@@ -1,0 +1,6 @@
+2024-05-04 13:25:05.324 +01 [11984] LOG:  redirecting log output to logging collector process
+2024-05-04 13:25:05.324 +01 [11984] HINT:  Future log output will appear in directory "log".
+2024-05-04 14:16:20.834 +01 [7684] LOG:  redirecting log output to logging collector process
+2024-05-04 14:16:20.834 +01 [7684] HINT:  Future log output will appear in directory "log".
+2024-05-04 14:16:32.091 +01 [16688] LOG:  redirecting log output to logging collector process
+2024-05-04 14:16:32.091 +01 [16688] HINT:  Future log output will appear in directory "log".
