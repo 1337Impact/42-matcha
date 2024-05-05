@@ -9,9 +9,9 @@ interface Payload {
     id: string;
     email: string;
     username: string;
-    firstName: string;
-    lastName: string;
-    profilePicture?: string;
+    first_name: string;
+    last_name: string;
+    profilePicture: string;
 }
 
 export const generateToken = (payload: Payload) => {

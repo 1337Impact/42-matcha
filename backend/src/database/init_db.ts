@@ -1,4 +1,4 @@
-import pool from ".";
+import pool from "./client";
 
 const createTableQuery = `
 CREATE TABLE IF NOT EXISTS "USER" (
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "username" VARCHAR(255) NOT NULL,
   "first_name" VARCHAR(255),
   "last_name" VARCHAR(255),
-  "email" VARCHAR(255),
+  "email" VARCHAR(255) UNIQUE,
   "password" VARCHAR(255),
   "gender" VARCHAR(255),
   "sexual_preferences" VARCHAR(255)[],
@@ -20,16 +20,15 @@ CREATE TABLE IF NOT EXISTS "USER" (
 );
 `;
 
-// Execute the SQL query
 pool
   .query(createTableQuery)
   .then(() => {
     console.log("User table created successfully");
-    pool.end(); // Close the connection pool
+    pool.end();
   })
   .catch((error) => {
     console.error("Error creating user table:", error);
-    pool.end(); // Close the connection pool
+    pool.end();
   });
 
 const createTableViewQuery = `
@@ -46,11 +45,11 @@ pool
   .query(createTableViewQuery)
   .then(() => {
     console.log("User views table created successfully");
-    pool.end(); // Close the connection pool
+    pool.end();
   })
   .catch((error) => {
     console.error("Error creating user views table:", error);
-    pool.end(); // Close the connection pool
+    pool.end();
   });
 
 const createTableLikesQuery = `
@@ -63,16 +62,15 @@ CREATE TABLE IF NOT EXISTS "user_likes" (
 );
 `;
 
-// Execute the SQL query
 pool
   .query(createTableLikesQuery)
   .then(() => {
     console.log("User likes table created successfully");
-    pool.end(); // Close the connection pool
+    pool.end();
   })
   .catch((error) => {
     console.error("Error creating user likes table:", error);
-    pool.end(); // Close the connection pool
+    pool.end();
   });
 
 const createTableMessageQuery = `
@@ -86,14 +84,13 @@ CREATE TABLE IF NOT EXISTS "Message" (
 );
 `;
 
-// Execute the SQL query
 pool
   .query(createTableMessageQuery)
   .then(() => {
     console.log("Message table created successfully");
-    pool.end(); // Close the connection pool
+    pool.end();
   })
   .catch((error) => {
     console.error("Error creating Message table:", error);
-    pool.end(); // Close the connection pool
+    pool.end();
   });
