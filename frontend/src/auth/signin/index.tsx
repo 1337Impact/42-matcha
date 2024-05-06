@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { loginSchema } from "../../utils/zod/loginSchema";
 
-export default function Login() {
+export default function SignIn() {
   const [data, setData] = useState({
     email: "",
     password: "",

@@ -9,9 +9,10 @@ import {
 // custom pages
 import ErrorPage from "./error-page";
 import Home from './root/index.tsx';
-import Login from './auth/login/index.tsx';
+import Sing from './auth/signin/index.tsx';
 import SingUp from './auth/singup/index.tsx';
 import AuthLayout from './auth/AuthLayout.tsx';
+import SignIn from './auth/signin/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -29,8 +30,8 @@ const router = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       {
-        path: "/login",
-        element: <Login />,
+        path: "/signin",
+        element: <SignIn />,
       },
       {
         path: "/singup",

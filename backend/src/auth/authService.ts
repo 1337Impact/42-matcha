@@ -39,8 +39,10 @@ async function createUser(userData: User) {
 }
 
 export const registerUser = async (userData: User) => {
+  console.log("registerUser: ", userData);
   try {
     const result = signupSchema.safeParse(userData);
+    console.log("result: ", result.error);
     if (!result.success) {
       return {
         code: 400,

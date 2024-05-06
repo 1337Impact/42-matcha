@@ -1,0 +1,170 @@
+import { useState } from "react";
+import { signupSchema } from "../../utils/zod/signupSchema";
+import axios from "axios";
+
+export default function SingUpForm() {
+  const [data, setData] = useState({
+    email: "",
+    username: "",
+    last_name: "",
+    first_name: "",
+    password: "",
+  });
+  const [error, setError] = useState(data);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.id, e.target.value);
+    setData({ ...data, [e.target.id]: e.target.value });
+  };
+
+  const onSubmit = async () => {
+    setError({
+      email: "",
+      username: "",
+      last_name: "",
+      first_name: "",
+      password: "",
+    });
+    const result = signupSchema.safeParse(data);
+    if (!result.success) {
+      result.error.errors.forEach((err) => {
+        setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
+      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/signup",
+        data
+      );
+      window.localStorage.setItem("token", response.data.token);
+      console.log(response);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div className="w-96 mx-auto">
+      <div className="mb-3">
+        <label
+          className="block text-gray-600 text-sm font-bold mb-1"
+          htmlFor="email"
+        >
+          Email
+        </label>
+        <input
+          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+          id="email"
+          type="email"
+          required={false}
+          placeholder="Email"
+          onChange={handleChange}
+        />
+        {error.email && (
+          <p className="text-red-400 font-medium text-xs -mb-[8px]">
+            {error.email}
+          </p>
+        )}
+      </div>
+      <div className="mb-3">
+        <label
+          className="block text-gray-600 text-sm font-bold mb-1"
+          htmlFor="username"
+        >
+          Username
+        </label>
+        <input
+          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+          id="username"
+          type="text"
+          placeholder="Username"
+          onChange={handleChange}
+        />
+        {error.username && (
+          <p className="text-red-400 font-medium text-xs -mb-[8px]">
+            {error.username}
+          </p>
+        )}
+      </div>
+      <div className="flex gap-2">
+      <div className="mb-3">
+        <label
+          className="block text-gray-600 text-sm font-bold mb-1"
+          htmlFor="first_name"
+          >
+          First Name
+        </label>
+        <input
+          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+          id="first_name"
+          type="text"
+          placeholder="First Name"
+          onChange={handleChange}
+          />
+        {error.first_name && (
+            <p className="text-red-400 font-medium text-xs -mb-[8px]">
+            {error.first_name}
+          </p>
+        )}
+      </div>
+      <div className="mb-3">
+        <label
+          className="block text-gray-600 text-sm font-bold mb-1"
+          htmlFor="last_name"
+          >
+          Last Name
+        </label>
+        <input
+          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+          id="last_name"
+          type="text"
+          placeholder="Last Name"
+          onChange={handleChange}
+          />
+        {error.last_name && (
+            <p className="text-red-400 font-medium text-xs -mb-[8px]">
+            {error.last_name}
+          </p>
+        )}
+      </div>
+        </div>
+      <div className="mb-5">
+        <label
+          className="block text-gray-600 text-sm font-bold mb-1"
+          htmlFor="password"
+        >
+          Password
+        </label>
+        <input
+          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+          id="password"
+          type="password"
+          placeholder="Password"
+          onChange={handleChange}
+        />
+        {error.password && (
+          <p className="text-red-400 font-medium text-xs -mb-[8px]">
+            {error.password}
+          </p>
+        )}
+      </div>
+      <div className="flex items-center justify-between">
+        <button
+          className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-1 px-4 rounded"
+          onClick={onSubmit}
+        >
+          Sign Up
+        </button>
+      </div>
+      <div>
+        <p className="text-gray-600 text-sm mt-3">
+          Already have an account?{" "}
+          <a href="/signin" className="text-blue-500">
+            Sign In
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+}

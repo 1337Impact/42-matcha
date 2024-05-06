@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Login from "./login";
+import Login from "./signin";
 import SingUp from "./singup";
 
 const AuthLayout: React.FC = () => {
