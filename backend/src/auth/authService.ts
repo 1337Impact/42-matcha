@@ -77,21 +77,45 @@ export const registerUser = async (userData: User) => {
   }
 };
 
+const getUserData = async (email: string) => {
+  const query = `
+      SELECT id, username, first_name, last_name, email, password, pictures
+      FROM "USER"
+      WHERE email = $1;
+    `;
+  try {
+    const { rows } = await db.query(query, [email]);
+    return rows[0];
+  } catch (error) {
+    console.error("Error getting user data:", error);
+    throw error;
+  }
+};
+
 export const loginUser = async (data: { email: string; password: string }) => {
   try {
-    const validatedData = loginSchema.parse(data);
-    console.log("login validated data: ", validatedData);
-    const isMatch = await bcrypt.compare("submittedPassword", "storedHash");
-    // fetch data from database
-    // const token = generateToken({
-    //   email: "string",
-    //   firstName: "string",
-    //   lastName: "string",
-    //   username: "string",
-    //   id: "1234",
-    //   profilePicture: "default.jpg",
-    // });
-    // return token;
+    const result = loginSchema.safeParse(data);
+    if (!result.success) {
+      console.log("Invalid data");
+      return null;
+    }
+    const userData = await getUserData(data.email);
+    if (!userData) {
+      console.log("User not found");
+      return null;
+    }
+    const { password: userPassword, pictures, ...user } = userData;
+    const isMatch = await bcrypt.compare(data.password, userPassword);
+    if (!isMatch) {
+      console.log("Invalid password");
+      return null;
+    }
+
+    const token = generateToken({
+      ...user,
+      profilePicture: pictures ? pictures[0] : "",
+    });
+    return token;
   } catch (error) {
     console.log("error: ", error);
     return null;
