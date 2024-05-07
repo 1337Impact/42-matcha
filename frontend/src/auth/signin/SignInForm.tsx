@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { loginSchema } from "../../utils/zod/loginSchema";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function SignInForm() {
   const [data, setData] = useState({
@@ -10,7 +11,6 @@ export default function SignInForm() {
   const [error, setError] = useState(data);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.id, e.target.value);
     setData({ ...data, [e.target.id]: e.target.value });
   };
 
@@ -19,14 +19,22 @@ export default function SignInForm() {
       email: "",
       password: "",
     });
+    const result = loginSchema.safeParse(data);
+    if (!result.success) {
+      result.error.errors.forEach((err) => {
+        setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
+      });
+      return;
+    }
     try {
-      const result = loginSchema.parse(data);
-      console.log(result);
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        data
+      );
+      console.log(response);
+      window.localStorage.setItem("token", response.data.token);
     } catch (error: any) {
-      error.issues.reduce((acc: any, issue: any) => {
-        setError((prev) => ({ ...prev, [issue.path[0]]: issue.message }));
-        return acc;
-      }, {} as Record<string, string>);
+      console.log(error.message);
     }
   };
 
@@ -75,7 +83,7 @@ export default function SignInForm() {
       </div>
       <div>
         <p className="text-gray-600 text-sm mt-3">
-          Already have an account? <Link to="/signup">Sign Up</Link>
+          Already have an account? <Link className="text-blue-500" to="/signup">Sign Up</Link>
         </p>
       </div>
     </div>

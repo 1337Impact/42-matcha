@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signupSchema } from "../../utils/zod/signupSchema";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-export default function SingUpForm() {
+export default function SingUpForm({
+  setStatus,
+  setSignUpError,
+}: {
+  setStatus: (status: string) => void;
+  setSignUpError: (status: string) => void;
+}) {
   const [data, setData] = useState({
     email: "",
     username: "",
@@ -14,7 +20,6 @@ export default function SingUpForm() {
   const [error, setError] = useState(data);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.id, e.target.value);
     setData({ ...data, [e.target.id]: e.target.value });
   };
 
@@ -34,14 +39,17 @@ export default function SingUpForm() {
       return;
     }
     try {
+      setStatus("loading");
       const response = await axios.post(
         "http://localhost:3000/api/auth/signup",
         data
       );
-      window.localStorage.setItem("token", response.data.token);
+      setStatus("success");
+      // window.localStorage.setItem("token", response.data.token);
       console.log(response);
     } catch (error: any) {
-      console.log(error);
+      setStatus("failed");
+      setSignUpError(error.message);
     }
   };
 
@@ -160,7 +168,10 @@ export default function SingUpForm() {
       </div>
       <div>
         <p className="text-gray-600 text-sm mt-3">
-          Already have an account? <Link to="/signin">Sign In</Link>
+          Already have an account?{" "}
+          <Link to="/signin" className="text-blue-500">
+            Sign In
+          </Link>
         </p>
       </div>
     </div>
