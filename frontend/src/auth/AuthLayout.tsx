@@ -1,15 +1,22 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Login from "./signin";
-import SingUp from "./singup";
+import SignIn from "./signin";
+import SignUp from "./signup";
 
 const AuthLayout: React.FC = () => {
   return (
-    <div className="bg-pink-300 min-h-screen flex items-center justify-center flex-col">
+    <div className="bg-pink-200 min-h-screen flex items-center justify-center flex-col">
+          <div className="min-w-[330px] mx-6 lg:w-[1000px] h-[600px] lg:h-[650px] rounded-2xl bg-white flex shadow-xl">
+      <img
+        className="hidden lg:block lg:w-[45%] h-full object-cover rounded-l-2xl"
+        src={"/signup_background.jpg"}
+        alt="background_img"
+      />
         <Routes>
-          <Route path="login" element={<Login />} />
-          <Route path="singup" element={<SingUp />} />
+          <Route path="signin" element={<SignIn />} />
+          <Route path="signup" element={<SignUp />} />
         </Routes>
+        </div>
         <footer className="mt-4 text-center text-gray-500 text-sm">
           &copy; 2024
         </footer>

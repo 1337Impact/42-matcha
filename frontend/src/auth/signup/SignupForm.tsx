@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { signupSchema } from "../../utils/zod/signupSchema";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function SingUpForm() {
   const [data, setData] = useState({
@@ -45,7 +46,7 @@ export default function SingUpForm() {
   };
 
   return (
-    <div className="w-96 mx-auto">
+    <div className="w-full mx-auto">
       <div className="mb-3">
         <label
           className="block text-gray-600 text-sm font-bold mb-1"
@@ -87,48 +88,48 @@ export default function SingUpForm() {
           </p>
         )}
       </div>
-      <div className="flex gap-2">
-      <div className="mb-3">
-        <label
-          className="block text-gray-600 text-sm font-bold mb-1"
-          htmlFor="first_name"
+      <div className="flex gap-2 w-full">
+        <div className="mb-3 w-full">
+          <label
+            className="block text-gray-600 text-sm font-bold mb-1"
+            htmlFor="first_name"
           >
-          First Name
-        </label>
-        <input
-          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-          id="first_name"
-          type="text"
-          placeholder="First Name"
-          onChange={handleChange}
+            First Name
+          </label>
+          <input
+            className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+            id="first_name"
+            type="text"
+            placeholder="First Name"
+            onChange={handleChange}
           />
-        {error.first_name && (
+          {error.first_name && (
             <p className="text-red-400 font-medium text-xs -mb-[8px]">
-            {error.first_name}
-          </p>
-        )}
-      </div>
-      <div className="mb-3">
-        <label
-          className="block text-gray-600 text-sm font-bold mb-1"
-          htmlFor="last_name"
-          >
-          Last Name
-        </label>
-        <input
-          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-          id="last_name"
-          type="text"
-          placeholder="Last Name"
-          onChange={handleChange}
-          />
-        {error.last_name && (
-            <p className="text-red-400 font-medium text-xs -mb-[8px]">
-            {error.last_name}
-          </p>
-        )}
-      </div>
+              {error.first_name}
+            </p>
+          )}
         </div>
+        <div className="mb-3 w-full">
+          <label
+            className="block text-gray-600 text-sm font-bold mb-1"
+            htmlFor="last_name"
+          >
+            Last Name
+          </label>
+          <input
+            className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+            id="last_name"
+            type="text"
+            placeholder="Last Name"
+            onChange={handleChange}
+          />
+          {error.last_name && (
+            <p className="text-red-400 font-medium text-xs -mb-[8px]">
+              {error.last_name}
+            </p>
+          )}
+        </div>
+      </div>
       <div className="mb-5">
         <label
           className="block text-gray-600 text-sm font-bold mb-1"
@@ -159,10 +160,7 @@ export default function SingUpForm() {
       </div>
       <div>
         <p className="text-gray-600 text-sm mt-3">
-          Already have an account?{" "}
-          <a href="/signin" className="text-blue-500">
-            Sign In
-          </a>
+          Already have an account? <Link to="/signin">Sign In</Link>
         </p>
       </div>
     </div>

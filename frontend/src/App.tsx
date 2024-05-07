@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Login from "./auth/signin";
-import SingUp from "./auth/singup";
+import SingUp from "./auth/signup";
 
 function App() {
   return (
