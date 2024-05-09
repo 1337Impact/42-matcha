@@ -1,17 +1,32 @@
-import { Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Login from "./auth/signin";
-import SingUp from "./auth/signup";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import Home from "./pages";
+import AuthLayout from "./auth/AuthLayout";
+import SignIn from "./auth/signin";
+import SignUp from "./auth/signup";
+import { useEffect } from "react";
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    const token = window.localStorage.getItem("token");
+    if (token) {
+      if (location.pathname === "/signin" || location.pathname === "/signup") {
+        navigate("/");
+      }
+    } else {
+      navigate("/signin");
+    }
+  }, [navigate, location.pathname]);
+
   return (
-    <>
-      <Navbar />
-      <Routes>
-        {/* <Route path="login" element={<Login />} />
-        <Route path="singup" element={<SingUp />} /> */}
-      </Routes>
-    </>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/" element={<AuthLayout />}>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Route>
+    </Routes>
   );
 }
 

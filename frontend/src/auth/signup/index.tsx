@@ -1,11 +1,10 @@
 import { useState } from "react";
 import SignUpForm from "./SignupForm";
-// import { ImSpinner11 } from "react-icons/im";
 import { ImSpinner3 } from "react-icons/im";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 
-export default function SingUp() {
+export default function SignUp() {
   const [status, setStatus] = useState("pending");
   const [signUpError, setSignUpError] = useState("");
   return (

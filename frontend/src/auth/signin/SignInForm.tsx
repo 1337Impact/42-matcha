@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { loginSchema } from "../../utils/zod/loginSchema";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ImSpinner3 } from "react-icons/im";
+
 
 export default function SignInForm() {
   const [data, setData] = useState({
@@ -9,6 +11,10 @@ export default function SignInForm() {
     password: "",
   });
   const [error, setError] = useState(data);
+  const [singInError, setSignInError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
@@ -27,19 +33,37 @@ export default function SignInForm() {
       return;
     }
     try {
+      setLoading(true);
       const response = await axios.post(
         "http://localhost:3000/api/auth/login",
         data
       );
       console.log(response);
       window.localStorage.setItem("token", response.data.token);
+      setRedirecting(true);
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (error: any) {
+      setSignInError(error.message);
       console.log(error.message);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full mx-auto relative">
+      <div
+        className={`${
+          !loading && "hidden"
+        } absolute flex justify-center flex-col items-center w-full h-full bg-[rgba(255,255,255,0.44)]`}
+      >
+        <ImSpinner3 className="animate-spin w-12 h-12" />
+        {redirecting && (
+          <p className="text-gray-600 text-sm font-medium">Redirecting...</p>
+        )}
+      </div>
+      <p className="text-red-500 text-sm font-medium pb-2">{singInError}</p>
       <div className="mb-4">
         <label
           className="block text-gray-600 text-sm font-bold mb-1"
@@ -83,7 +107,10 @@ export default function SignInForm() {
       </div>
       <div>
         <p className="text-gray-600 text-sm mt-3">
-          Already have an account? <Link className="text-blue-500" to="/signup">Sign Up</Link>
+          Already have an account?{" "}
+          <Link className="text-blue-500" to="/signup">
+            Sign Up
+          </Link>
         </p>
       </div>
     </div>

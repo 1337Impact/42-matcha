@@ -49,7 +49,7 @@ export default function SingUpForm({
       console.log(response);
     } catch (error: any) {
       setStatus("failed");
-      setSignUpError(error.message);
+      setSignUpError(error.response.data.error);
     }
   };
 
