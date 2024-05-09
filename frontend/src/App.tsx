@@ -1,5 +1,5 @@
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import Home from "./pages";
+import Home from "./root";
 import AuthLayout from "./auth/AuthLayout";
 import SignIn from "./auth/signin";
 import SignUp from "./auth/signup";
