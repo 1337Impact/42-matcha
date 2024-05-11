@@ -4,13 +4,30 @@ import AuthLayout from "./auth/AuthLayout";
 import SignIn from "./auth/signin";
 import SignUp from "./auth/signup";
 import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { setUser } from "./store/userSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   useEffect(() => {
     const token = window.localStorage.getItem("token");
     if (token) {
+      let decodedToken = jwtDecode(token);
+      const { exp, iat, iss, ...userData } = decodedToken;
+      console.log("user: ", userData);
+      var current_time = new Date().getTime() / 1000;
+      if (exp && current_time > exp) {
+        toast.error("Session expired. Please sign in again.");
+        console.log("Token expired");
+        window.localStorage.removeItem("token");
+        navigate("/signin");
+      }
+      dispatch(setUser(userData as any));
       if (location.pathname === "/signin" || location.pathname === "/signup") {
         navigate("/");
       }
@@ -20,13 +37,16 @@ function App() {
   }, [navigate, location.pathname]);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/" element={<AuthLayout />}>
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-      </Route>
-    </Routes>
+    <>
+      <ToastContainer />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/" element={<AuthLayout />}>
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
