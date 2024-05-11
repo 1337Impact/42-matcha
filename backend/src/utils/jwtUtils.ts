@@ -17,7 +17,7 @@ interface Payload {
 export const generateToken = (payload: Payload) => {
 
   const options = {
-    expiresIn: '1h',
+    expiresIn: '1d',
     issuer: process.env.FRONTEND_URL,
   };
 
