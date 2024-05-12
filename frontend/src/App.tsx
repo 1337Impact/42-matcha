@@ -26,12 +26,19 @@ function App() {
         console.log("Token expired");
         window.localStorage.removeItem("token");
         navigate("/signin");
+      } else {
+        dispatch(setUser(userData as any));
+        if (
+          location.pathname === "/signin" ||
+          location.pathname === "/signup"
+        ) {
+          navigate("/");
+        }
       }
-      dispatch(setUser(userData as any));
-      if (location.pathname === "/signin" || location.pathname === "/signup") {
-        navigate("/");
-      }
-    } else {
+    } else if (
+      location.pathname !== "/signin" &&
+      location.pathname !== "/signup"
+    ) {
       navigate("/signin");
     }
   }, [navigate, location.pathname]);
