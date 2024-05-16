@@ -1,27 +1,35 @@
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 dotenv.config();
 
-const secretKey = process.env.JWT_SECRET_KEY || 'your-secret-key';
+const secretKey = process.env.JWT_SECRET_KEY || "your-secret-key";
 
 interface Payload {
-    id: string;
-    email: string;
-    username: string;
-    first_name: string;
-    last_name: string;
-    profilePicture: string;
+  id: string;
+  email: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  profilePicture: string;
 }
 
 export const generateToken = (payload: Payload) => {
-
   const options = {
-    expiresIn: '1d',
+    expiresIn: "1d",
     issuer: process.env.FRONTEND_URL,
   };
 
   return jwt.sign(payload, secretKey, options);
+};
+export const generateEmailVerificationToken = (payload: string) => {
+  console.log("Generating email verification token for: ", payload);
+  const options = {
+    expiresIn: "4h",
+    issuer: process.env.FRONTEND_URL,
+  };
+
+  return jwt.sign({ id: payload }, secretKey, options);
 };
 
 export const verifyToken = (token: string) => {

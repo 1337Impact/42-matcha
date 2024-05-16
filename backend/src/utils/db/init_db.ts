@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "fame_rating" NUMERIC,
   "location" VARCHAR(255),
   "age" NUMERIC,
+  "bio" TEXT,
+  "is_verified" BOOLEAN DEFAULT FALSE,
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
