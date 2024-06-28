@@ -104,7 +104,7 @@ export const registerUser = async (userData: User) => {
 
 const getUserData = async (email: string) => {
   const query = `
-      SELECT id, username, first_name, last_name, email, password, pictures
+      SELECT id, username, first_name, last_name, email, password, pictures, is_verified
       FROM "USER"
       WHERE email = $1;
     `;

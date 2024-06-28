@@ -12,6 +12,7 @@ interface Payload {
   first_name: string;
   last_name: string;
   profilePicture: string;
+  is_verified: boolean;
 }
 
 export const generateToken = (payload: Payload) => {
@@ -26,7 +27,7 @@ export const generateEmailVerificationToken = (payload: string) => {
   console.log("Generating email verification token for: ", payload);
   const options = {
     expiresIn: "4h",
-    issuer: process.env.FRONTEND_URL,
+    issuer: process.env.FRONTEND_URL, 
   };
 
   return jwt.sign({ id: payload }, secretKey, options);

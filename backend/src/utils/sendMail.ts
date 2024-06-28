@@ -1,5 +1,7 @@
-import { Resend } from "resend";
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 interface SendEmailProps {
   name: string;
@@ -8,20 +10,20 @@ interface SendEmailProps {
 }
 
 const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
+  host: process.env.EMAIL_HOST as string,
+  port: parseInt(process.env.EMAIL_PORT as string),
   secure: false,
   auth: {
-    user: "74d2d2002@smtp-brevo.com",
-    pass: "DbGF6yKpjrTQfNwv",
+    user: process.env.EMAIL_LOGIN,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
 async function sendVerificationEmail(data: SendEmailProps) {
   console.log("sending verification mail: ", data);
-  try{
+  try {
     const info = await transporter.sendMail({
-      from: '"Matcha 👻" <74d2d2002@smtp-brevo.com>',
+      from: `"Matcha 👻" <${process.env.EMAIL_LOGIN}>`,
       to: data.email,
       subject: "Matcha - Account verification",
       html: `<div>
@@ -30,11 +32,10 @@ async function sendVerificationEmail(data: SendEmailProps) {
       <a href=${data.link}>Click here to verfiy your account.</a>\
       </div>`,
     });
-    
+
     console.log("Message sent: %s", info);
     return { data: "Email sent successfully", error: null };
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error sending email: ", error);
     return { data: null, error: "Error sending email" };
   }

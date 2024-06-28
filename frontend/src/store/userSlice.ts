@@ -8,6 +8,7 @@ interface User {
     last_name: string;
     username: string;
     profile_picture: string;
+    is_verified: boolean;
   }
 
 export interface UserState {

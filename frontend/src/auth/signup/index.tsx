@@ -16,9 +16,11 @@ export default function SignUp() {
       ) : status == "success" ? (
         <div className="flex justify-center flex-col items-center">
           <IoMdCheckmarkCircleOutline className="text-green-500 w-20 h-20" />
-          <h2 className="text-3xl font-bold text-gray-800">Congratulations!</h2>
+          <h2 className="text-3xl font-bold text-gray-800">
+            Your account has been created successfully!
+          </h2>
           <p className="text-sm font-semibold text-gray-500">
-            Your account has been created successfully
+            A verification email has been sent to your email address.
           </p>
           <Link
             to={"/signin"}

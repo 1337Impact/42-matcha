@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "./store/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Verify from "./auth/verify";
 
 function App() {
   const navigate = useNavigate();
@@ -37,7 +38,8 @@ function App() {
       }
     } else if (
       location.pathname !== "/signin" &&
-      location.pathname !== "/signup"
+      location.pathname !== "/signup" &&
+      location.pathname !== "/verify"
     ) {
       navigate("/signin");
     }
@@ -52,6 +54,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
         </Route>
+          <Route path="/verify" element={<Verify />} />
       </Routes>
     </>
   );
