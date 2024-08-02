@@ -1,6 +1,6 @@
 import pool from "./client";
 
-const createTableQuery = `
+const createTableUserQuery = `
 CREATE TABLE IF NOT EXISTS "USER" (
   "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   "username" VARCHAR(255) NOT NULL,
@@ -22,17 +22,6 @@ CREATE TABLE IF NOT EXISTS "USER" (
 );
 `;
 
-pool
-  .query(createTableQuery)
-  .then(() => {
-    console.log("User table created successfully");
-    pool.end();
-  })
-  .catch((error) => {
-    console.error("Error creating user table:", error);
-    pool.end();
-  });
-
 const createTableViewQuery = `
 CREATE TABLE IF NOT EXISTS "user_views" (
   "viewer_id" UUID,
@@ -42,17 +31,6 @@ CREATE TABLE IF NOT EXISTS "user_views" (
   CONSTRAINT fk_viewed_id FOREIGN KEY ("viewed_id") REFERENCES "USER" ("id")
 );
 `;
-
-pool
-  .query(createTableViewQuery)
-  .then(() => {
-    console.log("User views table created successfully");
-    pool.end();
-  })
-  .catch((error) => {
-    console.error("Error creating user views table:", error);
-    pool.end();
-  });
 
 const createTableLikesQuery = `
 CREATE TABLE IF NOT EXISTS "user_likes" (
@@ -64,16 +42,6 @@ CREATE TABLE IF NOT EXISTS "user_likes" (
 );
 `;
 
-pool
-  .query(createTableLikesQuery)
-  .then(() => {
-    console.log("User likes table created successfully");
-    pool.end();
-  })
-  .catch((error) => {
-    console.error("Error creating user likes table:", error);
-    pool.end();
-  });
 
 const createTableMessageQuery = `
 CREATE TABLE IF NOT EXISTS "Message" (
@@ -86,13 +54,22 @@ CREATE TABLE IF NOT EXISTS "Message" (
 );
 `;
 
-pool
-  .query(createTableMessageQuery)
-  .then(() => {
+
+async function createTables() {
+  try {
+    await pool.query(createTableUserQuery);
+    console.log("User table created successfully");
+    await pool.query(createTableViewQuery);
+    console.log("User views table created successfully");
+    await pool.query(createTableLikesQuery);
+    console.log("User likes table created successfully");
+    await pool.query(createTableMessageQuery);
     console.log("Message table created successfully");
     pool.end();
-  })
-  .catch((error) => {
-    console.error("Error creating Message table:", error);
+  } catch (error) {
+    console.error("Error creating tables:", error);
     pool.end();
-  });
+  }
+}
+
+createTables();

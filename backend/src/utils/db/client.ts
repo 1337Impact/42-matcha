@@ -2,14 +2,10 @@ import { Pool } from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+console.log("data: ", process.env.DATABASE_URL);
 const pool = new Pool({
-    user: process.env.PGUSER,
-    host: process.env.DB_HOST,
-    database: process.env.PGDATABASE,
-    password: process.env.DB_PASS,
-    port: parseInt(process.env.PGPORT ?? ""),
-});
+    connectionString: process.env.DATABASE_URL,
+})
 
 pool.connect((err, client, release) => {
     if (err) {
