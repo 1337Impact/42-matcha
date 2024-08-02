@@ -50,8 +50,9 @@ export default function UpdateProfile({
   };
 
   return (
-    <div onClick={()=>console.log("close!")} className=" absolute w-full h-full z-30 backdrop-blur-sm">
-    <div className="w-[90%] mt-10 rounded-lg mx-auto p-4 bg-gray-100">
+    <div onClick={()=>console.log("close!")} className="flex items-center absolute w-full h-full z-30 backdrop-blur-sm">
+    <div className="w-[90%] rounded-lg mx-auto p-4 bg-gray-100">
+      <h1 className="text-xl font-bold text-center mb-5">Complete your profile</h1>
       <div className="mb-3">
         <label
           className="block text-gray-600 text-sm font-bold mb-1"
@@ -107,11 +108,10 @@ export default function UpdateProfile({
             biography
           </label>
           <textarea
-            cols={4}
+            rows={4}
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="biography"
-            // type="text"
-            placeholder="Last Name"
+            placeholder="biography"
             // onChange={handleChange}
           />
           {error.last_name && (
@@ -121,24 +121,7 @@ export default function UpdateProfile({
           )}
       </div>
       <div className="mb-5">
-        <label
-          className="block text-gray-600 text-sm font-bold mb-1"
-          htmlFor="password"
-        >
-          Password
-        </label>
-        <input
-          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-          id="password"
-          type="password"
-          placeholder="Password"
-          onChange={handleChange}
-        />
-        {error.password && (
-          <p className="text-red-400 font-medium text-xs -mb-[8px]">
-            {error.password}
-          </p>
-        )}
+        
       </div>
       <div className="flex items-center justify-between">
         <button
