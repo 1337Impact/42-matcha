@@ -10,18 +10,18 @@ import { RootState } from "../store";
 const Home: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
 
-  // useEffect(() => {
-  //   console.log("User: ", user);
-  // }, [user]);
+  useEffect(() => {
+    console.log("User: ", user);
+  }, [user]);
   return (
     <div className="w-screen relative h-screen">
-      <div className="w-full p-1 bg-green-500">
-        {user && !user.is_verified && (
+      {user && !user.is_verified && (
+        <div className="w-full p-1 bg-yellow-400">
           <div className="text-sm text-center">
             Verfiy your email address to access all features.
           </div>
-        )}
-      </div>
+        </div>
+      )}
       <Navbar />
       {/* Rest of the code */}
       <Footer />
