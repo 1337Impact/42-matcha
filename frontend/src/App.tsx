@@ -1,15 +1,15 @@
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Home from "./pages";
-import AuthLayout from "./auth/AuthLayout";
-import SignIn from "./auth/signin";
-import SignUp from "./auth/signup";
+import AuthLayout from "./pages/auth/AuthLayout";
+import SignIn from "./pages/auth/signin";
+import SignUp from "./pages/auth/signup";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Verify from "./auth/verify";
+import Verify from "./pages/auth/verify";
 
 function App() {
   const navigate = useNavigate();

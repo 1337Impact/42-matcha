@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { signupSchema } from "../../utils/zod/signupSchema";
+import { signupSchema } from "../../../utils/zod/signupSchema";
 import axios from "axios";
 import { Link } from "react-router-dom";
 

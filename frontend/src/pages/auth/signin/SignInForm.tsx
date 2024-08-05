@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { loginSchema } from "../../utils/zod/loginSchema";
+import { loginSchema } from "../../../utils/zod/loginSchema";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ImSpinner3 } from "react-icons/im";
