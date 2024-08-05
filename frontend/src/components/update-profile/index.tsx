@@ -23,7 +23,7 @@ export default function UpdateProfile({}: {}) {
   const [imageFiles, setImagFiles] = useState<(File | null)[]>(
     Array(5).fill(null)
   );
-  const [error, setError] = useState(data);
+  // const [error, setError] = useState(data);
 
   const handleChange = (e: any) => {
     console.log(e.target.id, e.target.value);

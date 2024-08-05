@@ -3,6 +3,7 @@ import { signupSchema } from "../../utils/zod/signupSchema";
 import axios from "axios";
 import UploadImage from "../upload-image";
 import ReactSelect from "react-select";
+import completeProfileSchema from "../../utils/zod/completeProfileSchema";
 
 const tagsList = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((tag) => ({
   value: tag,
@@ -14,7 +15,10 @@ const uploadImage = async (files: File[]) => {
   files.forEach((file) => {
     formData.append("images", file);
   });
-  const response = await axios.post("http://localhost:3000/api/update-profile", formData);
+  const response = await axios.post(
+    "http://localhost:3000/api/update-profile",
+    formData
+  );
   return response.data;
 };
 
@@ -23,16 +27,20 @@ export default function CompleteProfile({}: {}) {
   const [data, setData] = useState({
     gender: "",
     sexual_preferences: "",
-    bio: "",
+    biography: "",
     tags: [],
+    images: Array(5).fill(""),
   });
-  const [images, setImages] = useState<string[]>(Array(5).fill(""));
   const [imageFiles, setImagFiles] = useState<(File | null)[]>(
     Array(5).fill(null)
   );
-  // const [error, setError] = useState(data); 
-
-
+  const [error, setError] = useState({
+    gender: "",
+    sexual_preferences: "",
+    biography: "",
+    tags: "",
+    images: "",
+  });
 
   const handleChange = (e: any) => {
     setData({ ...data, [e.target.id]: e.target.value });
@@ -41,25 +49,27 @@ export default function CompleteProfile({}: {}) {
     setData({ ...data, tags: e.map((tag: any) => tag.value) });
   };
 
-
   const onSubmit = async () => {
-    // setError({
-    //   email: "",
-    //   username: "",
-    //   last_name: "",
-    //   first_name: "",
-    //   password: "",
-    // });
-    // const result = signupSchema.safeParse(data);
-    // if (!result.success) {
-    //   result.error.errors.forEach((err) => {
-    //     setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
-    //   });
-    //   return;
-    // }
+    console.log(data);
+    setError({
+      gender: "",
+      sexual_preferences: "",
+      biography: "",
+      tags: "",
+      images: "",
+    });
+    const result = completeProfileSchema.safeParse(data);
+    if (!result.success) {
+      result.error.errors.forEach((err) => {
+        setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
+      });
+      return;
+    }
     try {
       console.log(data);
-      const images = await uploadImage(imageFiles.filter((file) => file !== null) as File[]);
+      const images = await uploadImage(
+        imageFiles.filter((file) => file !== null) as File[]
+      );
       console.log(images);
       // console.log(data);
       // // setStatus("loading");
@@ -76,13 +86,10 @@ export default function CompleteProfile({}: {}) {
     }
   };
 
-  
   if (!open) return null;
 
   return (
-    <div
-      className="flex items-center absolute w-full h-full z-30 backdrop-blur-sm"
-    >
+    <div className="flex items-center absolute w-full h-full z-30 backdrop-blur-sm">
       <div className="w-[90%] rounded-lg mx-auto p-4 bg-gray-100">
         <h1 className="text-xl font-bold text-center mb-5">
           Complete your profile
@@ -103,11 +110,11 @@ export default function CompleteProfile({}: {}) {
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-          {/* {error.email && (
+          {error.gender && (
             <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.email}
+              {error.gender}
             </p>
-          )} */}
+          )}
         </div>
         <div className="mb-3"></div>
         <div className="mb-3 w-full">
@@ -126,11 +133,11 @@ export default function CompleteProfile({}: {}) {
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-          {/* {error.first_name && (
+          {error.sexual_preferences && (
             <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.first_name}
+              {error.sexual_preferences}
             </p>
-          )} */}
+          )}
         </div>
         <div className="mb-3 w-full">
           <label
@@ -146,11 +153,11 @@ export default function CompleteProfile({}: {}) {
             placeholder="biography"
             onChange={handleChange}
           />
-          {/* {error.last_name && (
+          {error.biography && (
             <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.last_name}
+              {error.biography}
             </p>
-          )} */}
+          )}
         </div>
         <div className="mb-3 w-full">
           <ReactSelect
@@ -161,17 +168,22 @@ export default function CompleteProfile({}: {}) {
             options={tagsList}
             isMulti
           />
+          {error.tags && (
+            <p className="text-red-400 font-medium text-xs -mb-[8px]">
+              {error.tags}
+            </p>
+          )}
         </div>
         <div className="mb-5">
           <div className="flex gap-2 flex-wrap">
-            {images.map((img, index) => (
+            {data.images.map((img, index) => (
               <UploadImage
                 key={index}
                 image={img}
                 setImage={(image) => {
-                  const newImages = [...images];
-                  newImages[index] = image || "";
-                  setImages(newImages);
+                  const newImages = [...data.images];
+                  newImages[index] = image as never;
+                  setData({ ...data, images: newImages });
                 }}
                 setImgFile={(imageFile) => {
                   const newImageFiles = [...imageFiles];
@@ -181,6 +193,11 @@ export default function CompleteProfile({}: {}) {
               />
             ))}
           </div>
+          {error.images && (
+            <p className="text-red-400 font-medium text-xs -mb-[8px]">
+              {error.images}
+            </p>
+          )}
         </div>
         <div className="flex items-center justify-between gap-2">
           <button
