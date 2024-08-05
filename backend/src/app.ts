@@ -13,7 +13,7 @@ app.use('/images', express.static('uploads'));
 
 app.use(bodyParser.json());
 app.use('/api/auth', authRouter);
-app.use('/api', profileRouter);
+app.use('/api/profile', authorize, profileRouter);
 app.use('/api/user', authorize, userRouter);
 
 export default app;

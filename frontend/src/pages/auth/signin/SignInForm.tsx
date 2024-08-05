@@ -41,9 +41,10 @@ export default function SignInForm() {
       console.log(response);
       window.localStorage.setItem("token", response.data.token);
       setRedirecting(true);
+      const isProfileCompleted = response.data.isProfileCompleted;
       setTimeout(() => {
-        navigate("/");
-      }, 2000);
+        navigate("/" + !isProfileCompleted ? "?profilecompleted=false" : "");
+      }, 1000);
     } catch (error: any) {
       setSignInError(error.message);
       console.log(error.message);

@@ -1,6 +1,7 @@
 import pool from "./client";
 
 const createTableUserQuery = `
+DROP TABLE IF EXISTS "USER" CASCADE;
 CREATE TABLE IF NOT EXISTS "USER" (
   "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   "username" VARCHAR(255) NOT NULL,
@@ -9,9 +10,9 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "email" VARCHAR(255) UNIQUE,
   "password" VARCHAR(255),
   "gender" VARCHAR(255),
-  "sexual_preferences" VARCHAR(255)[],
-  "interests" VARCHAR(255)[],
-  "pictures" VARCHAR(255)[],
+  "sexual_preferences" TEXT,
+  "interests" TEXT,
+  "pictures" TEXT,
   "fame_rating" NUMERIC,
   "location" VARCHAR(255),
   "age" NUMERIC,

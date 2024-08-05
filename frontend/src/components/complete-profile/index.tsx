@@ -1,28 +1,17 @@
 import { useEffect, useState } from "react";
-import { signupSchema } from "../../utils/zod/signupSchema";
 import axios from "axios";
 import UploadImage from "../upload-image";
 import ReactSelect from "react-select";
 import completeProfileSchema from "../../utils/zod/completeProfileSchema";
+import { toast } from "react-toastify";
 
 const tagsList = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((tag) => ({
   value: tag,
   label: tag,
 }));
 
-const uploadImage = async (files: File[]) => {
-  const formData = new FormData();
-  files.forEach((file) => {
-    formData.append("images", file);
-  });
-  const response = await axios.post(
-    "http://localhost:3000/api/update-profile",
-    formData
-  );
-  return response.data;
-};
-
 export default function CompleteProfile({}: {}) {
+  const token = window.localStorage.getItem("token");
   const [open, setOpen] = useState(true);
   const [data, setData] = useState({
     gender: "",
@@ -31,9 +20,6 @@ export default function CompleteProfile({}: {}) {
     tags: [],
     images: Array(5).fill(""),
   });
-  const [imageFiles, setImagFiles] = useState<(File | null)[]>(
-    Array(5).fill(null)
-  );
   const [error, setError] = useState({
     gender: "",
     sexual_preferences: "",
@@ -41,6 +27,9 @@ export default function CompleteProfile({}: {}) {
     tags: "",
     images: "",
   });
+  const [imageFiles, setImagFiles] = useState<(File | null)[]>(
+    Array(5).fill(null)
+  );
 
   const handleChange = (e: any) => {
     setData({ ...data, [e.target.id]: e.target.value });
@@ -67,23 +56,36 @@ export default function CompleteProfile({}: {}) {
     }
     try {
       console.log(data);
-      const images = await uploadImage(
-        imageFiles.filter((file) => file !== null) as File[]
+      const formData = new FormData();
+      formData.append("gender", data.gender);
+      formData.append("sexual_preferences", data.sexual_preferences);
+      formData.append("biography", data.biography);
+      formData.append("tags", JSON.stringify(data.tags));
+      imageFiles.forEach((file) => {
+        file && formData.append("images", file);
+      });
+      const response = await axios.post(
+        "http://localhost:3000/api/profile/update",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-      console.log(images);
-      // console.log(data);
-      // // setStatus("loading");
-      // const response = await axios.post(
-      //   "http://localhost:3000/api/update-profile",
-      //   data
-      // );
-      // setStatus("success");
-      // window.localStorage.setItem("token", response.data.token);
-      // console.log(response);
+      toast.success("Your profile has been updated");
+      setOpen(false);
     } catch (error: any) {
-      // setStatus("failed");
-      // setSignUpError(error.response.data.error);
+      console.log(error);
+      toast.error("Failed to update profile");
     }
+    // setData({
+    //   gender: "",
+    //   sexual_preferences: "",
+    //   biography: "",
+    //   tags: [],
+    //   images: Array(5).fill(""),
+    // })
   };
 
   if (!open) return null;

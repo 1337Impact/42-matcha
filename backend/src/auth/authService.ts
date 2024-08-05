@@ -140,7 +140,7 @@ export const loginUser = async (data: { email: string; password: string }) => {
       ...user,
       profilePicture: pictures ? pictures[0] : "",
     });
-    return token;
+    return {id: user.id, token: token};
   } catch (error) {
     console.log("error: ", error);
     return null;

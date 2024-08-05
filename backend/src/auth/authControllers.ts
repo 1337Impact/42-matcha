@@ -1,3 +1,5 @@
+import { isProfileCompleted } from "../profile/profileControllers";
+import { getIsProfileCompleted } from "../profile/profileService";
 import { verifyToken } from "../utils/jwtUtils";
 import { handleEmailVerification, loginUser, registerUser } from "./authService";
 
@@ -12,9 +14,10 @@ export const signup = async (req: any, res: any) => {
 };
 
 export const login = async (req: any, res: any) => {
-  const token = await loginUser(req.body);
-  if (token) {
-    res.send({token: token});
+  const user = await loginUser(req.body);
+  if (user) {
+    const isProfileCompleted = await getIsProfileCompleted(user.id);
+    res.send({token: user.token, isProfileCompleted: isProfileCompleted});
   } else {
     res.status(400).send({ error: "Invalid email or password." });
   }
