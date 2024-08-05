@@ -31,7 +31,7 @@ export default function UploadImage({
   };
 
   return (
-    <div className="w-10 h-10 flex flex-col justify-center items-center border border-gray-300 rounded-lg overflow-hidden relative">
+    <div className="w-24 min-h-24 flex flex-col justify-center items-center border border-gray-300 rounded-lg overflow-hidden relative">
       {image ? (
         <>
           <img
@@ -41,7 +41,7 @@ export default function UploadImage({
           />
           <button
             onClick={handleResetClick}
-            className="w-full h-full cursor-pointer text-center bg-red-500 py-2 text-white font-semibold"
+            className="w-full h-full cursor-pointer text-center bg-red-500 text-white font-semibold"
           >
             Remove
           </button>

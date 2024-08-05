@@ -9,7 +9,16 @@ const tagsList = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((tag) => ({
   label: tag,
 }));
 
-export default function UpdateProfile({}: {}) {
+const uploadImage = async (files: File[]) => {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append("images", file);
+  });
+  const response = await axios.post("http://localhost:3000/api/update-profile", formData);
+  return response.data;
+};
+
+export default function CompleteProfile({}: {}) {
   const [open, setOpen] = useState(true);
   const [data, setData] = useState({
     gender: "",
@@ -17,22 +26,21 @@ export default function UpdateProfile({}: {}) {
     bio: "",
     tags: [],
   });
-
-
   const [images, setImages] = useState<string[]>(Array(5).fill(""));
   const [imageFiles, setImagFiles] = useState<(File | null)[]>(
     Array(5).fill(null)
   );
-  const [error, setError] = useState(data);
+  // const [error, setError] = useState(data); 
+
+
 
   const handleChange = (e: any) => {
-    console.log(e.target.id, e.target.value);
     setData({ ...data, [e.target.id]: e.target.value });
   };
   const handleTagsChange = (e: any) => {
-    console.log(e);
-    setData({ ...data, tags: e });
+    setData({ ...data, tags: e.map((tag: any) => tag.value) });
   };
+
 
   const onSubmit = async () => {
     // setError({
@@ -50,14 +58,18 @@ export default function UpdateProfile({}: {}) {
     //   return;
     // }
     try {
-      // setStatus("loading");
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/signup",
-        data
-      );
+      console.log(data);
+      const images = await uploadImage(imageFiles.filter((file) => file !== null) as File[]);
+      console.log(images);
+      // console.log(data);
+      // // setStatus("loading");
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/update-profile",
+      //   data
+      // );
       // setStatus("success");
       // window.localStorage.setItem("token", response.data.token);
-      console.log(response);
+      // console.log(response);
     } catch (error: any) {
       // setStatus("failed");
       // setSignUpError(error.response.data.error);
@@ -69,7 +81,6 @@ export default function UpdateProfile({}: {}) {
 
   return (
     <div
-      onClick={() => console.log("close!")}
       className="flex items-center absolute w-full h-full z-30 backdrop-blur-sm"
     >
       <div className="w-[90%] rounded-lg mx-auto p-4 bg-gray-100">

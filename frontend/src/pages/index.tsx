@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
-import UpdateProfile from "../components/update-profile";
+import CompleteProfile from "../components/complete-profile";
 
 const Home: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -23,7 +23,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       )}
-      <UpdateProfile />
+      <CompleteProfile />
       <Navbar />
       <h1>No posts found</h1>
       <Footer />
