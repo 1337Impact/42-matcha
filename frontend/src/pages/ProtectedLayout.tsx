@@ -37,11 +37,13 @@ const ProtectedLayout: React.FC = () => {
         </div>
       )}
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/profile/:profileId" element={<Profile />} />
-      </Routes>
-      <Footer />
+      <main className="py-16">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/profile/:profileId" element={<Profile />} />
+        </Routes>
+        <Footer />
+      </main>
     </div>
   );
 };

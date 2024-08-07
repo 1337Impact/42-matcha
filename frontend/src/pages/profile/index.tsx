@@ -25,16 +25,16 @@ export default function Profile() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-5xl md:mx-auto pb-16">
       <div className="bg-muted rounded-t-lg p-6">
-        <div className="flex items-center gap-4">
-          <span className="relative flex shrink-0 overflow-hidden rounded-full h-16 w-16">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative flex shrink-0 overflow-hidden rounded-full h-32 w-32">
             <img
               className="aspect-square h-full w-full"
               alt={profileData.username}
               src={profileData.pictures[0]}
             />
-          </span>
+          </div>
           <div className="grid gap-1">
             <h2 className="text-2xl font-bold">John Doe</h2>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -103,25 +103,35 @@ export default function Profile() {
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-4">
           {profileData.pictures.map((image) => (
             <img
               src={image}
-              width="100"
-              height="100"
               alt="Profile Picture"
-              className="rounded-lg object-cover"
-              // style="aspect-ratio: 100 / 100; object-fit: cover;"
+              className="aspect-square rounded-md object-cover"
             />
           ))}
-        </div>
-        <div className="grid gap-1 text-sm text-muted-foreground">
-          <div>
-            <span className="font-medium">Email:</span> john.doe@example.com
-          </div>
-          <div>
-            <span className="font-medium">Sexual Preferences:</span> Straight
-          </div>
+          {profileData.pictures.map((image) => (
+            <img
+              src={image}
+              alt="Profile Picture"
+              className="aspect-square rounded-md object-cover"
+            />
+          ))}
+          {profileData.pictures.map((image) => (
+            <img
+              src={image}
+              alt="Profile Picture"
+              className="aspect-square rounded-md object-cover"
+            />
+          ))}
+          {profileData.pictures.map((image) => (
+            <img
+              src={image}
+              alt="Profile Picture"
+              className="aspect-square rounded-md object-cover"
+            />
+          ))}
         </div>
       </div>
     </div>

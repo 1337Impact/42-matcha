@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
     navigate("/signin");
   };
   return (
-    <nav className="bg-gray-200 text-gray-600">
+    <header className="fixed w-full z-50 bg-gray-200 text-gray-600">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -80,7 +80,7 @@ const Navbar: React.FC = () => {
           </DropdownMenu>
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
