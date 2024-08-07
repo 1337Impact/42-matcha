@@ -14,7 +14,7 @@ const getProfile = async (req: any, res: any) => {
 
 const updateProfile = async (req: any, res: any) => {
   try {
-    const images = JSON.stringify(req.files.map((file: any) => file.path));
+    const images = JSON.stringify(req.files.map((file: any) => `${process.env.BACKEND_URL}/images/${file.filename}`));
     await handleUpdateProfile({...req.body, images: images}, req.user);
     res.send("Profile updated successfully");
   } catch (error) {
