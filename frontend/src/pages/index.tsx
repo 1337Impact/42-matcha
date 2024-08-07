@@ -6,7 +6,7 @@ const Home: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="">
       <h1>No posts found</h1>
     </div>
   );

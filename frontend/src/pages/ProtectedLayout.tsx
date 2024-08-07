@@ -25,7 +25,7 @@ const ProtectedLayout: React.FC = () => {
   };
 
   return (
-    <div className="w-screen relative h-screen">
+    <div className="">
       {isOpenProfileCompleted && (
         <CompleteProfile handleClose={handleCloseProfileCompletion} />
       )}
@@ -42,8 +42,8 @@ const ProtectedLayout: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/profile/:profileId" element={<Profile />} />
         </Routes>
-        <Footer />
       </main>
+      <Footer />
     </div>
   );
 };
