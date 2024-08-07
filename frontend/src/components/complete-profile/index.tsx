@@ -11,11 +11,11 @@ const tagsList = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((tag) => ({
 }));
 
 interface CompleteProfileProps{
-  setOpen: (value: boolean) => void
+  handleClose: () => void
 }
 
 export default function CompleteProfile({
-  setOpen
+  handleClose
 }: CompleteProfileProps) {
   const token = window.localStorage.getItem("token");
   const [data, setData] = useState({
@@ -79,7 +79,7 @@ export default function CompleteProfile({
         }
       );
       toast.success("Your profile has been updated");
-      setOpen(false);
+      handleClose();
     } catch (error: any) {
       console.log(error);
       toast.error("Failed to update profile");
@@ -207,7 +207,7 @@ export default function CompleteProfile({
         <div className="flex items-center justify-between gap-2">
           <button
             className="w-full hover:bg-gray-500 border-2 border-gray-500 text-black font-bold py-1 px-4 rounded"
-            onClick={() => setOpen(false)}
+            onClick={handleClose}
           >
             Skip
           </button>

@@ -15,14 +15,15 @@ const Home: React.FC = () => {
   const [isOpenProfileCompleted, setIsOpenProfileCompleted] = useState(false);
 
   useEffect(() => {
-    console.log("User: ", user);
-  }, [user]);
-
-  useEffect(() => {
     if (searchParams.get("profilecompleted") == "false") {
       setIsOpenProfileCompleted(true);
     }
   }, [searchParams]);
+  
+  const handleCloseProfileCompletion = () => {
+    setIsOpenProfileCompleted(false);
+    setSearchParams();
+  }
 
   return (
     <div className="w-screen relative h-screen">
@@ -34,7 +35,7 @@ const Home: React.FC = () => {
         </div>
       )}
       {isOpenProfileCompleted && (
-        <CompleteProfile setOpen={setIsOpenProfileCompleted} />
+        <CompleteProfile handleClose={handleCloseProfileCompletion} />
       )}
       <Navbar />
       <h1>No posts found</h1>
