@@ -1,45 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-// import { Route, Routes } from "react-router-dom";
-// import SignIn from "../auth/signin";
-// import SignUp from "../auth/signup";
-import Footer from "../components/Footer";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
-import CompleteProfile from "../components/complete-profile";
-import { useSearchParams } from "react-router-dom";
 
 const Home: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
-  let [searchParams, setSearchParams] = useSearchParams();
-  const [isOpenProfileCompleted, setIsOpenProfileCompleted] = useState(false);
-
-  useEffect(() => {
-    if (searchParams.get("profilecompleted") == "false") {
-      setIsOpenProfileCompleted(true);
-    }
-  }, [searchParams]);
-  
-  const handleCloseProfileCompletion = () => {
-    setIsOpenProfileCompleted(false);
-    setSearchParams();
-  }
 
   return (
-    <div className="w-screen relative h-screen">
-      {user && !user.is_verified && (
-        <div className="w-full p-1 bg-yellow-400">
-          <div className="text-sm text-center">
-            Verfiy your email address to access all features.
-          </div>
-        </div>
-      )}
-      {isOpenProfileCompleted && (
-        <CompleteProfile handleClose={handleCloseProfileCompletion} />
-      )}
-      <Navbar />
+    <div className="w-screen h-screen">
       <h1>No posts found</h1>
-      <Footer />
     </div>
   );
 };

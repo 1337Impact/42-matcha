@@ -10,6 +10,8 @@ import { setUser } from "./store/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Verify from "./pages/auth/verify";
+import Profile from "./pages/profile";
+import ProtectedLayout from "./pages/ProtectedLayout";
 
 function App() {
   const navigate = useNavigate();
@@ -49,7 +51,10 @@ function App() {
     <>
       <ToastContainer />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<ProtectedLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/profile/:profileId" element={<Profile />} />
+        </Route>
         <Route path="/" element={<AuthLayout />}>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />

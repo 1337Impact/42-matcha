@@ -27,6 +27,27 @@ interface Profile {
   images: string;
 }
 
+async function handleGetProfile(
+  profileId: string,
+  user: User
+): Promise<string | null> {
+  console.log("User data: ", user);
+  try {
+    const query = `SELECT *
+      FROM "USER"  
+      WHERE id = $1;`;
+    const { rows } = await db.query(query, [
+      profileId,
+    ]);
+    console.log("*")
+    return rows[0];
+  } catch (error) {
+    console.error("Error getting user:", error);
+    throw error;
+  }
+}
+
+
 async function handleUpdateProfile(
   profileData: Profile,
   user: User
@@ -71,4 +92,4 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
   }
 }
 
-export { handleUpdateProfile, getIsProfileCompleted };
+export {handleGetProfile, handleUpdateProfile, getIsProfileCompleted };

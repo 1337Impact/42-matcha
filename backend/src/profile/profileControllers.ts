@@ -1,5 +1,16 @@
 import { verifyToken } from "../utils/jwtUtils";
-import { getIsProfileCompleted, handleUpdateProfile } from "./profileService";
+import { getIsProfileCompleted, handleGetProfile, handleUpdateProfile } from "./profileService";
+
+const getProfile = async (req: any, res: any) => {
+  console.log("req: ", req.query)
+  const query = req.query
+  try {
+    const data = await handleGetProfile(query.profileId, req.user);
+    res.send(data);
+  } catch (error) {
+      res.status(400).send({ error: "Something went wrong." });
+    }
+};
 
 const updateProfile = async (req: any, res: any) => {
   try {
@@ -11,6 +22,7 @@ const updateProfile = async (req: any, res: any) => {
     }
 };
 
+
 const isProfileCompleted = async (req: any, res: any) => {
   try {
     const isCompleted = await getIsProfileCompleted(req.user);
@@ -20,4 +32,4 @@ const isProfileCompleted = async (req: any, res: any) => {
   }
 };
 
-export {updateProfile, isProfileCompleted};
+export {getProfile, updateProfile, isProfileCompleted};
