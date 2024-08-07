@@ -54,7 +54,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
         </Route>
-          <Route path="/verify" element={<Verify />} />
+        <Route path="/verify" element={<Verify />} />
       </Routes>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 // import { Route, Routes } from "react-router-dom";
 // import SignIn from "../auth/signin";
@@ -7,13 +7,23 @@ import Footer from "../components/Footer";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import CompleteProfile from "../components/complete-profile";
+import { useSearchParams } from "react-router-dom";
 
 const Home: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
+  let [searchParams, setSearchParams] = useSearchParams();
+  const [isOpenProfileCompleted, setIsOpenProfileCompleted] = useState(false);
 
   useEffect(() => {
     console.log("User: ", user);
   }, [user]);
+
+  useEffect(() => {
+    if (searchParams.get("profilecompleted") == "false") {
+      setIsOpenProfileCompleted(true);
+    }
+  }, [searchParams]);
+
   return (
     <div className="w-screen relative h-screen">
       {user && !user.is_verified && (
@@ -23,7 +33,9 @@ const Home: React.FC = () => {
           </div>
         </div>
       )}
-      <CompleteProfile />
+      {isOpenProfileCompleted && (
+        <CompleteProfile setOpen={setIsOpenProfileCompleted} />
+      )}
       <Navbar />
       <h1>No posts found</h1>
       <Footer />

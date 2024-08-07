@@ -38,13 +38,13 @@ export default function SignInForm() {
         "http://localhost:3000/api/auth/login",
         data
       );
-      console.log(response);
+      console.log("login res: ", response);
       window.localStorage.setItem("token", response.data.token);
-      setRedirecting(true);
       const isProfileCompleted = response.data.isProfileCompleted;
-      setTimeout(() => {
-        navigate("/" + !isProfileCompleted ? "?profilecompleted=false" : "");
-      }, 1000);
+      setRedirecting(true);
+      navigate(`/${!isProfileCompleted ? "?profilecompleted=false" : ""}`)
+      // setTimeout(() => {
+      // }, 1000);
     } catch (error: any) {
       setSignInError(error.message);
       console.log(error.message);

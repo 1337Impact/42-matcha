@@ -10,9 +10,14 @@ const tagsList = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((tag) => ({
   label: tag,
 }));
 
-export default function CompleteProfile({}: {}) {
+interface CompleteProfileProps{
+  setOpen: (value: boolean) => void
+}
+
+export default function CompleteProfile({
+  setOpen
+}: CompleteProfileProps) {
   const token = window.localStorage.getItem("token");
-  const [open, setOpen] = useState(true);
   const [data, setData] = useState({
     gender: "",
     sexual_preferences: "",
@@ -87,8 +92,6 @@ export default function CompleteProfile({}: {}) {
     //   images: Array(5).fill(""),
     // })
   };
-
-  if (!open) return null;
 
   return (
     <div className="flex items-center absolute w-full h-full z-30 backdrop-blur-sm">

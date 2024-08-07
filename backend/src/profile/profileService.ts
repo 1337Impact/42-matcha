@@ -23,8 +23,8 @@ interface Profile {
   gender: string;
   sexual_preferences: string;
   biography: string;
-  tags: string[];
-  imgaes: string[];
+  tags: string;
+  images: string;
 }
 
 async function handleUpdateProfile(
@@ -42,7 +42,7 @@ async function handleUpdateProfile(
       profileData.sexual_preferences,
       profileData.biography,
       profileData.tags,
-      profileData.imgaes,
+      profileData.images,
       user.id,
     ]);
     return rows[0].id;
@@ -53,13 +53,13 @@ async function handleUpdateProfile(
 }
 
 async function getIsProfileCompleted(userId: string): Promise<boolean> {
-  const query = `SELECT (gender, sexual_preferences, interests) FROM "USER" WHERE id = $1;`;
+  const query = `SELECT gender, sexual_preferences, interests, bio FROM "USER" WHERE id = $1;`;
   try {
     const { rows } = await db.query(query, [userId]);
-    console.log("User profile: ", rows[0]);
     if (rows[0]) {
-      const {gender, sexual_preferences, interests} = rows[0];
-      if (gender && sexual_preferences && interests) {
+      const {gender, sexual_preferences, interests, bio} = rows[0];
+      console.log(gender, sexual_preferences, interests, bio)
+      if (gender && sexual_preferences && interests && bio) {
         return true;
       }
       return false;

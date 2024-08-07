@@ -7,5 +7,6 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
+  process.stdout.write('\x1Bc');
   console.log(`Server is running on port ${PORT}`);
 });
