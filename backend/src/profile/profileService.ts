@@ -1,31 +1,5 @@
-import {
-  generateEmailVerificationToken,
-  generateToken,
-  verifyToken,
-} from "../utils/jwtUtils";
-// import { loginSchema, signupSchema } from "./authSchema";
-import bcrypt from "bcrypt";
 import db from "../utils/db/client";
-import sendVerificationEmail from "../utils/sendMail";
-import { JwtPayload } from "jsonwebtoken";
-
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  profilePicture: string;
-  is_verified: boolean;
-}
-
-interface Profile {
-  gender: string;
-  sexual_preferences: string;
-  biography: string;
-  tags: string;
-  images: string;
-}
+import { User, Profile } from "./types";
 
 async function handleGetProfile(
   profileId: string,
@@ -34,11 +8,9 @@ async function handleGetProfile(
   console.log("User data: ", user);
   try {
     const query = `SELECT *
-      FROM "USER"  
+      FROM "USER" 
       WHERE id = $1;`;
-    const { rows } = await db.query(query, [
-      profileId,
-    ]);
+    const { rows } = await db.query(query, [profileId]);
     return rows[0];
   } catch (error) {
     console.error("Error getting user:", error);
@@ -46,22 +18,19 @@ async function handleGetProfile(
   }
 }
 
-
-async function handleGetAllProfiles(
-  user: User
-): Promise<any> {
+async function handleGetAllProfiles(user: User): Promise<any> {
   try {
-    const query = `SELECT *
+    const query = `SELECT *, sqrt(pow(latitude - $1, 2) + pow(longitude - $2, 2)) AS distance
       FROM "USER"
-      where id != $1;`;
-    const { rows } = await db.query(query, [user.id]);
+      ORDER BY distance
+      LIMIT $3;`;
+    const { rows } = await db.query(query, [0.0, 0.0, 2]);
     return rows;
   } catch (error) {
     console.error("Error getting all Profiles:", error);
     throw error;
   }
 }
-
 
 async function handleUpdateProfile(
   profileData: Profile,
@@ -93,8 +62,8 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
   try {
     const { rows } = await db.query(query, [userId]);
     if (rows[0]) {
-      const {gender, sexual_preferences, interests, bio} = rows[0];
-      console.log(gender, sexual_preferences, interests, bio)
+      const { gender, sexual_preferences, interests, bio } = rows[0];
+      console.log(gender, sexual_preferences, interests, bio);
       if (gender && sexual_preferences && interests && bio) {
         return true;
       }
@@ -107,4 +76,9 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
   }
 }
 
-export {handleGetProfile, handleGetAllProfiles, handleUpdateProfile, getIsProfileCompleted };
+export {
+  handleGetProfile,
+  handleGetAllProfiles,
+  handleUpdateProfile,
+  getIsProfileCompleted,
+};

@@ -18,13 +18,13 @@ export default function Profile() {
   useEffect(() => {
     getProfileData(params.profileId as string)
       .then((data) => {
-        console.log(data);
+        console.log("data: ", data);
         setProfileData(data);
       })
       .catch((error) => {
         console.log("error: ", error);
       });
-  });
+  }, [params]);
 
   if (!profileData) {
     return (

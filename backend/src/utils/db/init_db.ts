@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "pictures" TEXT,
   "fame_rating" NUMERIC,
   "location" VARCHAR(255),
+  latitude NUMERIC,
+  longitude NUMERIC,
   "age" NUMERIC,
   "bio" TEXT,
   "is_verified" BOOLEAN DEFAULT FALSE,
