@@ -98,6 +98,17 @@ async function handleUpdateProfile(
   }
 }
 
+async function handleLikeProfile(profileId: string, user: User): Promise<any> {
+  try {
+    const query = `INSERT INTO "user_likes" (liker_id, liked_id) VALUES ($1, $2);`;
+    await db.query(query, [user.id, profileId]);
+    return "Profile liked successfully";
+  } catch (error) {
+    console.error("Error liking profile:", error);
+    throw error;
+  }
+}
+
 async function getIsProfileCompleted(userId: string): Promise<boolean> {
   const query = `SELECT gender, sexual_preferences, interests, bio FROM "USER" WHERE id = $1;`;
   try {
@@ -122,4 +133,5 @@ export {
   handleGetAllProfiles,
   handleUpdateProfile,
   getIsProfileCompleted,
+  handleLikeProfile,
 };

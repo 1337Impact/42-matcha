@@ -3,6 +3,7 @@ import {
   getIsProfileCompleted,
   handleGetAllProfiles,
   handleGetProfile,
+  handleLikeProfile,
   handleUpdateProfile,
 } from "./profileService";
 
@@ -54,6 +55,16 @@ const updateProfile = async (req: any, res: any) => {
   }
 };
 
+const likeProfile = async (req: any, res: any) => {
+  try {
+    const profileId = req.body.profileId;
+    const data = await handleLikeProfile(profileId, req.user);
+    res.send(data);
+  } catch (error) {
+    res.status(400).send({ error: "Something went wrong." });
+  }
+}
+
 const isProfileCompleted = async (req: any, res: any) => {
   try {
     const isCompleted = await getIsProfileCompleted(req.user);
@@ -63,4 +74,4 @@ const isProfileCompleted = async (req: any, res: any) => {
   }
 };
 
-export { getProfile, getAllProfiles, updateProfile, isProfileCompleted };
+export { getProfile, getAllProfiles, updateProfile, isProfileCompleted, likeProfile };
