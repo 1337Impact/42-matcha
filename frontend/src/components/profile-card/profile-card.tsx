@@ -2,12 +2,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import { FaHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import LikeButton from "../like-button/like-button";
 
 interface ProfileCardProps {
   profile: {
-    id: number;
+    id: string;
     first_name: string;
     last_name: string;
     username: string;
@@ -53,16 +53,14 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
       </Swiper>
       <div className="mt-2 px-1 flex justify-between">
         <Link to={`/profile/${profile.id}`}>
-          <div className="max-w-[80%]">
-            <h1 className="text-sm text-gray-600 font-semibold">
+          <div className="">
+            <h1 className="text-gray-600 font-semibold">
               {profile.first_name} {profile.last_name}
             </h1>
             <h1 className="text-sm text-gray-600">@{profile.username}</h1>
           </div>
         </Link>
-        <div className="text-red-400">
-          <FaHeart className="w-6 h-6" />
-        </div>
+        <LikeButton profileId={profile.id} />
       </div>
     </div>
   );

@@ -5,10 +5,28 @@ import ReactSelect from "react-select";
 import { toast } from "react-toastify";
 import completeProfileSchema from "../../utils/zod/completeProfileSchema";
 
-const tagsList = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((tag) => ({
-  value: tag,
-  label: tag,
-}));
+const tagsList = [
+  { label: "Reading", value: "Reading" },
+  { label: "Traveling", value: "Traveling" },
+  { label: "Gardening", value: "Gardening" },
+  { label: "Cooking", value: "Cooking" },
+  { label: "Photography", value: "Photography" },
+  { label: "Drawing", value: "Drawing" },
+  { label: "Painting", value: "Painting" },
+  { label: "Writing", value: "Writing" },
+  { label: "Fishing", value: "Fishing" },
+  { label: "Hiking", value: "Hiking" },
+  { label: "Swimming", value: "Swimming" },
+  { label: "Cycling", value: "Cycling" },
+  { label: "Yoga", value: "Yoga" },
+  { label: "Dancing", value: "Dancing" },
+  { label: "Running", value: "Running" },
+  { label: "Playing Music", value: "Playing Music" },
+  { label: "Knitting", value: "Knitting" },
+  { label: "Crafting", value: "Crafting" },
+  { label: "Gaming", value: "Gaming" },
+  { label: "Bird Watching", value: "Bird Watching" }
+];
 
 interface EditProfileProps {
   handleClose: () => void;

@@ -6,7 +6,7 @@ export default function LikeButton({profileId}: {profileId: string}) {
   };
   return (
     <button onClick={handleLike} className="text-red-400">
-      <FaHeart className="w-6 h-6" />
+      <FaHeart className="w-8 h-8" />
     </button>
   );
 }

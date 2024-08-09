@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProfileCard from "../components/profile-card/profile-card";
 
 interface Profile {
-  id: number;
+  id: string;
   first_name: string;
   last_name: string;
   username: string;

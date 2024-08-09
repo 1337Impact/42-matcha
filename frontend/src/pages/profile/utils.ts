@@ -33,7 +33,6 @@ const getProfileData = async (profileId: string): Promise<UserProfile> => {
   return {
     ...response.data,
     pictures: JSON.parse(response.data.pictures),
-    interests: JSON.parse(response.data.interests),
   };
 };
 
