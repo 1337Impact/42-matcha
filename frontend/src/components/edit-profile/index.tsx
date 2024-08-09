@@ -2,38 +2,50 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import UploadImage from "../upload-image";
 import ReactSelect from "react-select";
-import completeProfileSchema from "../../utils/zod/completeProfileSchema";
 import { toast } from "react-toastify";
+import { UserProfile } from "../../pages/profile/utils";
+import updateProfileSchema from "../../utils/zod/updateProfileSchema";
 
 const tagsList = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((tag) => ({
   value: tag,
   label: tag,
 }));
 
-interface EditProfileProps{
-  handleClose: () => void
+interface EditProfileProps {
+  initialData: UserProfile;
+  handleClose: () => void;
 }
 
 export default function EditProfile({
-  handleClose
+  initialData,
+  handleClose,
 }: EditProfileProps) {
   const token = window.localStorage.getItem("token");
   const [data, setData] = useState({
-    gender: "",
-    sexual_preferences: "",
-    biography: "",
-    tags: [],
-    images: Array(5).fill(""),
+    first_name: initialData.first_name,
+    last_name: initialData.last_name,
+    email: initialData.email,
+    images: initialData.pictures,
+    tags: initialData.interests,
+    biography: initialData.bio,
+    sexual_preferences: initialData.sexual_preferences,
+    gender: initialData.gender,
   });
   const [error, setError] = useState({
-    gender: "",
-    sexual_preferences: "",
-    biography: "",
-    tags: "",
+    first_name: "",
+    last_name: "",
+    email: "",
     images: "",
+    tags: "",
+    biography: "",
+    sexual_preferences: "",
+    gender: "",
   });
   const [imageFiles, setImagFiles] = useState<(File | null)[]>(
     Array(5).fill(null)
+  );
+  const [imagePreview, setImagePreview] = useState<(string | null)[]>(
+    data.images
   );
 
   const handleChange = (e: any) => {
@@ -46,13 +58,16 @@ export default function EditProfile({
   const onSubmit = async () => {
     console.log(data);
     setError({
-      gender: "",
-      sexual_preferences: "",
-      biography: "",
-      tags: "",
+      first_name: "",
+      last_name: "",
+      email: "",
       images: "",
+      tags: "",
+      biography: "",
+      sexual_preferences: "",
+      gender: "",
     });
-    const result = completeProfileSchema.safeParse(data);
+    const result = updateProfileSchema.safeParse(data);
     if (!result.success) {
       result.error.errors.forEach((err) => {
         setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
@@ -66,6 +81,7 @@ export default function EditProfile({
       formData.append("sexual_preferences", data.sexual_preferences);
       formData.append("biography", data.biography);
       formData.append("tags", JSON.stringify(data.tags));
+      formData.append("images", JSON.stringify(data.images));
       imageFiles.forEach((file) => {
         file && formData.append("images", file);
       });
@@ -84,14 +100,11 @@ export default function EditProfile({
       console.log(error);
       toast.error("Failed to update profile");
     }
-    // setData({
-    //   gender: "",
-    //   sexual_preferences: "",
-    //   biography: "",
-    //   tags: [],
-    //   images: Array(5).fill(""),
-    // })
   };
+
+  useEffect(() => {
+    console.log("images: ", data.images);
+  }, [data.images]);
 
   return (
     <div className="flex items-center fixed top-0 w-full h-full z-50 backdrop-blur-sm">
@@ -99,69 +112,72 @@ export default function EditProfile({
         <h1 className="text-xl font-bold text-center mb-5">
           Edit your profile
         </h1>
+        <div className="flex gap-2 w-full">
+          <div className="mb-3 w-full">
+            <label
+              className="block text-gray-600 text-sm font-bold mb-1"
+              htmlFor="first_name"
+            >
+              First Name
+            </label>
+            <input
+              className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+              id="first_name"
+              type="text"
+              placeholder="First Name"
+              value={data.first_name}
+              onChange={handleChange}
+            />
+            {error.first_name && (
+              <p className="text-red-400 font-medium text-xs -mb-[8px]">
+                {error.first_name}
+              </p>
+            )}
+          </div>
+          <div className="mb-3 w-full">
+            <label
+              className="block text-gray-600 text-sm font-bold mb-1"
+              htmlFor="last_name"
+            >
+              Last Name
+            </label>
+            <input
+              className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+              id="last_name"
+              type="text"
+              placeholder="Last Name"
+              value={data.last_name}
+              onChange={handleChange}
+            />
+            {error.last_name && (
+              <p className="text-red-400 font-medium text-xs -mb-[8px]">
+                {error.last_name}
+              </p>
+            )}
+          </div>
+        </div>
         <div className="mb-3">
-        <label
-          className="block text-gray-600 text-sm font-bold mb-1"
-          htmlFor="email"
-        >
-          Email
-        </label>
-        <input
-          className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-          id="email"
-          type="email"
-          required={false}
-          placeholder="Email"
-          onChange={handleChange}
-        />
-        {error.email && (
-          <p className="text-red-400 font-medium text-xs -mb-[8px]">
-            {error.email}
-          </p>
-        )}
-      </div>
-      <div className="flex gap-2 w-full">
-        <div className="mb-3 w-full">
           <label
             className="block text-gray-600 text-sm font-bold mb-1"
-            htmlFor="first_name"
+            htmlFor="email"
           >
-            First Name
+            Email
           </label>
           <input
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-            id="first_name"
-            type="text"
-            placeholder="First Name"
+            id="email"
+            type="email"
+            required={false}
+            placeholder="Email"
+            value={data.email}
             onChange={handleChange}
           />
-          {error.first_name && (
+          {error.email && (
             <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.first_name}
+              {error.email}
             </p>
           )}
         </div>
-        <div className="mb-3 w-full">
-          <label
-            className="block text-gray-600 text-sm font-bold mb-1"
-            htmlFor="last_name"
-          >
-            Last Name
-          </label>
-          <input
-            className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-            id="last_name"
-            type="text"
-            placeholder="Last Name"
-            onChange={handleChange}
-          />
-          {error.last_name && (
-            <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.last_name}
-            </p>
-          )}
-        </div>
-      </div>
         <div className="mb-3">
           <label
             className="block text-gray-600 text-sm font-bold mb-1"
@@ -172,6 +188,7 @@ export default function EditProfile({
           <select
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="gender"
+            value={data.gender}
             onChange={handleChange}
           >
             <option value="">Select Gender</option>
@@ -195,6 +212,7 @@ export default function EditProfile({
           <select
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="sexual_preferences"
+            value={data.sexual_preferences}
             onChange={handleChange}
           >
             <option value="">Select Sexual preferences</option>
@@ -219,6 +237,7 @@ export default function EditProfile({
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="biography"
             placeholder="biography"
+            value={data.biography}
             onChange={handleChange}
           />
           {error.biography && (
@@ -244,19 +263,30 @@ export default function EditProfile({
         </div>
         <div className="mb-5">
           <div className="flex gap-2 flex-wrap">
-            {data.images.map((img, index) => (
+            {imagePreview.map((image, index) => (
               <UploadImage
                 key={index}
-                image={img}
+                image={image}
                 setImage={(image) => {
-                  const newImages = [...data.images];
-                  newImages[index] = image as never;
-                  setData({ ...data, images: newImages });
+                  setImagePreview((prev) => {
+                    const newImages = [...prev];
+                    newImages[index] = image;
+                    return newImages;
+                  });
+                  if (!image) {
+                    setData((prev) => {
+                      const newImages = [...prev.images];
+                      newImages[index] = "";
+                      return { ...prev, images: newImages };
+                    });
+                  }
                 }}
-                setImgFile={(imageFile) => {
-                  const newImageFiles = [...imageFiles];
-                  newImageFiles[index] = imageFile;
-                  setImagFiles(newImageFiles);
+                setImgFile={(file) => {
+                  setImagFiles((prev) => {
+                    const newFiles = [...prev];
+                    newFiles[index] = file;
+                    return newFiles;
+                  });
                 }}
               />
             ))}

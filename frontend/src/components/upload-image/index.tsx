@@ -5,12 +5,14 @@ interface AddProductImageProps {
   setImgFile: (imgFile: File | null) => void;
   image?: string | null;
   setImage: (img: string | null) => void;
+  isProfile?: boolean;
 }
 
 export default function UploadImage({
   setImgFile,
   image,
   setImage,
+  isProfile = false,
 }: AddProductImageProps) {
 
   const handleUploadClick = async (event: any) => {
@@ -26,18 +28,18 @@ export default function UploadImage({
   };
 
   const handleResetClick = () => {
-    setImage(null);
+    setImage("");
     setImgFile(null);
   };
 
   return (
-    <div className="w-24 min-h-24 flex flex-col justify-center items-center border border-gray-300 rounded-lg overflow-hidden relative">
+    <div className="w-24 h-32 flex flex-col justify-center items-center border border-gray-300 rounded-lg overflow-hidden relative">
       {image ? (
         <>
           <img
             src={image}
             alt="product image"
-            className="w-full h-full object-cover"
+            className="w-full aspect-square object-cover"
           />
           <button
             onClick={handleResetClick}

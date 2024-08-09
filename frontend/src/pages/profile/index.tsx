@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getProfileData, UserProfile } from "./utils";
 import { FaCalendarAlt } from "react-icons/fa";
-import { FaRegStar } from "react-icons/fa";
 import { BsSearchHeart } from "react-icons/bs";
 
 import { IoMaleFemale } from "react-icons/io5";
@@ -11,7 +10,7 @@ import EditProfile from "../../components/edit-profile";
 export default function Profile() {
   const params = useParams();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
-  const [openModal, setOpenModal] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
   useEffect(() => {
     getProfileData(params.profileId as string)
       .then((data) => {
@@ -37,7 +36,12 @@ export default function Profile() {
 
   return (
     <>
-      {openModal && <EditProfile handleClose={() => setOpenModal(false)} />}
+      {openModal && (
+        <EditProfile
+          initialData={profileData}
+          handleClose={() => setOpenModal(false)}
+        />
+      )}
       <div className="w-full max-w-5xl md:mx-auto pb-16">
         <div className="bg-muted rounded-t-lg p-6">
           <div className="flex items-center gap-6">
@@ -92,13 +96,16 @@ export default function Profile() {
             ))}
           </div>
           <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-4 mt-4">
-            {profileData.pictures.map((image) => (
-              <img
-                src={image}
-                alt="Profile Picture"
-                className="aspect-square rounded-md object-cover"
-              />
-            ))}
+            {profileData.pictures.map(
+              (image) =>
+                image && (
+                  <img
+                    src={image}
+                    alt="Profile Picture"
+                    className="aspect-square rounded-md object-cover"
+                  />
+                )
+            )}
           </div>
         </div>
       </div>

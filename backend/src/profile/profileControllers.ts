@@ -20,16 +20,26 @@ const getProfile = async (req: any, res: any) => {
   }
 };
 
+const mergeArrays = (newImages: string[], imageFiles: any) => {
+  let fillIndex = 0;
+
+  return newImages.map((item: string) => {
+      if (item === "" && fillIndex < imageFiles.length) {
+          return `${process.env.BACKEND_URL}/images/${imageFiles[fillIndex++].filename}`
+      }
+      return item;
+  });
+}
+
 const updateProfile = async (req: any, res: any) => {
   try {
-    const images = JSON.stringify(
-      req.files.map(
-        (file: any) => `${process.env.BACKEND_URL}/images/${file.filename}`
-      )
-    );
+    console.log("req.body: ", req.body);
+    const images = JSON.stringify(mergeArrays(JSON.parse(req.body.images), req.files));
+    console.log("images: ", images);
     await handleUpdateProfile({ ...req.body, images: images }, req.user);
     res.send("Profile updated successfully");
   } catch (error) {
+    console.log("update profile error: ", error);
     res.status(400).send({ error: "Something went wrong." });
   }
 };
