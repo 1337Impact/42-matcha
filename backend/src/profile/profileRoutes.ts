@@ -1,4 +1,4 @@
-import { getProfile, isProfileCompleted, updateProfile } from "./profileControllers";
+import { getAllProfiles, getProfile, isProfileCompleted, updateProfile } from "./profileControllers";
 import { Router } from "express";
 import multer from "multer";
 
@@ -17,7 +17,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.post("/update", upload.array("images", 5), updateProfile);
-router.get("/", upload.array("images", 5), getProfile);
-router.post("/iscompleted", upload.array("images", 5), isProfileCompleted);
+router.get("/", getProfile);
+router.get("/all", getAllProfiles);
+router.post("/iscompleted", isProfileCompleted);
 
 export default router;

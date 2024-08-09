@@ -1,6 +1,7 @@
 import { verifyToken } from "../utils/jwtUtils";
 import {
   getIsProfileCompleted,
+  handleGetAllProfiles,
   handleGetProfile,
   handleUpdateProfile,
 } from "./profileService";
@@ -14,6 +15,15 @@ const getProfile = async (req: any, res: any) => {
         ? req.user.id
         : query.profileId;
     const data = await handleGetProfile(profileId, req.user);
+    res.send(data);
+  } catch (error) {
+    res.status(400).send({ error: "Something went wrong." });
+  }
+};
+
+const getAllProfiles = async (req: any, res: any) => {
+  try {
+    const data = await handleGetAllProfiles(req.user);
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
@@ -53,4 +63,4 @@ const isProfileCompleted = async (req: any, res: any) => {
   }
 };
 
-export { getProfile, updateProfile, isProfileCompleted };
+export { getProfile, getAllProfiles, updateProfile, isProfileCompleted };

@@ -39,8 +39,23 @@ async function handleGetProfile(
     const { rows } = await db.query(query, [
       profileId,
     ]);
-    console.log("*")
     return rows[0];
+  } catch (error) {
+    console.error("Error getting user:", error);
+    throw error;
+  }
+}
+
+
+async function handleGetAllProfiles(
+  user: User
+): Promise<any> {
+  console.log("User data: ", user);
+  try {
+    const query = `SELECT *
+      FROM "USER";`;
+    const { rows } = await db.query(query, []);
+    return rows;
   } catch (error) {
     console.error("Error getting user:", error);
     throw error;
@@ -92,4 +107,4 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
   }
 }
 
-export {handleGetProfile, handleUpdateProfile, getIsProfileCompleted };
+export {handleGetProfile, handleGetAllProfiles, handleUpdateProfile, getIsProfileCompleted };
