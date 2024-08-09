@@ -50,14 +50,14 @@ async function handleGetProfile(
 async function handleGetAllProfiles(
   user: User
 ): Promise<any> {
-  console.log("User data: ", user);
   try {
     const query = `SELECT *
-      FROM "USER";`;
-    const { rows } = await db.query(query, []);
+      FROM "USER"
+      where id != $1;`;
+    const { rows } = await db.query(query, [user.id]);
     return rows;
   } catch (error) {
-    console.error("Error getting user:", error);
+    console.error("Error getting all Profiles:", error);
     throw error;
   }
 }

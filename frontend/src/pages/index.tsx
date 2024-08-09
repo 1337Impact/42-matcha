@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
 import ProfileCard from "../components/profile-card/profile-card";
 
 interface Profile {
@@ -33,7 +31,6 @@ const getProfiles = async (token: string) : Promise<Profile[]> => {
 };
 
 const Home: React.FC = () => {
-  const user = useSelector((state: RootState) => state.userSlice.user);
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
   useEffect(() => {
@@ -47,8 +44,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="mt-4">
-      <h1></h1>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 px-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 px-2">
         {profiles.map((profile, index) => (
           <ProfileCard profile={profile} key={index} />
         ))}

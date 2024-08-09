@@ -3,6 +3,7 @@ import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { FaHeart } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 interface ProfileCardProps {
   profile: {
@@ -35,7 +36,7 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
                   <img
                     className="aspect-square rounded-md object-cover"
                     src={image}
-                    alt="profile img"
+                    alt="profile image"
                   />
                 </SwiperSlide>
               )
@@ -50,14 +51,18 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
           </SwiperSlide>
         )}
       </Swiper>
-      <div className="px-1 flex items-center justify-between">
-        <div>
-          <h1 className="text-gray-600 font-semibold">
-            {profile.first_name} {profile.last_name}
-          </h1>
-          <h1 className="text-sm text-gray-600">@{profile.username}</h1>
+      <div className="mt-2 px-1 flex justify-between">
+        <Link to={`/profile/${profile.id}`}>
+          <div className="max-w-[80%]">
+            <h1 className="text-sm text-gray-600 font-semibold">
+              {profile.first_name} {profile.last_name}
+            </h1>
+            <h1 className="text-sm text-gray-600">@{profile.username}</h1>
+          </div>
+        </Link>
+        <div className="text-red-400">
+          <FaHeart className="w-6 h-6" />
         </div>
-        <FaHeart className="text-2xl text-red-400" />
       </div>
     </div>
   );
