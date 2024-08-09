@@ -67,7 +67,7 @@ export default function EditProfile({
       sexual_preferences: "",
       gender: "",
     });
-    const result = updateProfileSchema.safeParse(data);
+    const result = updateProfileSchema.safeParse({...data, images: imagePreview});
     if (!result.success) {
       result.error.errors.forEach((err) => {
         setError((prev) => ({ ...prev, [err.path[0]]: err.message }));

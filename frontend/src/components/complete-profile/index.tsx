@@ -2,21 +2,21 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import UploadImage from "../upload-image";
 import ReactSelect from "react-select";
-import completeProfileSchema from "../../utils/zod/completeProfileSchema";
 import { toast } from "react-toastify";
+import completeProfileSchema from "../../utils/zod/completeProfileSchema";
 
 const tagsList = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((tag) => ({
   value: tag,
   label: tag,
 }));
 
-interface CompleteProfileProps{
-  handleClose: () => void
+interface EditProfileProps {
+  handleClose: () => void;
 }
 
-export default function CompleteProfile({
-  handleClose
-}: CompleteProfileProps) {
+export default function EditProfile({
+  handleClose,
+}: EditProfileProps) {
   const token = window.localStorage.getItem("token");
   const [data, setData] = useState({
     gender: "",
@@ -25,6 +25,7 @@ export default function CompleteProfile({
     tags: [],
     images: Array(5).fill(""),
   });
+  
   const [error, setError] = useState({
     gender: "",
     sexual_preferences: "",
@@ -34,6 +35,9 @@ export default function CompleteProfile({
   });
   const [imageFiles, setImagFiles] = useState<(File | null)[]>(
     Array(5).fill(null)
+  );
+  const [imagePreview, setImagePreview] = useState<(string | null)[]>(
+    data.images
   );
 
   const handleChange = (e: any) => {
@@ -46,13 +50,13 @@ export default function CompleteProfile({
   const onSubmit = async () => {
     console.log(data);
     setError({
-      gender: "",
-      sexual_preferences: "",
-      biography: "",
-      tags: "",
       images: "",
+      tags: "",
+      biography: "",
+      sexual_preferences: "",
+      gender: "",
     });
-    const result = completeProfileSchema.safeParse(data);
+    const result = completeProfileSchema.safeParse({...data, images: imagePreview});
     if (!result.success) {
       result.error.errors.forEach((err) => {
         setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
@@ -66,6 +70,7 @@ export default function CompleteProfile({
       formData.append("sexual_preferences", data.sexual_preferences);
       formData.append("biography", data.biography);
       formData.append("tags", JSON.stringify(data.tags));
+      formData.append("images", JSON.stringify(data.images));
       imageFiles.forEach((file) => {
         file && formData.append("images", file);
       });
@@ -84,20 +89,17 @@ export default function CompleteProfile({
       console.log(error);
       toast.error("Failed to update profile");
     }
-    // setData({
-    //   gender: "",
-    //   sexual_preferences: "",
-    //   biography: "",
-    //   tags: [],
-    //   images: Array(5).fill(""),
-    // })
   };
 
+  useEffect(() => {
+    console.log("images: ", data.images);
+  }, [data.images]);
+
   return (
-    <div className="flex items-center absolute w-full h-full z-30 backdrop-blur-sm">
-      <div className="w-[90%] rounded-lg mx-auto p-4 bg-gray-100">
+    <div className="flex items-center fixed top-0 w-full h-full z-50 backdrop-blur-sm">
+      <div className="w-[90%] max-h-[80dvh] overflow-y-scroll rounded-lg mx-auto p-4 bg-gray-100">
         <h1 className="text-xl font-bold text-center mb-5">
-          Complete your profile
+          Edit your profile
         </h1>
         <div className="mb-3">
           <label
@@ -109,6 +111,7 @@ export default function CompleteProfile({
           <select
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="gender"
+            value={data.gender}
             onChange={handleChange}
           >
             <option value="">Select Gender</option>
@@ -132,6 +135,7 @@ export default function CompleteProfile({
           <select
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="sexual_preferences"
+            value={data.sexual_preferences}
             onChange={handleChange}
           >
             <option value="">Select Sexual preferences</option>
@@ -156,6 +160,7 @@ export default function CompleteProfile({
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="biography"
             placeholder="biography"
+            value={data.biography}
             onChange={handleChange}
           />
           {error.biography && (
@@ -181,19 +186,30 @@ export default function CompleteProfile({
         </div>
         <div className="mb-5">
           <div className="flex gap-2 flex-wrap">
-            {data.images.map((img, index) => (
+            {imagePreview.map((image, index) => (
               <UploadImage
                 key={index}
-                image={img}
+                image={image}
                 setImage={(image) => {
-                  const newImages = [...data.images];
-                  newImages[index] = image as never;
-                  setData({ ...data, images: newImages });
+                  setImagePreview((prev) => {
+                    const newImages = [...prev];
+                    newImages[index] = image;
+                    return newImages;
+                  });
+                  if (!image) {
+                    setData((prev) => {
+                      const newImages = [...prev.images];
+                      newImages[index] = "";
+                      return { ...prev, images: newImages };
+                    });
+                  }
                 }}
-                setImgFile={(imageFile) => {
-                  const newImageFiles = [...imageFiles];
-                  newImageFiles[index] = imageFile;
-                  setImagFiles(newImageFiles);
+                setImgFile={(file) => {
+                  setImagFiles((prev) => {
+                    const newFiles = [...prev];
+                    newFiles[index] = file;
+                    return newFiles;
+                  });
                 }}
               />
             ))}
@@ -209,7 +225,7 @@ export default function CompleteProfile({
             className="w-full hover:bg-gray-500 border-2 border-gray-500 text-black font-bold py-1 px-4 rounded"
             onClick={handleClose}
           >
-            Skip
+            Cancel
           </button>
           <button
             className="w-full  border-2 border-gray-500 bg-gray-600 hover:bg-gray-500 text-white font-bold py-1 px-4 rounded"

@@ -12,16 +12,16 @@ export default function Verify() {
   useEffect(() => {
     const token = searchParams.get("token");
     axios
-      .post(`${import.meta.env.VITE_API_URL}/auth/verify`, {
+      .post(`${import.meta.env.VITE_APP_API_URL}/auth/verify`, {
         token: token,
       })
       .then((res) => {
         navigate("/signin");
       })
-        .catch((err) => {
-            setLoading(false);
-            setError(err.response.data.error);
-        })
+      .catch((err) => {
+        setLoading(false);
+        setError(err.response.data.error);
+      });
   }, [searchParams]);
   return (
     <div>
