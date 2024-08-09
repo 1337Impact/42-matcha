@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "password" VARCHAR(255),
   "gender" VARCHAR(255),
   "sexual_preferences" TEXT,
-  "interests" TEXT,
+  "interests" TEXT[],
   "pictures" TEXT,
   "fame_rating" NUMERIC,
   "location" VARCHAR(255),

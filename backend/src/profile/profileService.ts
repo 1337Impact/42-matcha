@@ -20,11 +20,52 @@ async function handleGetProfile(
 
 async function handleGetAllProfiles(user: User): Promise<any> {
   try {
-    const query = `SELECT *, sqrt(pow(latitude - $1, 2) + pow(longitude - $2, 2)) AS distance
+    //get user's location
+    const { rows: data } = await db.query(
+      `SELECT id, latitude, longitude, sexual_preferences, interests FROM "USER" WHERE id = $1;`,
+      [user.id]
+    );
+    const userData = data[0];
+
+    // get all profiles ordered by distance, fame rating and common interests
+    const query = `
+    SELECT *, sqrt(pow(latitude - $2, 2) + pow(longitude - $3, 2)) AS distance, 
+    array_length(array(
+      SELECT unnest(interests)
+      INTERSECT
+      SELECT unnest($5::text[])
+    ), 1) AS common_interests_count
       FROM "USER"
-      ORDER BY distance
-      LIMIT $3;`;
-    const { rows } = await db.query(query, [0.0, 0.0, 2]);
+      WHERE id != $1
+      AND (
+       $4 =  'bisexual' 
+        OR gender = $4
+      )
+      ORDER BY distance,fame_rating DESC, common_interests_count DESC
+      LIMIT 5;`;
+    const { rows } = await db.query(query, [
+      userData.id,
+      userData.latitude,
+      userData.longitude,
+      userData.sexual_preferences || "bisexual",
+      userData.interests,
+    ]);
+    console.log(
+      "latitude",
+      "longitude",
+      "distance",
+      "fame_rating",
+      "common_interests_c"
+    );
+    console.log(
+      rows.map((row: any) => [
+        row.latitude,
+        row.longitude,
+        row.distance,
+        row.fame_rating,
+        row.common_interests_count,
+      ])
+    );
     return rows;
   } catch (error) {
     console.error("Error getting all Profiles:", error);
@@ -46,7 +87,7 @@ async function handleUpdateProfile(
       profileData.gender,
       profileData.sexual_preferences,
       profileData.biography,
-      profileData.tags,
+      JSON.parse(profileData.tags),
       profileData.images,
       user.id,
     ]);
