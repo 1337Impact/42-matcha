@@ -11,9 +11,9 @@ export default function LikeDislikeButton({
 }) {
   const token = window.localStorage.getItem("token");
   const [isLiked, setIsLiked] = useState(false);
-  const handleLike = async () => {
+  const handleLikeDislike = async () => {
     try {
-      await axios.post(
+      const res = await axios.post(
         `${import.meta.env.VITE_APP_API_URL}/profile/likes/like-profile`,
         {
           profileId: profileId,
@@ -25,7 +25,7 @@ export default function LikeDislikeButton({
         }
       );
       setIsLiked(!isLiked);
-      toast.success("Profile liked successfully");
+      toast.success(res.data);
     } catch (error: any) {
       console.error("Error liking profile:", error);
       toast.error("Failed to like profile");
@@ -54,7 +54,10 @@ export default function LikeDislikeButton({
   }, []);
 
   return (
-    <button onClick={handleLike} className="text-red-400 hover:scale-105">
+    <button
+      onClick={handleLikeDislike}
+      className="text-red-400 hover:scale-105"
+    >
       {isLiked ? (
         <RiDislikeLine className="w-8 h-8" />
       ) : (

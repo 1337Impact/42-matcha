@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CompleteProfile from "../components/complete-profile";
 import Likes from "./profile/likes";
+import Views from "./profile/views";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -38,11 +39,12 @@ const ProtectedLayout: React.FC = () => {
         </div>
       )}
       <Navbar />
-      <main className="py-16">
+      <main className="py-16 xl:w-[1200px] mx-2 md:mx-6 lg:mx-8 xl:mx-auto">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile/:profileId" element={<Profile />} />
           <Route path="/profile/likes" element={<Likes />} />
+          <Route path="/profile/views" element={<Views />} />
         </Routes>
       </main>
       <Footer />

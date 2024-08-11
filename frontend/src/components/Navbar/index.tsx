@@ -13,6 +13,12 @@ import { BiLogOut } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { FaUserCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
+import { FaRegHeart } from "react-icons/fa";
+import { FaRegEye } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
+
 
 export function AvatarDemo({
   profileImage,
@@ -39,16 +45,11 @@ const Navbar: React.FC = () => {
     navigate("/signin");
   };
   return (
-    <header className="fixed w-full z-50 bg-gray-200 text-gray-600">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="fixed w-full z-50 text-gray-700">
+      <div className="xl:w-[1200px] py-4 mx-4 md:mx-6 lg:mx-8 xl:mx-auto">
+        <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="flex-shrink-0">Logo</div>
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-4">
-                nav links
-              </div>
-            </div>
+            <div className="text-red-500 text-xl font-bold">Logo</div>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger>
@@ -65,8 +66,20 @@ const Navbar: React.FC = () => {
                 </h4>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>
+                <FaRegUserCircle className="mr-2" />
+                <Link to={`/profile/${user?.id}`}>Profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <FaRegHeart className="mr-2" />
+                <Link to="/profile/likes">Likes</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <FaRegEye className="mr-2" />
+                <Link to="/profile/views">Views</Link>
+              </DropdownMenuItem>
+
+              {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}
               <DropdownMenuItem>
                 <button
                   onClick={onLogout}

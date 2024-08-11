@@ -44,7 +44,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="mt-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 px-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
         {profiles.map((profile, index) => (
           <ProfileCard profile={profile} key={index} />
         ))}

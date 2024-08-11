@@ -13,6 +13,7 @@ import Verify from "./pages/auth/verify";
 import Profile from "./pages/profile";
 import ProtectedLayout from "./pages/ProtectedLayout";
 import Likes from "./pages/profile/likes";
+import Views from "./pages/profile/views";
 
 function App() {
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/profile/:profileId" element={<Profile />} />
           <Route path="/profile/likes" element={<Likes />} />
+          <Route path="/profile/views" element={<Views />} />
         </Route>
         <Route path="/" element={<AuthLayout />}>
           <Route path="/signin" element={<SignIn />} />
