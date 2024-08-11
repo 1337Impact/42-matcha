@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getProfileData, UserProfile } from "./utils";
+import { getProfileData, handleViewProfile, UserProfile } from "./utils";
 import { FaCalendarAlt } from "react-icons/fa";
 import { BsSearchHeart } from "react-icons/bs";
 
@@ -9,6 +9,7 @@ import EditProfile from "../../components/edit-profile";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import LikeButton from "../../components/like-button/like-button";
+import axios from "axios";
 
 export default function Profile() {
   const params = useParams();
@@ -25,6 +26,13 @@ export default function Profile() {
         console.log("error: ", error);
       });
   }, [params]);
+
+  useEffect(() => {
+    if (profileData) {
+      const token = localStorage.getItem("token");
+      handleViewProfile(profileData.id, token);
+    }
+  }, [profileData]);
 
   if (!profileData) {
     return (

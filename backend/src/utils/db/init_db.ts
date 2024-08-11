@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS "user_views" (
   "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   "viewer_id" UUID,
   "viewed_id" UUID,
-  "view_time" DATE,
+  "view_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_viewer_id FOREIGN KEY ("viewer_id") REFERENCES "USER" ("id"),
   CONSTRAINT fk_viewed_id FOREIGN KEY ("viewed_id") REFERENCES "USER" ("id")
 );
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS "user_likes" (
   "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   "liker_id" UUID,
   "liked_id" UUID,
-  "like_time" DATE,
+  "like_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_liker_id FOREIGN KEY ("liker_id") REFERENCES "USER" ("id"),
   CONSTRAINT fk_liked_id FOREIGN KEY ("liked_id") REFERENCES "USER" ("id")
 );

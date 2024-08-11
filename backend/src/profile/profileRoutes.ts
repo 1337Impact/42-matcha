@@ -1,5 +1,6 @@
 import { getAllProfiles, getProfile, isProfileCompleted, likeProfile, updateProfile } from "./profileControllers";
-import LikeRouter from "./likes/likesRoutes";
+import LikesRouter from "./likes/likesRoutes";
+import viewsRouter from "./views/viewsRoutes";
 import { Router } from "express";
 import multer from "multer";
 
@@ -17,7 +18,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.use("/likes", LikeRouter);
+router.use("/likes", LikesRouter);
+router.use("/views", viewsRouter);
 
 router.post("/update", upload.array("images", 5), updateProfile);
 router.post("/iscompleted", isProfileCompleted);

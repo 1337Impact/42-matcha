@@ -20,6 +20,25 @@ export interface UserProfile {
   username: string;
 }
 
+const handleViewProfile = async (profileId: string, token: string | null) => {
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_APP_API_URL}/profile/views/view-profile`,
+      {
+        profileId: profileId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(res.data);
+  } catch (error: any) {
+    console.error("Error viewing profile:", error);
+  }
+};
+
 const getProfileData = async (profileId: string): Promise<UserProfile> => {
   const token = localStorage.getItem("token");
   const response = await axios.get("http://localhost:3000/api/profile", {
@@ -36,4 +55,4 @@ const getProfileData = async (profileId: string): Promise<UserProfile> => {
   };
 };
 
-export { getProfileData };
+export { getProfileData, handleViewProfile };
