@@ -27,7 +27,7 @@ export default function Footer() {
       icon: PiChatCenteredTextBold,
       activeIcon: PiChatCenteredTextFill,
       label: "Messages",
-      link: "/messages",
+      link: "/chat",
     },
     {
       icon: IoSettingsOutline,

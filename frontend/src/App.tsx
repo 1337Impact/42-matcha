@@ -17,6 +17,8 @@ import Views from "./pages/profile/views";
 import History from "./pages/profile/history";
 import Connections from "./pages/connections";
 import { SocketProvider } from "./contexts/SocketContext";
+import Chat from "./pages/chat";
+import ChatRoom from "./pages/chat/chat-room";
 
 function App() {
   const navigate = useNavigate();
@@ -59,6 +61,8 @@ function App() {
         <Route path="/" element={<ProtectedLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/connections" element={<Connections />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/chat/:profileId" element={<ChatRoom />} />
           <Route path="/profile/:profileId" element={<Profile />} />
           <Route path="/profile/likes" element={<Likes />} />
           <Route path="/profile/views" element={<Views />} />
