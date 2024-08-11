@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS "USER" (
 
 const createTableViewQuery = `
 CREATE TABLE IF NOT EXISTS "user_views" (
+  "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   "viewer_id" UUID,
   "viewed_id" UUID,
   "view_time" DATE,
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS "user_views" (
 
 const createTableLikesQuery = `
 CREATE TABLE IF NOT EXISTS "user_likes" (
+  "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   "liker_id" UUID,
   "liked_id" UUID,
   "like_time" DATE,
@@ -48,6 +50,7 @@ CREATE TABLE IF NOT EXISTS "user_likes" (
 
 const createTableMessageQuery = `
 CREATE TABLE IF NOT EXISTS "Message" (
+  "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   "sender_id" UUID,
   "receiver_id" UUID,
   "time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
