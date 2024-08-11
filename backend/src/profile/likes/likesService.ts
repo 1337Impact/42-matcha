@@ -2,16 +2,17 @@ import db from "../../utils/db/client";
 import { User, Profile } from "../types";
 
 async function handleGetLikes(
-  profileId: string,
   user: User
-): Promise<string | null> {
+): Promise<string[] | null> {
   console.log("User data: ", user);
   try {
-    const query = `SELECT *
-      FROM "USER" 
-      WHERE id = $1;`;
-    const { rows } = await db.query(query, [profileId]);
-    return rows[0];
+    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username
+      FROM "user_likes" 
+      INNER JOIN "USER" ON "user_likes"."liker_id" = "USER"."id"
+      WHERE "liked_id" = $1;`;
+    const { rows } = await db.query(query, [user.id]);
+    console.log("rows: ", rows);
+    return rows;
   } catch (error) {
     console.error("Error getting user:", error);
     throw error;

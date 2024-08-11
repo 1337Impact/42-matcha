@@ -7,6 +7,7 @@ import { RootState } from "../store";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CompleteProfile from "../components/complete-profile";
+import Likes from "./profile/likes";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -41,6 +42,7 @@ const ProtectedLayout: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile/:profileId" element={<Profile />} />
+          <Route path="/profile/likes" element={<Likes />} />
         </Routes>
       </main>
       <Footer />

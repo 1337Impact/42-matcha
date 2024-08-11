@@ -8,11 +8,7 @@ const getLikes = async (req: any, res: any) => {
   console.log("req: ", req.query);
   const query = req.query;
   try {
-    const profileId =
-      !query.profileId || query.profileId === "me"
-        ? req.user.id
-        : query.profileId;
-    const data = await handleGetLikes(profileId, req.user);
+    const data = await handleGetLikes(req.user);
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
