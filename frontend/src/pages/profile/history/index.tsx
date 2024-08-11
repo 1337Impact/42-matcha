@@ -6,7 +6,7 @@ const gethistoryData = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      "http://localhost:3000/api/profile/history",
+      "http://localhost:3000/api/profile/views/history",
       {
         headers: {
           Authorization: `Bearer ${token}`,

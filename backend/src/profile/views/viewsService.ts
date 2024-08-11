@@ -11,7 +11,22 @@ async function handleGetViews(user: User): Promise<string[] | null> {
     const { rows } = await db.query(query, [user.id]);
     return rows;
   } catch (error) {
-    console.error("Error getting user:", error);
+    console.error("Error getting views:", error);
+    throw error;
+  }
+}
+
+async function handleGetViewesHistory(user: User): Promise<string[] | null> {
+  try {
+    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username
+      FROM "user_views" 
+      INNER JOIN "USER" ON "user_views"."viewed_id" = "USER"."id"
+      WHERE "viewer_id" = $1
+      ORDER BY "user_views"."view_time" DESC;`;
+    const { rows } = await db.query(query, [user.id]);
+    return rows;
+  } catch (error) {
+    console.error("Error getting history:", error);
     throw error;
   }
 }
@@ -55,4 +70,4 @@ async function handleViewedProfile(
   }
 }
 
-export { handleGetViews, handleViewedProfile, handleGetIsProfileViewed };
+export { handleGetViews, handleViewedProfile, handleGetIsProfileViewed, handleGetViewesHistory };

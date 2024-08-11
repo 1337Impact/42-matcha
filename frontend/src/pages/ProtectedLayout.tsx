@@ -9,6 +9,7 @@ import Footer from "../components/Footer";
 import CompleteProfile from "../components/complete-profile";
 import Likes from "./profile/likes";
 import Views from "./profile/views";
+import History from "./profile/history";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -45,6 +46,7 @@ const ProtectedLayout: React.FC = () => {
           <Route path="/profile/:profileId" element={<Profile />} />
           <Route path="/profile/likes" element={<Likes />} />
           <Route path="/profile/views" element={<Views />} />
+          <Route path="/profile/history" element={<History />} />
         </Routes>
       </main>
       <Footer />

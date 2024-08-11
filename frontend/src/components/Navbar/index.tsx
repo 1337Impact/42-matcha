@@ -18,6 +18,9 @@ import { Link } from "react-router-dom";
 import { FaRegHeart } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
+import { FaHistory } from "react-icons/fa";
+import { MdHistory } from "react-icons/md";
+
 
 
 export function AvatarDemo({
@@ -77,6 +80,10 @@ const Navbar: React.FC = () => {
               <DropdownMenuItem>
                 <FaRegEye className="mr-2" />
                 <Link to="/profile/views">Views</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <MdHistory className="mr-2" />
+                <Link to="/profile/history">History</Link>
               </DropdownMenuItem>
 
               {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}
