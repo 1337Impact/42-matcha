@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import LikeDislikeButton from "../../../components/like-button/like-button";
+import formatDate from "../../../utils/formateDate";
 
 const getviewsData = async (): Promise<any> => {
   try {
@@ -43,6 +44,9 @@ export default function Views() {
                   {profile.first_name} {profile.last_name}
                 </h1>
                 <h2 className="text-gray-500">@{profile.username}</h2>
+                <h3 className="text-sm text-gray-500">
+                  {formatDate(profile.view_time)}
+                </h3>
               </div>
               <LikeDislikeButton profileId={profile.id} />
             </p>

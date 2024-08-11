@@ -5,10 +5,11 @@ async function handleGetLikes(
   user: User
 ): Promise<string[] | null> {
   try {
-    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username
+    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_likes"."like_time"
       FROM "user_likes" 
       INNER JOIN "USER" ON "user_likes"."liker_id" = "USER"."id"
-      WHERE "liked_id" = $1;`;
+      WHERE "liked_id" = $1
+      ORDER BY "user_likes"."like_time" DESC;`;
     const { rows } = await db.query(query, [user.id]);
     return rows;
   } catch (error) {

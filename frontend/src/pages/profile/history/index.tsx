@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import LikeDislikeButton from "../../../components/like-button/like-button";
+import formatDate from "../../../utils/formateDate";
 
 const gethistoryData = async (): Promise<any> => {
   try {
@@ -32,7 +33,7 @@ export default function History() {
   return (
     <div>
       <h1 className="text-2xl font-semibold text-gray-700 p-2">
-        Who viewed your profile?
+        History
       </h1>
       <ul className="flex flex-col gap-2 mt-4">
         {history.map((profile: any) => (
@@ -43,6 +44,9 @@ export default function History() {
                   {profile.first_name} {profile.last_name}
                 </h1>
                 <h2 className="text-gray-500">@{profile.username}</h2>
+                <h3 className="text-sm text-gray-500">
+                  {formatDate(profile.view_time)}
+                </h3>
               </div>
               <LikeDislikeButton profileId={profile.id} />
             </p>
