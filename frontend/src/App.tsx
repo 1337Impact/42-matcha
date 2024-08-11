@@ -15,6 +15,7 @@ import ProtectedLayout from "./pages/ProtectedLayout";
 import Likes from "./pages/profile/likes";
 import Views from "./pages/profile/views";
 import History from "./pages/profile/history";
+import Connections from "./pages/connections";
 
 function App() {
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ function App() {
       <Routes>
         <Route path="/" element={<ProtectedLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/connections" element={<Connections />} />
           <Route path="/profile/:profileId" element={<Profile />} />
           <Route path="/profile/likes" element={<Likes />} />
           <Route path="/profile/views" element={<Views />} />

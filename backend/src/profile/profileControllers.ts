@@ -2,6 +2,7 @@ import { verifyToken } from "../utils/jwtUtils";
 import {
   getIsProfileCompleted,
   handleGetAllProfiles,
+  handleGetConnections,
   handleGetProfile,
   handleLikeProfile,
   handleUpdateProfile,
@@ -25,6 +26,15 @@ const getProfile = async (req: any, res: any) => {
 const getAllProfiles = async (req: any, res: any) => {
   try {
     const data = await handleGetAllProfiles(req.user);
+    res.send(data);
+  } catch (error) {
+    res.status(400).send({ error: "Something went wrong." });
+  }
+};
+
+const getConnections = async (req: any, res: any) => {
+  try {
+    const data = await handleGetConnections(req.user);
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
@@ -74,4 +84,4 @@ const isProfileCompleted = async (req: any, res: any) => {
   }
 };
 
-export { getProfile, getAllProfiles, updateProfile, isProfileCompleted, likeProfile };
+export { getProfile, getAllProfiles, getConnections, updateProfile, isProfileCompleted, likeProfile };

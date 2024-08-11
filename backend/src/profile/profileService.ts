@@ -1,4 +1,5 @@
 import db from "../utils/db/client";
+import { handleGetIsProfileLiked } from "./likes/likesService";
 import { User, Profile } from "./types";
 
 async function handleGetProfile(
@@ -50,25 +51,45 @@ async function handleGetAllProfiles(user: User): Promise<any> {
       userData.sexual_preferences || "bisexual",
       userData.interests,
     ]);
-    console.log(
-      "latitude",
-      "longitude",
-      "distance",
-      "fame_rating",
-      "common_interests_c"
-    );
-    console.log(
-      rows.map((row: any) => [
-        row.latitude,
-        row.longitude,
-        row.distance,
-        row.fame_rating,
-        row.common_interests_count,
-      ])
-    );
+    // console.log(
+    //   "latitude",
+    //   "longitude",
+    //   "distance",
+    //   "fame_rating",
+    //   "common_interests_c"
+    // );
+    // console.log(
+    //   rows.map((row: any) => [
+    //     row.latitude,
+    //     row.longitude,
+    //     row.distance,
+    //     row.fame_rating,
+    //     row.common_interests_count,
+    //   ])
+    // );
     return rows;
   } catch (error) {
     console.error("Error getting all Profiles:", error);
+    throw error;
+  }
+}
+
+async function handleGetConnections(user: User): Promise<any> {
+  try {
+    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_likes_1"."like_time" AS "like_time"
+    FROM "user_likes" AS "user_likes_1"
+    INNER JOIN "user_likes" AS "user_likes_2" 
+      ON "user_likes_1"."liker_id" = "user_likes_2"."liked_id" 
+      AND "user_likes_1"."liked_id" = "user_likes_2"."liker_id"
+    INNER JOIN "USER" 
+      ON "user_likes_1"."liker_id" = "USER"."id"
+    WHERE "user_likes_1"."liked_id" = $1
+    ORDER BY "user_likes_1"."like_time" DESC;`;
+    const { rows: data } = await db.query(query, [user.id]);
+    console.log("Connections data: ", data);
+    return data;
+  } catch (error) {
+    console.error("Error getting Connections:", error);
     throw error;
   }
 }
@@ -131,6 +152,7 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
 export {
   handleGetProfile,
   handleGetAllProfiles,
+  handleGetConnections,
   handleUpdateProfile,
   getIsProfileCompleted,
   handleLikeProfile,

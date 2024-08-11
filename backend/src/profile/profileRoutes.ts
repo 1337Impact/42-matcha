@@ -1,4 +1,4 @@
-import { getAllProfiles, getProfile, isProfileCompleted, likeProfile, updateProfile } from "./profileControllers";
+import { getAllProfiles, getConnections, getProfile, isProfileCompleted, likeProfile, updateProfile } from "./profileControllers";
 import LikesRouter from "./likes/likesRoutes";
 import viewsRouter from "./views/viewsRoutes";
 import { Router } from "express";
@@ -24,6 +24,7 @@ router.use("/views", viewsRouter);
 router.post("/update", upload.array("images", 5), updateProfile);
 router.post("/iscompleted", isProfileCompleted);
 router.get("/", getProfile);
+router.get("/connections", getConnections);
 router.get("/all", getAllProfiles);
 
 export default router;

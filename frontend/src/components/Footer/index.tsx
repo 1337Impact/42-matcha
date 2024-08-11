@@ -19,8 +19,8 @@ export default function Footer() {
     {
       icon: RiHeartsLine,
       activeIcon: RiHeartsFill,
-      label: "Matches",
-      link: "/matches",
+      label: "Connections",
+      link: "/connections",
     },
     { icon: RiHome4Line, activeIcon: RiHome4Fill, label: "Home", link: "/" },
     {
