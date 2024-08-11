@@ -16,7 +16,6 @@ interface ProfileCardProps {
 }
 
 const ProfileCard = ({ profile }: ProfileCardProps) => {
-  console.log("ProfileCard");
   return (
     <div className="p-2 rounded-lg bg-white shadow-xl">
       <Swiper
@@ -25,8 +24,6 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
           clickable: true,
         }}
         modules={[Pagination]}
-        onSlideChange={() => console.log("slide change")}
-        onSwiper={(swiper) => console.log(swiper)}
       >
         {profile.pictures ? (
           profile.pictures.map(

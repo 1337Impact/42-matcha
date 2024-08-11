@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ProfileCard from "../components/profile-card/profile-card";
+import { SocketContext } from "../contexts/SocketContext";
+import axios from "axios";
 
 interface Profile {
   id: string;
@@ -9,15 +11,13 @@ interface Profile {
   pictures: string[];
 }
 
-const getProfiles = async (token: string) : Promise<Profile[]> => {
-  const result = await fetch("http://localhost:3000/api/profile/all", {
-    method: "GET",
+const getProfiles = async (token: string): Promise<Profile[]> => {
+  const result = await axios.get("http://localhost:3000/api/profile/all", {
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
-  const data = await result.json();
+  const data = result.data;
   return data.map((profile: any) => {
     const pictures = JSON.parse(profile.pictures);
     return {
@@ -32,12 +32,23 @@ const getProfiles = async (token: string) : Promise<Profile[]> => {
 
 const Home: React.FC = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("message", (message: string) => {
+        console.log("Message received: ", message);
+      });
+      return () => {
+        socket.off("message");
+      };
+    }
+  }, [socket]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     token &&
       getProfiles(token).then((data) => {
-        console.log("profiles: ", data);
         setProfiles(data);
       });
   }, []);

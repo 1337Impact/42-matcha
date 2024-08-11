@@ -16,6 +16,7 @@ import Likes from "./pages/profile/likes";
 import Views from "./pages/profile/views";
 import History from "./pages/profile/history";
 import Connections from "./pages/connections";
+import { SocketProvider } from "./contexts/SocketContext";
 
 function App() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ function App() {
   }, [navigate, location.pathname]);
 
   return (
-    <>
+    <SocketProvider>
       <ToastContainer />
       <Routes>
         <Route path="/" element={<ProtectedLayout />}>
@@ -69,7 +70,7 @@ function App() {
         </Route>
         <Route path="/verify" element={<Verify />} />
       </Routes>
-    </>
+    </SocketProvider>
   );
 }
 
