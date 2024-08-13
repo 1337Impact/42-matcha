@@ -26,20 +26,20 @@ io.engine.use(socketMiddlware);
 
 io.on("connection", (socket) => {
   // @ts-ignore
-  const userId = socket.request.user.id;
-  userSocketMap.set(userId, socket.id);
+  const user = socket.request.user;
+  userSocketMap.set(user.id, socket.id);
 
   socket.on("disconnect", () => {
-    userSocketMap.delete(userId);
+    userSocketMap.delete(user.id);
   });
 
   socket.on("message", async (msg) => {
     const receiverSocketId = userSocketMap.get(msg.receiver_id);
-    const res = await handleCreateMessage(msg, userId);
+    const res = await handleCreateMessage(msg, user);
     io.to(receiverSocketId).emit("message", {
       id: "",
       content: msg.content,
-      sender_id: userId,
+      sender_id: user.id,
     });
   });
 });

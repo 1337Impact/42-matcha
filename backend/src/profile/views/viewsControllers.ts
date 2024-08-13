@@ -1,3 +1,4 @@
+import { sendNotification } from "../../utils/socket";
 import {
   handleGetIsProfileViewed,
   handleGetViewesHistory,
@@ -29,6 +30,7 @@ const vieweProfile = async (req: any, res: any) => {
     const profileId = req.body.profileId;
     console.log("view profile: ", profileId);
     const data = await handleViewedProfile(profileId, req.user);
+    sendNotification({ content: `@${req.user.username} has viewed you profile.`, type: "view" }, profileId);
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });

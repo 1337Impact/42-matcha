@@ -23,7 +23,7 @@ const likeProfile = async (req: any, res: any) => {
     // handle notification
     if (response) {
       sendNotification(
-        { message: `You have a new like from @${req.user.username}` },
+        { content: `@${req.user.username} has liked you profile.`, type: "like" },
         profileId
       );
       res.send("profile liked");
@@ -32,7 +32,7 @@ const likeProfile = async (req: any, res: any) => {
         await handleGetIsProfileLiked(req.user.id, { id: profileId } as User)
       ) {
         sendNotification(
-          { message: `You have been unliked from @${req.user.username}` },
+          { content: `@${req.user.username} has unliked your profile.`, type: "unlike" },
           profileId
         );
       }
