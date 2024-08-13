@@ -13,6 +13,7 @@ import History from "./profile/history";
 import Connections from "./connections";
 import Chat from "./chat";
 import ChatRoom from "./chat/chat-room";
+import { SocketProvider } from "../contexts/SocketContext";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -31,32 +32,34 @@ const ProtectedLayout: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
-      {isOpenProfileCompleted && (
-        <CompleteProfile handleClose={handleCloseProfileCompletion} />
-      )}
-      {user && !user.is_verified && (
-        <div className="w-full p-1 bg-yellow-400">
-          <div className="text-sm text-center">
-            Verfiy your email address to access all features.
+    <SocketProvider>
+      <div className="h-screen flex flex-col">
+        {isOpenProfileCompleted && (
+          <CompleteProfile handleClose={handleCloseProfileCompletion} />
+        )}
+        {user && !user.is_verified && (
+          <div className="w-full p-1 bg-yellow-400">
+            <div className="text-sm text-center">
+              Verfiy your email address to access all features.
+            </div>
           </div>
-        </div>
-      )}
-      <Navbar />
-      <main className="flex-1 py-16 xl:w-[1200px] mx-2 md:mx-6 lg:mx-8 xl:mx-auto">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/connections" element={<Connections />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/chat/:profileId" element={<ChatRoom />} />
-          <Route path="/profile/:profileId" element={<Profile />} />
-          <Route path="/profile/likes" element={<Likes />} />
-          <Route path="/profile/views" element={<Views />} />
-          <Route path="/profile/history" element={<History />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+        )}
+        <Navbar />
+        <main className="flex-1 py-16 xl:w-[1200px] mx-2 md:mx-6 lg:mx-8 xl:mx-auto">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/connections" element={<Connections />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat/:profileId" element={<ChatRoom />} />
+            <Route path="/profile/:profileId" element={<Profile />} />
+            <Route path="/profile/likes" element={<Likes />} />
+            <Route path="/profile/views" element={<Views />} />
+            <Route path="/profile/history" element={<History />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </SocketProvider>
   );
 };
 

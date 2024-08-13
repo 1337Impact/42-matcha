@@ -3,32 +3,42 @@ import bodyParser from "body-parser";
 import authRouter from "./auth/authRoutes";
 import userRouter from "./user/userRoutes";
 import profileRouter from "./profile/profileRoutes";
-import authorize from "./middleware";
+import authorize, { socketMiddlware } from "./middleware";
 import cors from "cors";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { createServer } from "http";
 
 const app = express();
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
-    path: "",
-    cors: {
-        origin: "*",
-    },
+  path: "",
+  cors: {
+    origin: "*",
+  },
 });
+
+const userSocketMap = new Map();
+
+io.engine.use(socketMiddlware);
 
 io.on("connection", (socket) => {
-    console.log("a user connected: ", socket.id);
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
-    });
-    socket.on('message', (msg) => {
-        console.log('message received: ', msg);
-        io.to(msg.received).emit('message', msg.content);
-      });
-});
+  // @ts-ignore
+  const userId = socket.request.user.id;
+  console.log("a user connected: ", userId);
+  userSocketMap.set(userId, socket.id);
 
+  socket.on("disconnect", () => {
+    userSocketMap.delete(userId);
+    console.log("user disconnected: ", userId);
+  });
+
+
+  socket.on("message", (msg) => {
+    console.log("message received: ", msg, "from: ", userId);
+    io.emit("message", msg.content);
+  });
+});
 
 app.use(cors());
 app.use("/images", express.static("uploads"));

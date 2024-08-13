@@ -28,4 +28,38 @@ function verifyToken(req: any, res: any, next: NextFunction) {
   }
 }
 
+function socketMiddlware(req: any, res: any, next: NextFunction) {
+  const isHandshake = req._query.sid === undefined;
+  if (!isHandshake) {
+    return next();
+  }
+  
+  const header = req.headers["authorization"];
+
+  if (!header) {
+    return next(new Error("no token"));
+  }
+
+  if (!header.startsWith("Bearer ")) {
+    return next(new Error("invalid token"));
+  }
+  try {
+    console.log("handshake")
+    const token = header.substring(7);
+    if (token) {
+      const decoded = jwt.verify(token, secretKey);
+      req.user = decoded;
+      next();
+    } else {
+      throw new Error("Access denied");
+    }
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    const err = new Error("Error verifying token!");
+    // err.data = { content: "Please retry later" }; // additional details
+    next(err);
+  }
+}
+
+export { socketMiddlware };
 export default verifyToken;

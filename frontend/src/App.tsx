@@ -16,7 +16,6 @@ import Likes from "./pages/profile/likes";
 import Views from "./pages/profile/views";
 import History from "./pages/profile/history";
 import Connections from "./pages/connections";
-import { SocketProvider } from "./contexts/SocketContext";
 import Chat from "./pages/chat";
 import ChatRoom from "./pages/chat/chat-room";
 
@@ -55,7 +54,7 @@ function App() {
   }, [navigate, location.pathname]);
 
   return (
-    <SocketProvider>
+    <>
       <ToastContainer />
       <Routes>
         <Route path="/" element={<ProtectedLayout />}>
@@ -74,7 +73,7 @@ function App() {
         </Route>
         <Route path="/verify" element={<Verify />} />
       </Routes>
-    </SocketProvider>
+    </>
   );
 }
 
