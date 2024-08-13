@@ -1,4 +1,5 @@
 function formatDate(sdate: string) {
+  if (!sdate) return "Unknown date";
   const date = new Date(sdate.slice(0, 19));
   const now = new Date();
   const yesterday = new Date(now);

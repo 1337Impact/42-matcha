@@ -33,10 +33,15 @@ io.on("connection", (socket) => {
     console.log("user disconnected: ", userId);
   });
 
-
   socket.on("message", (msg) => {
-    console.log("message received: ", msg, "from: ", userId);
-    io.emit("message", msg.content);
+    // console.log("message received: ", msg, "from: ", userId);
+    const receiverSocketId = userSocketMap.get(msg.receiver_id);
+    console.log("receiverSocketId: ", receiverSocketId);
+    io.to(receiverSocketId).emit("message", {
+      id: "",
+      content: msg.content,
+      sender_id: userId,
+    });
   });
 });
 
