@@ -3,18 +3,18 @@ import {
   handleGetMessages,
 } from "./messageService";
 
-const messageSocketHandlers = (socket: Socket, ) => {
-    socket.on('message', (msg: string) => {
-      console.log('Message received:', msg);
-      io.emit('message', msg); 
-    });
-};
+// const messageSocketHandlers = (socket: Socket, ) => {
+//     socket.on('message', (msg: string) => {
+//       console.log('Message received:', msg);
+//       io.emit('message', msg); 
+//     });
+// };
 
 
 const getMessages = async (req: any, res: any) => {
   try {
     const profileId = req.query.profileId;
-    console.log("getMessages: ", profileId);
+    console.log("getMessages: ", profileId, req.user);
     const messages = await handleGetMessages(profileId, req.user);
     res.send(messages);
   } catch (error) {
@@ -24,4 +24,4 @@ const getMessages = async (req: any, res: any) => {
 }
 
 
-export { getMessages, messageSocketHandlers};
+export { getMessages};

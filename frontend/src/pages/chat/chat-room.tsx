@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { GrSend } from "react-icons/gr";
 import { useParams } from "react-router-dom";
 import { SocketContext } from "../../contexts/SocketContext";
-// import { useSelector } from "react-redux";
-// import { RootState } from "../../store";
+import Message from "../../components/message/message";
+import axios from "axios";
 
 interface Message {
   id: string;
@@ -17,11 +17,33 @@ interface IncomingMessage {
   sender_id: string;
 }
 
+
+const getMessages = async (token: string, profileId: string) => {
+  const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/message`, {
+    params: {
+      profileId,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data.map((msg: any) => ({
+    id: msg.id,
+    content: msg.content,
+    is_me: msg.receiver_id === profileId,
+  }));
+}
+
+
 export default function ChatRoom() {
   const params = useParams();
-  // const user = useSelector((state: RootState) => state.userSlice.user);
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState<Message[]>([]);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    token && params.profileId && getMessages(token, params.profileId).then((msgs)=>setMessages(msgs));
+  }, [params]);
 
   const onSubmit = (e: any) => {
     e.preventDefault();
@@ -51,15 +73,15 @@ export default function ChatRoom() {
   }, [socket]);
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 h-full">
-        <div className="h-full flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
+      <div className="flex-1 overflow-y-auto">
+        <div className="flex flex-col gap-2 overflow-y-auto">
           {messages.map((message, index) => (
             <div
               key={index}
               className={`w-full flex ${message.is_me && "justify-end"}`}
             >
-              <p>{message.content}</p>
+              <Message message={message} />
             </div>
           ))}
         </div>

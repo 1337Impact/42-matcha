@@ -44,7 +44,6 @@ function socketMiddlware(req: any, res: any, next: NextFunction) {
     return next(new Error("invalid token"));
   }
   try {
-    console.log("handshake")
     const token = header.substring(7);
     if (token) {
       const decoded = jwt.verify(token, secretKey);

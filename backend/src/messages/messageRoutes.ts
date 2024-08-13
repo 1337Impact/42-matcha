@@ -3,9 +3,6 @@ import { Router } from "express";
 
 const router = Router();
 
-
-
-// router.post("/", likeProfile);
 router.get("/", getMessages);
 // router.get("/", isProfileLiked);
 

@@ -1,4 +1,4 @@
-interface Message {
+export default interface Message {
     id: string;
     content: string;
     sender_id: string;

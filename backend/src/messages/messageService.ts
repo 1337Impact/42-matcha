@@ -1,3 +1,5 @@
+import { User } from "../profile/types";
+import Message from "../types/message";
 import db from "../utils/db/client";
 
 async function handleGetMessages(
@@ -12,21 +14,21 @@ async function handleGetMessages(
     const { rows } = await db.query(query, [user.id, profileId]);
     return rows;
   } catch (error) {
-    console.error("Error getting likes:", error);
+    console.error("Error getting messages:", error);
     throw error;
   }
 }
 
 async function handleCreateMessage(
   msg: any,
-  user: User
+  userId: string
 ): Promise<Message[]> {
   try {
     const query = `INSERT INTO "Message" (sender_id, receiver_id, content) VALUES ($1, $2, $3);`;
-    const { rows } = await db.query(query, [user.id, user.id, msg.receiver_id, msg.content]);
-    return rows;
+    const { rows } = await db.query(query, [userId, msg.receiver_id, msg.content]);
+    return rows[0];
   } catch (error) {
-    console.error("Error getting likes:", error);
+    console.error("Error creating message:", error);
     throw error;
   }
 }
