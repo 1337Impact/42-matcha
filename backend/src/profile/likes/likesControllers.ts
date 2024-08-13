@@ -1,3 +1,5 @@
+import { sendNotification } from "../../utils/socket";
+import { User } from "../types";
 import {
   handleGetIsProfileLiked,
   handleGetLikes,
@@ -17,12 +19,30 @@ const likeProfile = async (req: any, res: any) => {
   try {
     const profileId = req.body.profileId;
     console.log("like profile: ", profileId);
-    const data = await handleLikeProfile(profileId, req.user);
-    res.send(data);
+    const response = await handleLikeProfile(profileId, req.user);
+    // handle notification
+    if (response) {
+      sendNotification(
+        { message: `You have a new like from @${req.user.username}` },
+        profileId
+      );
+      res.send("profile liked");
+    } else {
+      if (
+        await handleGetIsProfileLiked(req.user.id, { id: profileId } as User)
+      ) {
+        sendNotification(
+          { message: `You have been unliked from @${req.user.username}` },
+          profileId
+        );
+      }
+      res.send("profile unliked");
+    }
   } catch (error) {
+    console.error("Error liking profile:", error);
     res.status(400).send({ error: "Something went wrong." });
   }
-}
+};
 
 const isProfileLiked = async (req: any, res: any) => {
   try {
@@ -34,5 +54,5 @@ const isProfileLiked = async (req: any, res: any) => {
     console.error("Error getting likes:", error);
     throw error;
   }
-}
+};
 export { getLikes, likeProfile, isProfileLiked };

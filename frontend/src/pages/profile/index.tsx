@@ -9,7 +9,6 @@ import EditProfile from "../../components/edit-profile";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import LikeButton from "../../components/like-button/like-button";
-import axios from "axios";
 
 export default function Profile() {
   const params = useParams();

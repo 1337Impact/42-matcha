@@ -104,7 +104,7 @@ export default function EditProfile({
       imageFiles.forEach((file) => {
         file && formData.append("images", file);
       });
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:3000/api/profile/update",
         formData,
         {

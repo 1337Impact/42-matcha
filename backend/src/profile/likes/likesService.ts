@@ -38,11 +38,11 @@ async function handleLikeProfile(profileId: string, user: User): Promise<any> {
     if (isProfileLiked) {
       const query = `DELETE FROM "user_likes" WHERE liker_id = $1 AND liked_id = $2;`;
       await db.query(query, [user.id, profileId]);
-      return "Profile disliked successfully";
+      return false;
     }
     const query = `INSERT INTO "user_likes" (liker_id, liked_id) VALUES ($1, $2);`;
     await db.query(query, [user.id, profileId]);
-    return "Profile liked successfully";
+    return true;
   } catch (error) {
     console.error("Error liking profile:", error);
     throw error;

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GrSend } from "react-icons/gr";
 import { useParams } from "react-router-dom";
 import { SocketContext } from "../../contexts/SocketContext";

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,8 +10,9 @@ import {
 
 import { FaRegHeart } from "react-icons/fa";
 import { IoIosNotifications } from "react-icons/io";
+import { SocketContext } from "../../contexts/SocketContext";
 
-const notifications = [
+const inotifications = [
   { id: 1, message: "New message from user", read: false, time: "1 min ago" },
   { id: 2, message: "New message from user", read: false, time: "1 min ago" },
   { id: 3, message: "New message from user", read: false, time: "1 min ago" },
@@ -20,6 +21,20 @@ const notifications = [
 ];
 
 const Notifications: React.FC = () => {
+  const [notifications, setNotifications] = useState(inotifications);
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("notification", (data) => {
+      console.log("notification", data);
+      setNotifications(inotifications);
+    });
+    return () => {
+      socket.off("notification");
+    };
+  }, []);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>

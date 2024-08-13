@@ -1,8 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
 import { FaUserCircle } from "react-icons/fa";
 import ProfileDropdown from "./profile-dropdown";
 import Notifications from "../notifications/notifications";
@@ -25,12 +22,6 @@ export function AvatarDemo({
 }
 
 const Navbar: React.FC = () => {
-  const user = useSelector((state: RootState) => state.userSlice.user);
-  const navigate = useNavigate();
-  const onLogout = () => {
-    window.localStorage.removeItem("token");
-    navigate("/signin");
-  };
   return (
     <header className="w-full z-50 text-gray-700">
       <div className="xl:w-[1200px] py-4 mx-4 md:mx-6 lg:mx-8 xl:mx-auto">

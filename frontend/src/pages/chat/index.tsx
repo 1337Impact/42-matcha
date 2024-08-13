@@ -1,10 +1,8 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LikeDislikeButton from "../../components/like-button/like-button";
 import formatDate from "../../utils/formateDate";
 import { Link } from "react-router-dom";
-import { SocketContext } from "../../contexts/SocketContext";
-
 const getConnectionsData = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");

@@ -15,7 +15,7 @@ export default function Verify() {
       .post(`${import.meta.env.VITE_APP_API_URL}/auth/verify`, {
         token: token,
       })
-      .then((res) => {
+      .then(() => {
         navigate("/signin");
       })
       .catch((err) => {

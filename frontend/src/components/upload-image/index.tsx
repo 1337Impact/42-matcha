@@ -1,18 +1,15 @@
-import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 
 interface AddProductImageProps {
   setImgFile: (imgFile: File | null) => void;
   image?: string | null;
   setImage: (img: string | null) => void;
-  isProfile?: boolean;
 }
 
 export default function UploadImage({
   setImgFile,
   image,
   setImage,
-  isProfile = false,
 }: AddProductImageProps) {
 
   const handleUploadClick = async (event: any) => {

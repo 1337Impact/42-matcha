@@ -53,4 +53,5 @@ app.use("/api/profile", authorize, profileRouter);
 app.use("/api/user", authorize, userRouter);
 app.use("/api/message", authorize, messageRouter);
 
+export { io, userSocketMap };
 export default httpServer;
