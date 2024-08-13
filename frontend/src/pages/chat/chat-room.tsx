@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { GrSend } from "react-icons/gr";
 import { useParams } from "react-router-dom";
 import { SocketContext } from "../../contexts/SocketContext";
@@ -17,7 +17,6 @@ interface IncomingMessage {
   sender_id: string;
 }
 
-
 const getMessages = async (token: string, profileId: string) => {
   const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/message`, {
     params: {
@@ -32,17 +31,28 @@ const getMessages = async (token: string, profileId: string) => {
     content: msg.content,
     is_me: msg.receiver_id === profileId,
   }));
-}
-
+};
 
 export default function ChatRoom() {
   const params = useParams();
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState<Message[]>([]);
-  
+
+  useEffect(() => {
+    const container = document.getElementById("message-container");
+    if (container) {
+      container.scrollBy({
+        top: container.scrollHeight,
+        behavior: "instant",
+      });
+    }
+  }, [messages]);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    token && params.profileId && getMessages(token, params.profileId).then((msgs)=>setMessages(msgs));
+    token &&
+      params.profileId &&
+      getMessages(token, params.profileId).then((msgs) => setMessages(msgs));
   }, [params]);
 
   const onSubmit = (e: any) => {
@@ -73,9 +83,9 @@ export default function ChatRoom() {
   }, [socket]);
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex-1 overflow-y-auto">
-        <div className="flex flex-col gap-2 overflow-y-auto">
+    <div className="flex flex-col h-full">
+      <div id={"message-container"} className="flex-1 p-2 overflow-y-auto">
+        <div className="flex  flex-col gap-2">
           {messages.map((message, index) => (
             <div
               key={index}
@@ -86,8 +96,8 @@ export default function ChatRoom() {
           ))}
         </div>
       </div>
-      <form onSubmit={onSubmit}>
-        <div className="flex items-center w-full h-[52px] mb-2 px-2 rounded-full border-2 border-gray-800 bg-gray-200">
+      <form onSubmit={onSubmit} className="w-full mb-1">
+        <div className="flex items-center w-full h-[52px] px-2 rounded-full border-2 border-gray-800 bg-gray-200">
           <input
             placeholder="Enter message"
             className="px-2 w-full h-full bg-transparent focus:outline-none"

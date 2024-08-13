@@ -38,7 +38,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full fixed z-50 bottom-0 flex justify-center lg:bottom-3">
+    <footer className="w-full z-50 bottom-0 flex justify-center lg:bottom-3">
       <div className="w-full flex justify-between bg-red-400 py-1 pt-2 px-7 lg:w-[450px] lg:rounded-full lg:px-10">
         {items.map((item, index) => (
           <Link

@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
     navigate("/signin");
   };
   return (
-    <header className="fixed w-full z-50 text-gray-700">
+    <header className="w-full z-50 text-gray-700">
       <div className="xl:w-[1200px] py-4 mx-4 md:mx-6 lg:mx-8 xl:mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center">

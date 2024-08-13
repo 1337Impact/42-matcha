@@ -45,7 +45,7 @@ const ProtectedLayout: React.FC = () => {
           </div>
         )}
         <Navbar />
-        <main className="flex-1 py-16 xl:w-[1200px] mx-2 md:mx-6 lg:mx-8 xl:mx-auto">
+        <main className="flex-1 overflow-auto xl:w-[1200px] mx-2 md:mx-6 lg:mx-8 xl:mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/connections" element={<Connections />} />
