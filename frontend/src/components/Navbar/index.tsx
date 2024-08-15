@@ -1,25 +1,7 @@
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { FaUserCircle } from "react-icons/fa";
 import ProfileDropdown from "./profile-dropdown";
 import Notifications from "../notifications/notifications";
 
-export function AvatarDemo({
-  profileImage,
-  username,
-}: {
-  profileImage: string | undefined;
-  username: string | undefined;
-}) {
-  return (
-    <Avatar>
-      <AvatarImage src={profileImage} alt={username || "avatar"} />
-      <AvatarFallback>
-        <FaUserCircle className="h-10 w-10" />
-      </AvatarFallback>
-    </Avatar>
-  );
-}
 
 const Navbar: React.FC = () => {
   return (

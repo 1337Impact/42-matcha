@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { SocketContext } from "../../contexts/SocketContext";
 import Message from "../../components/message/message";
 import axios from "axios";
+import { ProfileAvatar } from "../../components/profile-avatar/profile-avatar";
+import { Link } from "react-router-dom";
 
 interface Message {
   id: string;
@@ -18,7 +20,27 @@ interface IncomingMessage {
 }
 
 const getMessages = async (token: string, profileId: string) => {
-  const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/message`, {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/message`, {
+      params: {
+        profileId,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data.map((msg: any) => ({
+      id: msg.id,
+      content: msg.content,
+      is_me: msg.receiver_id === profileId,
+    }));
+  } catch (error) {
+    console.log("Error getting messages: ", error);
+    return null;
+  }
+};
+const getProfileData = async (token: string, profileId: string) => {
+  const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/profile`, {
     params: {
       profileId,
     },
@@ -26,16 +48,19 @@ const getMessages = async (token: string, profileId: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return res.data.map((msg: any) => ({
-    id: msg.id,
-    content: msg.content,
-    is_me: msg.receiver_id === profileId,
-  }));
+  console.log("profile data: ", res.data);
+  return {
+    username: res.data.username,
+    first_name: res.data.first_name,
+    last_name: res.data.last_name,
+    profile_picture: JSON.parse(res.data.pictures)[0],
+  };
 };
 
 export default function ChatRoom() {
   const params = useParams();
   const socket = useContext(SocketContext);
+  const [profile, setProfile] = useState<any>({});
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -50,9 +75,12 @@ export default function ChatRoom() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    token &&
-      params.profileId &&
+    if (token && params.profileId) {
       getMessages(token, params.profileId).then((msgs) => setMessages(msgs));
+      getProfileData(token, params.profileId).then((data) => {
+        setProfile(data);
+      });
+    }
   }, [params]);
 
   const onSubmit = (e: any) => {
@@ -83,7 +111,21 @@ export default function ChatRoom() {
   }, [socket]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col gap-1 h-full">
+      <Link to={`/profile/${params.profileId}`} className="text-blue-500">
+        <div className="w-full border-b-2 shadow-lg flex items-center gap-2 p-2">
+          <ProfileAvatar
+            profileImage={profile.profile_picture}
+            username={profile.username}
+          />
+          <div>
+            <h1 className="text-gray-600 font-semibold">
+              {profile.first_name} {profile.last_name}
+            </h1>
+            <h2 className="text-gray-500">@{profile.username}</h2>
+          </div>
+        </div>
+      </Link>
       <div id={"message-container"} className="flex-1 p-2 overflow-y-auto">
         <div className="flex  flex-col gap-2">
           {messages.map((message, index) => (

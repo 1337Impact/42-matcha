@@ -9,12 +9,14 @@ import EditProfile from "../../components/edit-profile";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import LikeButton from "../../components/like-button/like-button";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const params = useParams();
   const user = useSelector((state: RootState) => state.userSlice.user);
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [openModal, setOpenModal] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   useEffect(() => {
     getProfileData(params.profileId as string)
       .then((data) => {
@@ -83,7 +85,17 @@ export default function Profile() {
                   Edit Profile
                 </button>
               ) : (
-                <LikeButton profileId={profileData.id} />
+                <div className="flex gap-2">
+                  <Link to={`/chat/${profileData.id}`}>
+                    <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
+                      Message
+                    </button>
+                  </Link>
+                  <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
+                    Report
+                  </button>
+                  <LikeButton profileId={profileData.id} />
+                </div>
               )}
             </div>
           </div>

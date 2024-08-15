@@ -8,34 +8,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { BiLogOut } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 import { FaRegHeart } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdHistory } from "react-icons/md";
-
-export function AvatarDemo({
-  profileImage,
-  username,
-}: {
-  profileImage: string | undefined;
-  username: string | undefined;
-}) {
-  return (
-    <Avatar>
-      <AvatarImage src={profileImage} alt={username || "avatar"} />
-      <AvatarFallback>
-        <FaUserCircle className="h-10 w-10" />
-      </AvatarFallback>
-    </Avatar>
-  );
-}
+import { ProfileAvatar } from "../profile-avatar/profile-avatar";
 
 const ProfileDropdown: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -47,7 +29,7 @@ const ProfileDropdown: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <AvatarDemo
+        <ProfileAvatar
           profileImage={user?.profile_picture}
           username={user?.username}
         />
