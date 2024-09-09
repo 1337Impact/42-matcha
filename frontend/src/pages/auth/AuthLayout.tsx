@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import SignIn from "./signin";
 import SignUp from "./signup";
+import ResetPassword from "./resetPassword";
 
 const AuthLayout: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const AuthLayout: React.FC = () => {
         <Routes>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/resetPassword" element={<ResetPassword />} />
         </Routes>
       </div>
       <footer className="mt-4 text-center text-gray-500 text-sm">

@@ -21,7 +21,9 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "bio" TEXT,
   "is_verified" BOOLEAN DEFAULT FALSE,
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  "resetPasswordExpires" TIMESTAMP,
+  "resetPasswordToken" TEXT
 );
 `;
 

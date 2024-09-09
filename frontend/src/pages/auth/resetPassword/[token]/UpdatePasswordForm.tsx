@@ -1,58 +1,55 @@
 import { useState } from "react";
-import { loginSchema } from "../../../utils/zod/loginSchema";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { ImSpinner3 } from "react-icons/im";
+import { passwordUpdateSchema } from "../../../../utils/zod/passwordUpdateSchema";
 
-export default function SignInForm() {
+export default function UpdatePasswordForm() {
   const [data, setData] = useState({
-    email: "",
     password: "",
+    confirmPassword: "",
   });
   const [error, setError] = useState(data);
-  const [singInError, setSignInError] = useState("");
+  const [updateError, setUpdateError] = useState("");
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
-  
+  const { token } = useParams();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
 
-  // const handleForgertPassword = () => {
-  //   setRedirecting(true);
-  //   navigate("/reset-password");
-  // }
-
   const onSubmit = async (e: any) => {
     e.preventDefault();
     setError({
-      email: "",
       password: "",
+      confirmPassword: "",
     });
-    const result = loginSchema.safeParse(data);
+    
+    const result = passwordUpdateSchema.safeParse(data);
     if (!result.success) {
-      result.error.errors.forEach((err) => {
+      result.error.errors.forEach((err : any) => {
         setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
       });
       return;
     }
+
+    if (data.password !== data.confirmPassword) {
+      setError((prev) => ({ ...prev, confirmPassword: "Passwords do not match." }));
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        data
+      await axios.post(
+        `http://localhost:3000/api/auth/reset-password/${token}`,
+        { password: data.password }
       );
-      console.log("login res: ", response);
-      window.localStorage.setItem("token", response.data.token);
-      const isProfileCompleted = response.data.isProfileCompleted;
       setRedirecting(true);
-      navigate(`/${!isProfileCompleted ? "?profilecompleted=false" : ""}`)
-      // setTimeout(() => {
-      // }, 1000);
+      navigate("/");
     } catch (error: any) {
-      setSignInError(error.message);
-      console.log(error.message);
+      setUpdateError(error.message);
       setLoading(false);
     }
   };
@@ -70,63 +67,49 @@ export default function SignInForm() {
             <p className="text-gray-600 text-sm font-medium">Redirecting...</p>
           )}
         </div>
-        <p className="text-red-500 text-sm font-medium pb-2">{singInError}</p>
-        <div className="mb-4">
-          <label
-            className="block text-gray-600 text-sm font-bold mb-1"
-            htmlFor="email"
-          >
-            Email Address
-          </label>
-          <input
-            autoFocus
-            className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-            id="email"
-            type="email"
-            required={false}
-            placeholder="Email Address"
-            onChange={handleChange}
-          />
-          <p className="text-red-500 text-xs italic">{error.email}</p>
-        </div>
+        <p className="text-red-500 text-sm font-medium pb-2">{updateError}</p>
         <div className="mb-4">
           <label
             className="block text-gray-600 text-sm font-bold mb-1"
             htmlFor="password"
           >
-            Password
+            New Password
           </label>
           <input
+            autoFocus
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="password"
             type="password"
-            placeholder="Password"
+            placeholder="Enter your new password"
             onChange={handleChange}
           />
           <p className="text-red-500 text-xs italic">{error.password}</p>
-      
-          <Link className="text-blue-400 text-xs italic text-end justify-self-end" to="/resetPassword">
-            Forget password ? {" "}
-          </Link>
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-600 text-sm font-bold mb-1"
+            htmlFor="confirmPassword"
+          >
+            Confirm New Password
+          </label>
+          <input
+            className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm your new password"
+            onChange={handleChange}
+          />
+          <p className="text-red-500 text-xs italic">{error.confirmPassword}</p>
         </div>
         <div className="flex items-center justify-between">
           <button
             className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-1 px-4 rounded"
-            // onClick={onSubmit}
             type="submit"
           >
-            Sign In
+            Update Password
           </button>
         </div>
       </form>
-      <div>
-        <p className="text-gray-600 text-sm mt-3">
-          Already have an account?{" "}
-          <Link className="text-blue-500" to="/signup">
-            Sign Up
-          </Link>
-        </p>
-      </div>
     </div>
   );
 }
