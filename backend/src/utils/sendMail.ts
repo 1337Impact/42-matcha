@@ -9,7 +9,7 @@ interface SendEmailProps {
   link: string;
 }
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST as string,
   port: parseInt(process.env.EMAIL_PORT as string),
   secure: false,

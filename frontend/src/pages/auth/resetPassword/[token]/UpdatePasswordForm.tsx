@@ -43,8 +43,8 @@ export default function UpdatePasswordForm() {
     try {
       setLoading(true);
       await axios.post(
-        `http://localhost:3000/api/auth/reset-password/${token}`,
-        { password: data.password }
+        `http://localhost:3000/api/auth/reset-password/`,
+        { password: data.password, token: token }
       );
       setRedirecting(true);
       navigate("/");

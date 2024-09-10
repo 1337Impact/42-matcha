@@ -19,11 +19,6 @@ export default function SignInForm() {
     setData({ ...data, [e.target.id]: e.target.value });
   };
 
-  // const handleForgertPassword = () => {
-  //   setRedirecting(true);
-  //   navigate("/reset-password");
-  // }
-
   const onSubmit = async (e: any) => {
     e.preventDefault();
     setError({

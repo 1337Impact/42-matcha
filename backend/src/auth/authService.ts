@@ -6,10 +6,10 @@ import {
 import { loginSchema, signupSchema } from "./authSchema";
 import bcrypt from "bcrypt";
 import db from "../utils/db/client";
-import sendVerificationEmail from "../utils/sendMail";
+import sendVerificationEmail, { transporter } from "../utils/sendMail";
 import { JwtPayload } from "jsonwebtoken";
-const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 interface User {
   email: string;
@@ -18,7 +18,6 @@ interface User {
   username: string;
   password: string;
 }
-
 
 async function createUser(userData: User): Promise<string | null> {
   console.log("userData: ", userData);
@@ -143,7 +142,7 @@ export const loginUser = async (data: { email: string; password: string }) => {
       ...user,
       profilePicture: pictures ? pictures[0] : "",
     });
-    return {id: user.id, token: token};
+    return { id: user.id, token: token };
   } catch (error) {
     console.log("error: ", error);
     return null;
@@ -192,64 +191,62 @@ export const handleEmailVerification = async (token: string) => {
 
 export const handleForgetPasswordEamil = async (email: string, res: any) => {
   const query = `
-      SELECT id, username, first_name, last_name, email, resetPasswordToken, resetPasswordExpires, is_verified
+      SELECT id, username, first_name, last_name, email, is_verified, reset_password_token, reset_password_expires
       FROM "USER"
       WHERE email = $1;
     `;
+    const updateQuery = `
+    UPDATE "USER"
+    SET reset_password_token = $1, reset_password_expires = $2
+    WHERE email = $3;
+  `;
   try {
-    const { rows } : any = await db.query(query, [email]);
+    console.log("email: ", email);
+    const { rows }: any = await db.query(query, [email]);
+    console.log("rows: ", rows[0].reset_password_token);
 
     if (!rows) {
-      return res.status(400).json({ message: 'User with this email does not exist.' });
+      return res
+        .status(400)
+        .json({ message: "User with this email does not exist." });
     }
 
-    const token = crypto.randomBytes(32).toString('hex');
-    const expiration = Date.now() + 3600000; // 1 hour from now
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiration = new Date(Date.now() + 3600000); // 1 hour from now
 
-    rows.resetPasswordToken = token;
-    rows.resetPasswordExpires = new Date(expiration);
-    await rows.save();
-
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: process.env.EMAIL_LOGIN,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-
+    rows[0].reset_password_token = token;
+    rows[0].reset_password_expires = new Date(expiration);
+    await db.query(updateQuery, [token, expiration, email]);
+      
     const mailOptions = {
-      to: rows.email,
-      from: 'password-reset@yourapp.com',
-      subject: 'Password Reset',
+      to: rows[0].email,
+      from: `"Matcha 👻" <${process.env.EMAIL_LOGIN}>`,
+      subject: "Password Reset",
       text: `You are receiving this because you (or someone else) have requested to reset your account password.\n\n
       Please click on the following link, or paste it into your browser to complete the process:\n\n
-      ${process.env.FRONTEND_URL}/reset-password/${token}\n\n
+      ${process.env.FRONTEND_URL}/resetPassword/${token}\n\n
       If you did not request this, please ignore this email and your password will remain unchanged.\n`,
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'A reset link has been sent to your email.' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res
+      .status(200)
+      .json({ message: "A reset link has been sent to your email." });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
-
-export const handleUpdatePassword = async (
-  password: string,
-  token: string,
-) => {
-  // Query to find the user by reset token and ensure it hasn't expired
+export const handleUpdatePassword = async (password: string, token: string) => {
   const findUserQuery = `
-    SELECT id, email, resetPasswordExpires
+    SELECT id, email, reset_password_expires
     FROM "USER"
-    WHERE resetPasswordToken = $1 AND resetPasswordExpires > NOW();
+    WHERE reset_password_token = $1 AND reset_password_expires > NOW();
   `;
 
   const updatePasswordQuery = `
     UPDATE "USER"
-    SET password = $1, resetPasswordToken = NULL, resetPasswordExpires = NULL
+    SET password = $1, reset_password_token = NULL, reset_password_expires = NULL
     WHERE id = $2;
   `;
 
@@ -262,11 +259,9 @@ export const handleUpdatePassword = async (
 
     const user = rows[0];
 
-    // Hash the new password
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
 
-    // Update the user's password
     await db.query(updatePasswordQuery, [hashedPass, user.id]);
 
     console.log(`Password updated successfully for user ID ${user.id}`);

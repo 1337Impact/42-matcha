@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getProfileData, handleViewProfile, UserProfile } from "./utils";
-import { FaCalendarAlt } from "react-icons/fa";
 import { BsSearchHeart } from "react-icons/bs";
+import { FaCalendarAlt } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { UserProfile, getProfileData, handleViewProfile } from "./utils";
 
 import { IoMaleFemale } from "react-icons/io5";
-import EditProfile from "../../components/edit-profile";
 import { useSelector } from "react-redux";
-import { RootState } from "../../store";
-import LikeButton from "../../components/like-button/like-button";
 import { Link } from "react-router-dom";
+import EditProfile from "../../components/edit-profile";
+import LikeButton from "../../components/like-button/like-button";
+import { RootState } from "../../store";
 
 export default function Profile() {
   const params = useParams();

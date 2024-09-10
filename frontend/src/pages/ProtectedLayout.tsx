@@ -14,11 +14,39 @@ import Connections from "./connections";
 import Chat from "./chat";
 import ChatRoom from "./chat/chat-room";
 import { SocketProvider } from "../contexts/SocketContext";
+import axios from "axios";
+import Settings from "./settings";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
   let [searchParams, setSearchParams] = useSearchParams();
   const [isOpenProfileCompleted, setIsOpenProfileCompleted] = useState(false);
+  const token = window.localStorage.getItem("token");
+
+  useEffect(() => {
+    /// check if the user already completed the profile setup
+    console.log("Checking if profile is completed", user);
+    const checkProfileCompletion = async () => {
+      try {
+        const profileCompleted = await axios.post(
+          `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/iscompleted`,
+          {user: user?.id},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("Profile completed: ", profileCompleted.data.isCompleted);
+        if (profileCompleted.data.isCompleted == false) {
+          setIsOpenProfileCompleted(true);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    checkProfileCompletion();
+  }, []);
 
   useEffect(() => {
     if (searchParams.get("profilecompleted") == "false") {
@@ -55,6 +83,7 @@ const ProtectedLayout: React.FC = () => {
             <Route path="/profile/likes" element={<Likes />} />
             <Route path="/profile/views" element={<Views />} />
             <Route path="/profile/history" element={<History />} />
+            <Route path="/Settings" element={<Settings/>} />
           </Routes>
         </main>
         <Footer />

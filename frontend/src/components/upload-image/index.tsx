@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import { useEffect } from "react";
 
 interface AddProductImageProps {
   setImgFile: (imgFile: File | null) => void;
@@ -28,6 +29,11 @@ export default function UploadImage({
     setImage("");
     setImgFile(null);
   };
+
+  useEffect (() => {
+    console.log("image: ", image);
+  }
+  ,[image]);
 
   return (
     <div className="w-24 h-32 flex flex-col justify-center items-center border border-gray-300 rounded-lg overflow-hidden relative">

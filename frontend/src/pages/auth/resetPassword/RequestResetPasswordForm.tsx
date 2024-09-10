@@ -20,7 +20,7 @@ export default function RequestResetPasswordForm() {
     try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/request-reset-password",
-        { email }
+        { email: email }
       );
       setSuccessMessage(response.data.message);
       setLoading(false);

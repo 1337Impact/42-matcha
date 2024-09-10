@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "is_verified" BOOLEAN DEFAULT FALSE,
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  "resetPasswordExpires" TIMESTAMP,
-  "resetPasswordToken" TEXT
+  "reset_password_expires" TIMESTAMP,
+  "reset_password_token" TEXT DEFAULT ''
 );
 `;
 
@@ -63,16 +63,37 @@ CREATE TABLE IF NOT EXISTS "Message" (
 `;
 
 
+
+// const alterTableUserQuery = `
+// ALTER TABLE "USER"
+// ADD COLUMN IF NOT EXISTS "resetPasswordExpires" TIMESTAMP,
+// ADD COLUMN IF NOT EXISTS "resetPasswordToken" TEXT DEFAULT '';
+// `;
+
+// async function alterTables() {
+//   try {
+//     await pool.query(alterTableUserQuery);
+//     console.log("User table updated successfully with new columns.");
+//     pool.end();
+//   } catch (error) {
+//     console.error("Error updating User table:", error);
+//     pool.end();
+//   }
+// }
+
+// alterTables();
+
+
 async function createTables() {
   try {
     await pool.query(createTableUserQuery);
     console.log("User table created successfully");
-    await pool.query(createTableViewQuery);
-    console.log("User views table created successfully");
-    await pool.query(createTableLikesQuery);
-    console.log("User likes table created successfully");
-    await pool.query(createTableMessageQuery);
-    console.log("Message table created successfully");
+    // await pool.query(createTableViewQuery);
+    // console.log("User views table created successfully");
+    // await pool.query(createTableLikesQuery);
+    // console.log("User likes table created successfully");
+    // await pool.query(createTableMessageQuery);
+    // console.log("Message table created successfully");
     pool.end();
   } catch (error) {
     console.error("Error creating tables:", error);
