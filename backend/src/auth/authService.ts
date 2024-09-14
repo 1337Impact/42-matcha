@@ -201,11 +201,9 @@ export const handleForgetPasswordEamil = async (email: string, res: any) => {
     WHERE email = $3;
   `;
   try {
-    console.log("email: ", email);
-    const { rows }: any = await db.query(query, [email]);
-    console.log("rows: ", rows[0].reset_password_token);
+    const { rows } = await db.query(query, [email]);
 
-    if (!rows) {
+    if (rows.length === 0) {
       return res
         .status(400)
         .json({ message: "User with this email does not exist." });

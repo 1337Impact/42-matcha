@@ -1,5 +1,5 @@
-import { login, signup, verifyEmail } from "./authControllers";
 import { Router } from "express";
+import { login, signup, verifyEmail } from "./authControllers";
 import { handleForgetPasswordEamil, handleUpdatePassword } from "./authService";
 
 const router = Router();
@@ -8,11 +8,11 @@ router.post("/login", login);
 router.post("/signup", signup);
 router.post("/verify", verifyEmail);
 router.post("/request-reset-password", async (req, res) => {
-
-    const { email } = req.body;
-    try {
-      console.log("Request reset password");
-    await handleForgetPasswordEamil(email, res);
+  console.log("Request reset password", req.body);
+  const { email } = req.body.email;
+  try {
+    console.log("Request reset password");
+    const resp = await handleForgetPasswordEamil(email, res);
   } catch (error) {
     console.error("Error sending reset password email:", error);
     return res.status(500).send("Internal Server Error.");

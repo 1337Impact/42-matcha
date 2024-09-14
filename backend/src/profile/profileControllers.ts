@@ -6,6 +6,7 @@ import {
   handleGetConnections,
   handleGetProfile,
   handleLikeProfile,
+  handleSetGeoLocation,
   handleUpdateProfile,
 } from "./profileService";
 
@@ -46,37 +47,51 @@ const mergeArrays = (newImages: string[], imageFiles: any) => {
   let fillIndex = 0;
 
   return newImages.map((item: string) => {
-      if (item === "" && fillIndex < imageFiles.length) {
-          return `${process.env.BACKEND_URL}/images/${imageFiles[fillIndex++].filename}`
-      }
-      return item;
+    if (item === "" && fillIndex < imageFiles.length) {
+      return `${process.env.BACKEND_URL}/images/${
+        imageFiles[fillIndex++].filename
+      }`;
+    }
+    return item;
   });
-}
+};
 
 const updateProfile = async (req: any, res: any) => {
   try {
-    console.log("req.body: ", req.body, "req.files: ", req.files, "req.user: ", req.user);
-    const images = JSON.stringify(mergeArrays(JSON.parse(req.body.images), req.files));
+    console.log(
+      "req.body: ",
+      req.body,
+      "req.files: ",
+      req.files,
+      "req.user: ",
+      req.user
+    );
+    const images = JSON.stringify(
+      mergeArrays(JSON.parse(req.body.images), req.files)
+    );
     let hashedPassword = null;
     if (req.body.new_password) {
-      // if (req.body.new_password !== req.body.confirm_password) {
-      //   return res.status(405).send({ error: "Passwords do not match" });
-      // }
+      if (req.body.new_password !== req.body.confirm_password) {
+        return res.status(405).send({ error: "Passwords do not match" });
+      }
       hashedPassword = await bcrypt.hash(req.body.new_password, 10);
     }
 
     // Call function to update profile and optionally the password
-    await handleUpdateProfile({ 
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      email: req.body.email,
-      gender: req.body.gender,
-      sexual_preferences: req.body.sexual_preferences,
-      biography: req.body.biography,
-      tags: req.body.tags,
-      images: images,
-      new_password: hashedPassword as string
-    }, req.user);
+    await handleUpdateProfile(
+      {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        gender: req.body.gender,
+        sexual_preferences: req.body.sexual_preferences,
+        biography: req.body.biography,
+        tags: req.body.tags,
+        images: images,
+        new_password: hashedPassword as string,
+      },
+      req.user
+    );
     console.log("images: ", images);
     await handleUpdateProfile({ ...req.body, images: images }, req.user);
     res.send("Profile updated successfully");
@@ -86,9 +101,9 @@ const updateProfile = async (req: any, res: any) => {
   }
 };
 
-export const updateProfileSettings = async (req:any, res: any) => {
+export const updateProfileSettings = async (req: any, res: any) => {
   try {
-    console.log("req", req, "req.body: " , req.body);
+    // console.log("req", req, "req.body: ", req.body);
 
     // const imageFiles = req.body.files || [];
     // const imageFilesData = imageFiles.map((file:any) => ({
@@ -97,8 +112,10 @@ export const updateProfileSettings = async (req:any, res: any) => {
     // }));
 
     // Parsing and merging image data
-    const images = JSON.stringify(mergeArrays(JSON.parse(req.body.images), req.files));
-    
+    const images = JSON.stringify(
+      mergeArrays(JSON.parse(req.body.images), req.files)
+    );
+
     // Handle password update
     let hashedPassword = null;
     if (req.body.new_password) {
@@ -109,25 +126,31 @@ export const updateProfileSettings = async (req:any, res: any) => {
     }
 
     // Call function to update profile and optionally the password
-    await handleUpdateProfile({ 
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      email: req.body.email,
-      gender: req.body.gender,
-      sexual_preferences: req.body.sexual_preferences,
-      biography: req.body.biography,
-      tags: JSON.parse(req.body.tags || '[]'),
-      images: images,
-      new_password: hashedPassword as string
-    }, req.user);
-    
+    console.log("latitude: -----~~~~>", req.body.latitude, "longitude: ", req.body.longitude);
+    await handleUpdateProfile(
+      {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        gender: req.body.gender,
+        sexual_preferences: req.body.sexual_preferences,
+        biography: req.body.biography,
+        tags: JSON.parse(req.body.tags || "[]"),
+        images: images,
+        new_password: hashedPassword as string,
+        address: req.body.address,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude
+      },
+      req.user
+    );
+
     res.send("Profile settings updated successfully");
   } catch (error) {
     console.error("Update profile settings error: ", error);
     res.status(400).send({ error: "Something went wrong." });
   }
 };
-
 
 const likeProfile = async (req: any, res: any) => {
   try {
@@ -137,16 +160,37 @@ const likeProfile = async (req: any, res: any) => {
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
   }
-}
+};
 
 const isProfileCompleted = async (req: any, res: any) => {
   try {
     console.log("req.user: ", req.body.user);
     const isCompleted = await getIsProfileCompleted(req.body.user);
+    console.log("isCompleted: ", isCompleted);
     res.send({ isCompleted });
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
   }
 };
 
-export { getProfile, getAllProfiles, getConnections, updateProfile, isProfileCompleted, likeProfile };
+const getGeoLocation = async (req: any, res: any) => {
+  try {
+    const ip = req.headers["x-forwarded-for"] || req.socket.address().address;
+    console.log("ip: ", ip);
+    const data = await handleSetGeoLocation(req.user.id, ip);
+    // console.log("data back: ---------> ", data);
+  } catch (error) {
+    console.error("Error getting geo location: ", error);
+    res.status(400).send({ error: "Something went wrong." });
+  }
+};
+
+export {
+  getProfile,
+  getAllProfiles,
+  getConnections,
+  updateProfile,
+  isProfileCompleted,
+  likeProfile,
+  getGeoLocation,
+};

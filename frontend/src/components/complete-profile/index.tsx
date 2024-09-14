@@ -93,7 +93,7 @@ export default function EditProfile({
         file && formData.append("images", file);
       });
       await axios.post(
-        "http://localhost:3000/api/profile/update",
+        `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/update`,
         formData,
         {
           headers: {

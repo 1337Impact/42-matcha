@@ -1,6 +1,5 @@
 import db from "../utils/db/client";
-import { handleGetIsProfileLiked } from "./likes/likesService";
-import { User, Profile } from "./types";
+import { Profile, User } from "./types";
 
 async function handleGetProfile(
   profileId: string,
@@ -94,24 +93,65 @@ async function handleGetConnections(user: User): Promise<any> {
   }
 }
 
+async function handleSetGeoLocation(userId: string, ip: any): Promise<any> {
+  const query = `UPDATE "USER" 
+  SET latitude = $1, longitude = $2
+  WHERE id = $3
+  RETURNING id latitude;`;
+  try {
+    const geoLocation = await fetch(
+      "https://api.geoapify.com/v1/ipinfo?&apiKey=b9dbebfcbac54aa88569c2311512c0d4",
+      {
+        method: "GET",
+      }
+    );
+    const data = await geoLocation.json();
+    console.log(
+      "Geo location data: ",
+      data.location,
+      data.city.name,
+      data.country.name
+    );
+    await db.query(query, [
+      data.location.latitude,
+      data.location.longitude,
+      userId,
+    ]);
+    return data;
+  } catch (error) {
+    console.error("Error getting geo location: ", error);
+    throw error;
+  }
+}
+
 async function handleUpdateProfile(
   profileData: Profile,
   user: User
 ): Promise<string | null> {
   console.log("Profile data: ", profileData);
+  console.log("latitude: ++++++--->", profileData.latitude, "longitude:  ++++++--->", profileData.longitude);
   try {
     const query = `UPDATE "USER" 
-      SET gender = $1, sexual_preferences = $2, bio = $3, interests = $4, pictures = $5
-      WHERE id = $6
-      RETURNING id;`;
+      SET gender = $1, sexual_preferences = $2, bio = $3, interests = $4, pictures = $5, first_name = $6, last_name = $7, email = $8, password = $9,
+      latitude = $10, longitude = $11, address = $12
+      WHERE id = $13
+      RETURNING latitude;`;
     const { rows } = await db.query(query, [
       profileData.gender,
       profileData.sexual_preferences,
       profileData.biography,
       JSON.parse(profileData.tags),
       profileData.images,
+      profileData.first_name,
+      profileData.last_name,
+      profileData.email,
+      profileData.new_password,
+      profileData.latitude,
+      profileData.longitude,
+      profileData.address,
       user.id,
     ]);
+    console.log("Updated profile: ========>>", rows[0]);
     return rows[0].id;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -150,10 +190,8 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
 }
 
 export {
-  handleGetProfile,
-  handleGetAllProfiles,
-  handleGetConnections,
-  handleUpdateProfile,
-  getIsProfileCompleted,
-  handleLikeProfile,
+  getIsProfileCompleted, handleGetAllProfiles,
+  handleGetConnections, handleGetProfile, handleLikeProfile,
+  handleSetGeoLocation, handleUpdateProfile
 };
+

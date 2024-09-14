@@ -18,6 +18,9 @@ interface Profile {
   email?: string;
   first_name?: string;
   last_name?: string;
+  latitude?: string;
+  longitude?: string;
+  address?: string;
 }
 
 export { User, Profile };

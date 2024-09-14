@@ -16,6 +16,7 @@ import ChatRoom from "./chat/chat-room";
 import { SocketProvider } from "../contexts/SocketContext";
 import axios from "axios";
 import Settings from "./settings";
+import { toast } from "react-toastify";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -28,9 +29,10 @@ const ProtectedLayout: React.FC = () => {
     console.log("Checking if profile is completed", user);
     const checkProfileCompletion = async () => {
       try {
+        if (!user) return;
         const profileCompleted = await axios.post(
           `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/iscompleted`,
-          {user: user?.id},
+          { user: user.id },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,10 +45,31 @@ const ProtectedLayout: React.FC = () => {
         }
       } catch (err) {
         console.log(err);
+        toast.error("Failed to check profile completion");
       }
     };
+    const userGeoLocation = async () => {
+      try {
+        if (!user) return;
+        const geoLocation = await axios.post(
+          `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/geolocation`,
+          { user: user.id },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("User GeoLocation: ", geoLocation.data);
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to get user location");
+      }
+    };
+
+    userGeoLocation();
     checkProfileCompletion();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (searchParams.get("profilecompleted") == "false") {
@@ -83,7 +106,7 @@ const ProtectedLayout: React.FC = () => {
             <Route path="/profile/likes" element={<Likes />} />
             <Route path="/profile/views" element={<Views />} />
             <Route path="/profile/history" element={<History />} />
-            <Route path="/Settings" element={<Settings/>} />
+            <Route path="/Settings" element={<Settings />} />
           </Routes>
         </main>
         <Footer />

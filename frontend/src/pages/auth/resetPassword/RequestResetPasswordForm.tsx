@@ -19,7 +19,7 @@ export default function RequestResetPasswordForm() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/request-reset-password",
+        `${import.meta.env.VITE_APP_BACKEND_URL}/api/auth/request-reset-password`,
         { email: email }
       );
       setSuccessMessage(response.data.message);

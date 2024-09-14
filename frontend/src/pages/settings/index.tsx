@@ -41,6 +41,9 @@ export default function Settings() {
     images: Array(5).fill(""),
     new_password: "",
     confirm_password: "",
+    address: "",
+    latitude: 0,
+    longitude: 0,
   });
 
   const [error, setError] = useState({
@@ -54,6 +57,7 @@ export default function Settings() {
     images: "",
     new_password: "",
     confirm_password: "",
+    address: "",
   });
 
   const [imageFiles, setImageFiles] = useState<(File | null)[]>(
@@ -62,6 +66,9 @@ export default function Settings() {
   const [imagePreview, setImagePreview] = useState<(string | null)[]>(
     data.images
   );
+
+  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState<any>(null);
 
   useEffect(() => {
     // Fetch user profile data on component mount
@@ -81,6 +88,7 @@ export default function Settings() {
           tags: response.data.interests,
           biography: response.data.bio,
           images: pictureArrayFromString,
+          new_password: "",
         });
       } catch (error) {
         console.error("Failed to fetch user profile data", error);
@@ -101,6 +109,38 @@ export default function Settings() {
     setData({ ...data, tags: selectedOptions?.map((tag: any) => tag.value) });
   };
 
+  const onAddressChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setData({ ...data, address: query });
+
+    if (query.length < 3) {
+      setAddressSuggestions([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `https://api.geoapify.com/v1/geocode/autocomplete?text=${query}&apiKey=${
+          import.meta.env.VITE_APP_GEOAPIFY_API_KEY
+        }`
+      );
+      console.log("Address suggestions: --------> ", response.data);
+      const suggestions = response.data.features.map(
+        (feature: any) => feature.properties
+      );
+      setAddressSuggestions(suggestions);
+    } catch (error) {
+      console.error("Error fetching address suggestions:", error);
+    }
+  };
+
+  const onSelectAddress = (address: any) => {
+    setSelectedAddress(address);
+    console.log("Selected address: -----------==> ", address, address.formatted, "lat-lon ---> ", address.lat, address.lon);
+    setData({ ...data, address: address.formatted, latitude: address.lat, longitude: address.lon });
+    setAddressSuggestions([]); // Hide suggestions once an address is selected
+  };
+
   const onSubmit = async () => {
     setError({
       first_name: "",
@@ -113,6 +153,7 @@ export default function Settings() {
       gender: "",
       new_password: "",
       confirm_password: "",
+      address: "",
     });
 
     if (data.new_password && data.new_password !== data.confirm_password) {
@@ -126,6 +167,7 @@ export default function Settings() {
     const result = completeProfileSchema.safeParse({
       ...data,
       images: imagePreview,
+      address: selectedAddress,
     });
     if (!result.success) {
       result.error.errors.forEach((err) => {
@@ -146,6 +188,9 @@ export default function Settings() {
       formData.append("images", JSON.stringify(data.images));
       formData.append("new_password", data.new_password);
       formData.append("confirm_password", data.confirm_password);
+      formData.append("address", data.address);
+      formData.append("latitude", data.latitude.toString());
+      formData.append("longitude", data.longitude.toString());
       imageFiles.forEach((file) => {
         file && formData.append("images", file);
       });
@@ -225,6 +270,42 @@ export default function Settings() {
         />
         {error.email && (
           <p className="text-red-500 text-xs mt-1">{error.email}</p>
+        )}
+      </div>
+
+      {/* Address */}
+
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="address"
+        >
+          Address
+        </label>
+        <input
+          type="text"
+          className="border rounded w-full py-2 px-3 text-gray-700"
+          id="address"
+          value={data.address}
+          onChange={onAddressChange}
+          placeholder="Enter your address"
+        />
+        {error.address && (
+          <p className="text-red-500 text-xs mt-1">{error.address}</p>
+        )}
+        {/* Display Address Suggestions */}
+        {addressSuggestions.length > 0 && (
+          <ul className="bg-white border rounded shadow-md">
+            {addressSuggestions && addressSuggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => onSelectAddress(suggestion)}
+              >
+                {suggestion.formatted}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
