@@ -84,7 +84,7 @@ const ProtectedLayout: React.FC = () => {
 
   return (
     <SocketProvider>
-      <div className="h-screen flex flex-col">
+      <div className="h-screen bg-gray-100 flex flex-col">
         {isOpenProfileCompleted && (
           <CompleteProfile handleClose={handleCloseProfileCompletion} />
         )}
@@ -96,7 +96,7 @@ const ProtectedLayout: React.FC = () => {
           </div>
         )}
         <Navbar />
-        <main className="flex-1 overflow-auto xl:w-[1200px] mx-2 md:mx-6 lg:mx-8 xl:mx-auto">
+        <main className="flex-1 overflow-auto xl:w-[1200px] mx-2 md:mx-6 lg:mx-8 xl:mx-auto h-auto">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/connections" element={<Connections />} />

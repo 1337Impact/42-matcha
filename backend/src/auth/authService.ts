@@ -203,6 +203,8 @@ export const handleForgetPasswordEamil = async (email: string, res: any) => {
   try {
     const { rows } = await db.query(query, [email]);
 
+    console.log("rows: -------> ", email);
+
     if (rows.length === 0) {
       return res
         .status(400)

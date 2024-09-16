@@ -1,13 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import ProfileCard from "../components/profile-card/profile-card";
-import { SocketContext } from "../contexts/SocketContext";
 import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import ProfileSwiper from "../components/profiles-card-swiper/profiles-card-swiper";
+import { SocketContext } from "../contexts/SocketContext";
 
 interface Profile {
   id: string;
   first_name: string;
   last_name: string;
   username: string;
+  gender: string;
+  bio: string;
+  tags: string[];
   pictures: string[];
 }
 
@@ -25,6 +28,9 @@ const getProfiles = async (token: string): Promise<Profile[]> => {
       first_name: profile.first_name,
       last_name: profile.last_name,
       username: profile.username,
+      bio: profile.bio,
+      tags: profile.interests,
+      gender: profile.gender,
       pictures,
     };
   });
@@ -49,17 +55,14 @@ const Home: React.FC = () => {
     const token = localStorage.getItem("token");
     token &&
       getProfiles(token).then((data) => {
+        console.log("Profiles: ", data);
         setProfiles(data);
       });
   }, []);
 
   return (
-    <div className="mt-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-        {profiles.map((profile, index) => (
-          <ProfileCard profile={profile} key={index} />
-        ))}
-      </div>
+    <div className="w-full h-full p-1 pt-2">
+      <ProfileSwiper profiles={profiles} />
     </div>
   );
 };

@@ -100,7 +100,7 @@ async function handleSetGeoLocation(userId: string, ip: any): Promise<any> {
   RETURNING id latitude;`;
   try {
     const geoLocation = await fetch(
-      "https://api.geoapify.com/v1/ipinfo?&apiKey=b9dbebfcbac54aa88569c2311512c0d4",
+      `https://api.geoapify.com/v1/ipinfo?&apiKey=${process.env.GEOAPIFY_API_KEY}`,
       {
         method: "GET",
       }
@@ -129,7 +129,12 @@ async function handleUpdateProfile(
   user: User
 ): Promise<string | null> {
   console.log("Profile data: ", profileData);
-  console.log("latitude: ++++++--->", profileData.latitude, "longitude:  ++++++--->", profileData.longitude);
+  console.log(
+    "latitude: ++++++--->",
+    profileData.latitude,
+    "longitude:  ++++++--->",
+    profileData.longitude
+  );
   try {
     const query = `UPDATE "USER" 
       SET gender = $1, sexual_preferences = $2, bio = $3, interests = $4, pictures = $5, first_name = $6, last_name = $7, email = $8, password = $9,
@@ -190,8 +195,11 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
 }
 
 export {
-  getIsProfileCompleted, handleGetAllProfiles,
-  handleGetConnections, handleGetProfile, handleLikeProfile,
-  handleSetGeoLocation, handleUpdateProfile
+  getIsProfileCompleted,
+  handleGetAllProfiles,
+  handleGetConnections,
+  handleGetProfile,
+  handleLikeProfile,
+  handleSetGeoLocation,
+  handleUpdateProfile,
 };
-

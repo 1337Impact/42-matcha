@@ -9,9 +9,8 @@ router.post("/signup", signup);
 router.post("/verify", verifyEmail);
 router.post("/request-reset-password", async (req, res) => {
   console.log("Request reset password", req.body);
-  const { email } = req.body.email;
+  const email = req.body.email;
   try {
-    console.log("Request reset password");
     const resp = await handleForgetPasswordEamil(email, res);
   } catch (error) {
     console.error("Error sending reset password email:", error);
