@@ -65,7 +65,7 @@ const ProfileSwiper = ({ profiles }: { profiles: Profile[] }) => {
         {profiles.map((profile) => (
           <SwiperSlide
             key={profile.id}
-            className="h-full w-full flex items-center justify-center "
+            className="h-full w-full flex items-center justify-center  "
           >
             {/* Inner Swiper for Profile Pictures */}
             <Swiper
