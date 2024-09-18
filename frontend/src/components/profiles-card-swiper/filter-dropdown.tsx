@@ -1,35 +1,27 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { RootState } from "../../store";
-import React, { useState } from "react";
 import { Menu } from "@headlessui/react";
 import TuneIcon from "@mui/icons-material/Tune";
-import ReactSelect from "react-select";
-import { tagsList } from "../edit-profile";
 import Slider from "@mui/material/Slider";
 import axios from "axios";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import ReactSelect from "react-select";
+import { RootState } from "../../store";
+import { tagsList } from "../edit-profile";
 
 const FilterDropdown: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
-  //   const ProfilesFilter = useSelector(
-  //     (state: RootState) => state.profileFilterSlice
-  //   );
   interface ProfileFilter {
     distance: number;
     sexual_preferences: string;
     interests: string[];
+    agerange: number[] | number;
   }
   const [ProfilesFilter, setProfilesFilter] = useState({
     distance: 10,
     sexual_preferences: "",
     interests: [],
+    agerange: [18, 22],
   });
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const onLogout = () => {
-    window.localStorage.removeItem("token");
-    navigate("/signin");
-  };
 
   const sexPreference = [
     { value: "Male", label: "Male" },
@@ -60,6 +52,20 @@ const FilterDropdown: React.FC = () => {
     });
   };
 
+  const handleAgeRangeChange = (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === "number") {
+      setProfilesFilter({
+        ...ProfilesFilter,
+        agerange: [newValue, newValue],
+      });
+      return;
+    }
+    setProfilesFilter({
+      ...ProfilesFilter,
+      agerange: newValue as number[],
+    });
+  };
+
   const applyFilter = async () => {
     const token = window.localStorage.getItem("token");
     console.log(ProfilesFilter);
@@ -67,7 +73,13 @@ const FilterDropdown: React.FC = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/FilteredProfiles`,
         {
-            ProfilesFilter: ProfilesFilter,
+          ProfilesFilter: {
+            distance: ProfilesFilter.distance,
+            sexual_preferences: ProfilesFilter.sexual_preferences,
+            interests: ProfilesFilter.interests,
+            min_age: ProfilesFilter.agerange[0],
+            max_age: ProfilesFilter.agerange[1],
+          },
         },
         {
           headers: {
@@ -82,7 +94,7 @@ const FilterDropdown: React.FC = () => {
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-left z-50">
+    <Menu as="div" className="relative inline-block text-right z-50">
       <div>
         <Menu.Button>
           <TuneIcon
@@ -154,6 +166,28 @@ const FilterDropdown: React.FC = () => {
           <div className="flex flex-col items-start gap-0 w-full">
             <label
               className="text-gray-700 text-sm font-bold mb-1"
+              htmlFor="age range"
+            >
+              age range
+            </label>
+            <Slider
+              getAriaLabel={() => "Temperature range"}
+              value={
+                ProfilesFilter.agerange ? ProfilesFilter.agerange : [18, 22]
+              }
+              onChange={handleAgeRangeChange}
+              valueLabelDisplay="auto"
+              sx={{
+                color: "red",
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="p-4">
+          <div className="flex flex-col items-start gap-0 w-full">
+            <label
+              className="text-gray-700 text-sm font-bold mb-1"
               htmlFor="distance"
             >
               Distance
@@ -166,6 +200,9 @@ const FilterDropdown: React.FC = () => {
               onChange={handleDistanceChange}
               aria-label="Default"
               valueLabelDisplay="auto"
+              sx={{
+                color: "red",
+              }}
             />
           </div>
         </div>

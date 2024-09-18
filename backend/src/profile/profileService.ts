@@ -87,7 +87,7 @@ async function handleGetgetFilteredProfiles(
     user.id,
     profilesFilter.sexual_preferences,
     profilesFilter.interests,
-    profilesFilter.distance
+    profilesFilter.distance,
   );
   try {
     //get user's location and other data
@@ -111,7 +111,7 @@ async function handleGetgetFilteredProfiles(
                 cos(radians($2)) * cos(radians(latitude)) * cos(radians(longitude) - radians($3)) +
                 sin(radians($2)) * sin(radians(latitude))
               )
-            ) AS distance, 
+            ) AS distance,
             array_length(array(
               SELECT unnest(interests)
               INTERSECT
@@ -128,7 +128,11 @@ async function handleGetgetFilteredProfiles(
                 cos(radians($2)) * cos(radians(latitude)) * cos(radians(longitude) - radians($3)) +
                 sin(radians($2)) * sin(radians(latitude))
               )
-            ) <= 10
+            ) <= $6
+            AND (
+              -- age filter
+              age >= $7 AND age <= $8
+            )
         ) AS subquery
         ORDER BY distance ASC, fame_rating DESC, common_interests_count DESC
         LIMIT 5;
@@ -140,6 +144,9 @@ async function handleGetgetFilteredProfiles(
       userData.longitude,
       userData.sexual_preferences || "bisexual",
       userData.interests,
+      profilesFilter.distance || 10,
+      profilesFilter.min_age || 18,
+      profilesFilter.max_age || 99,
     ]);
 
     const query1 = `

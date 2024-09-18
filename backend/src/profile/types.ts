@@ -27,6 +27,8 @@ interface Filter {
   distance?: number;
   sexual_preferences?: string;
   interests?: string[];
+  min_age?: number;
+  max_age?: number;
 }
 
 export { User, Profile, Filter };

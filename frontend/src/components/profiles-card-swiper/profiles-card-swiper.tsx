@@ -9,6 +9,7 @@ import FemaleIcon from "@mui/icons-material/Female";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import FilterDropdown from "./filter-dropdown";
+import SortDropdown from "./sort-dropdown";
 
 SwiperCore.use([Navigation, Pagination, EffectCards]);
 
@@ -40,8 +41,9 @@ const ProfileSwiper = ({ profiles }: { profiles: Profile[] }) => {
 
   return (
     <div className="max-w-lg mx-auto h-full w-full flex flex-col justify-between overflow-hidden">
-      <div className="flex-end text-end items-end p-3 w-full">
-        <FilterDropdown />
+      <div className="flex-end gap-4 text-end items-end p-3 w-full">
+          <SortDropdown />
+          <FilterDropdown />
       </div>
       {/* Outer Swiper for Profiles */}
       <Swiper
