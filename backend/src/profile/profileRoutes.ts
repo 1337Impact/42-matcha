@@ -4,6 +4,7 @@ import LikesRouter from "./likes/likesRoutes";
 import {
   getAllProfiles,
   getConnections,
+  getFilteredProfiles,
   getGeoLocation,
   getProfile,
   isProfileCompleted,
@@ -36,6 +37,7 @@ router.post("/iscompleted", isProfileCompleted);
 router.get("/", getProfile);
 router.get("/connections", getConnections);
 router.get("/all", getAllProfiles);
+router.post("/FilteredProfiles", getFilteredProfiles);
 router.post("/geolocation", getGeoLocation);
 
 export default router;

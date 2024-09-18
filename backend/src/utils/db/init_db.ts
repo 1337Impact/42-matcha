@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "fame_rating" NUMERIC,
   "location" VARCHAR(255),
   latitude NUMERIC,
-  latitude NUMERIC,
+  longitude NUMERIC,
   "address" VARCHAR(255),
   "age" NUMERIC,
   "bio" TEXT,

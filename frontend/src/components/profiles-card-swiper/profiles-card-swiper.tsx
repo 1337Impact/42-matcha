@@ -4,11 +4,11 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import SwiperCore from "swiper";
 import { EffectCards, Navigation, Pagination } from "swiper/modules";
-import TuneIcon from "@mui/icons-material/Tune";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import FilterDropdown from "./filter-dropdown";
 
 SwiperCore.use([Navigation, Pagination, EffectCards]);
 
@@ -40,20 +40,8 @@ const ProfileSwiper = ({ profiles }: { profiles: Profile[] }) => {
 
   return (
     <div className="max-w-lg mx-auto h-full w-full flex flex-col justify-between overflow-hidden">
-      <div className="flex-end text-end items-end ">
-        <button
-          onClick={() => handleSwipe("dislike")}
-          className="p-2 transition-transform transform hover:scale-105 justify-end"
-        >
-          <TuneIcon
-            sx={{
-              width: 32,
-              height: 32,
-              color: "red",
-              fontWeight: "bold",
-            }}
-          />
-        </button>
+      <div className="flex-end text-end items-end p-3 w-full">
+        <FilterDropdown />
       </div>
       {/* Outer Swiper for Profiles */}
       <Swiper

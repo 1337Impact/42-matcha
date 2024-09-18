@@ -23,4 +23,10 @@ interface Profile {
   address?: string;
 }
 
-export { User, Profile };
+interface Filter {
+  distance?: number;
+  sexual_preferences?: string;
+  interests?: string[];
+}
+
+export { User, Profile, Filter };

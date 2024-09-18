@@ -1,5 +1,5 @@
 import db from "../utils/db/client";
-import { Profile, User } from "./types";
+import { Filter, Profile, User } from "./types";
 
 async function handleGetProfile(
   profileId: string,
@@ -73,6 +73,88 @@ async function handleGetAllProfiles(user: User): Promise<any> {
   }
 }
 
+async function handleGetgetFilteredProfiles(
+  user: User,
+  profilesFilter: Filter
+): Promise<any> {
+  const filter: Filter = {
+    distance: 10,
+    sexual_preferences: "",
+    interests: ["music", "sports"],
+  };
+  console.log(
+    "req_body: ---------> ",
+    user.id,
+    profilesFilter.sexual_preferences,
+    profilesFilter.interests,
+    profilesFilter.distance
+  );
+  try {
+    //get user's location and other data
+    const { rows: data } = await db.query(
+      `SELECT id, latitude, longitude, sexual_preferences, interests FROM "USER" WHERE id = $1;`,
+      [user.id]
+    );
+    const userData = data[0];
+    console.log("userData: ", userData);
+
+    // get the filtered profiles, so for example if the user set distance to 10km, we will get all profiles within 10km
+    // of the user position and so on for the other filters
+    const query = `
+        SELECT 
+          id, first_name, last_name, username, gender, bio, pictures, interests, location, latitude, longitude, fame_rating, distance, common_interests_count
+        FROM (
+          SELECT 
+            id, first_name, last_name, username, gender, bio, pictures, interests, location, latitude, longitude, fame_rating,
+            (
+              6371 * acos(
+                cos(radians($2)) * cos(radians(latitude)) * cos(radians(longitude) - radians($3)) +
+                sin(radians($2)) * sin(radians(latitude))
+              )
+            ) AS distance, 
+            array_length(array(
+              SELECT unnest(interests)
+              INTERSECT
+              SELECT unnest($5::text[])
+            ), 1) AS common_interests_count
+          FROM "USER"
+          WHERE id != $1
+            AND (
+              $4 = 'bisexual'
+              OR gender = $4
+            )
+            AND (
+              6371 * acos(
+                cos(radians($2)) * cos(radians(latitude)) * cos(radians(longitude) - radians($3)) +
+                sin(radians($2)) * sin(radians(latitude))
+              )
+            ) <= 10
+        ) AS subquery
+        ORDER BY distance ASC, fame_rating DESC, common_interests_count DESC
+        LIMIT 5;
+      `;
+
+    const { rows } = await db.query(query, [
+      user.id,
+      userData.latitude,
+      userData.longitude,
+      userData.sexual_preferences || "bisexual",
+      userData.interests,
+    ]);
+
+    const query1 = `
+      SELECT * FROM "USER"
+      WHERE id != $1
+    `;
+    const { rows: rows1 } = await db.query(query1, [user.id]);
+    console.log("all rows: ", rows1, "filtred : --------!!!----> ", rows);
+    return rows;
+  } catch (error) {
+    console.error("Error getting filtered Profiles:", error);
+    throw error;
+  }
+}
+
 async function handleGetConnections(user: User): Promise<any> {
   try {
     const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_likes_1"."like_time" AS "like_time"
@@ -129,12 +211,6 @@ async function handleUpdateProfile(
   user: User
 ): Promise<string | null> {
   console.log("Profile data: ", profileData);
-  console.log(
-    "latitude: ++++++--->",
-    profileData.latitude,
-    "longitude:  ++++++--->",
-    profileData.longitude
-  );
   try {
     const query = `UPDATE "USER" 
       SET gender = $1, sexual_preferences = $2, bio = $3, interests = $4, pictures = $5, first_name = $6, last_name = $7, email = $8, password = $9,
@@ -199,6 +275,7 @@ export {
   handleGetAllProfiles,
   handleGetConnections,
   handleGetProfile,
+  handleGetgetFilteredProfiles,
   handleLikeProfile,
   handleSetGeoLocation,
   handleUpdateProfile,

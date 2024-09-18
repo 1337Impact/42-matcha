@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { UserProfile } from "../../pages/profile/utils";
 import updateProfileSchema from "../../utils/zod/updateProfileSchema";
 
-const tagsList = [
+export const tagsList = [
   { label: "Reading", value: "Reading" },
   { label: "Traveling", value: "Traveling" },
   { label: "Gardening", value: "Gardening" },

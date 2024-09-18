@@ -5,6 +5,7 @@ import {
   handleGetAllProfiles,
   handleGetConnections,
   handleGetProfile,
+  handleGetgetFilteredProfiles,
   handleLikeProfile,
   handleSetGeoLocation,
   handleUpdateProfile,
@@ -33,6 +34,16 @@ const getAllProfiles = async (req: any, res: any) => {
     res.status(400).send({ error: "Something went wrong." });
   }
 };
+
+const getFilteredProfiles = async (req: any, res: any) => {
+  try {
+    console.log("req.body: ", req.user);
+    const data = await handleGetgetFilteredProfiles(req.user, req.body.ProfilesFilter);
+    res.send(data);
+  } catch (error) {
+    res.status(400).send({ error: "Something went wrong." });
+  }
+}
 
 const getConnections = async (req: any, res: any) => {
   try {
@@ -193,4 +204,5 @@ export {
   isProfileCompleted,
   likeProfile,
   getGeoLocation,
+  getFilteredProfiles,
 };
