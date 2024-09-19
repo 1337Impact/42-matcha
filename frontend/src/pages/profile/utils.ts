@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export interface UserProfile {
-  age: number | null;
+  age: number;
   bio: string;
   created_at: string;
   email: string;

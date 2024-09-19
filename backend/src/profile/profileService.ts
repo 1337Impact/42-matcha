@@ -11,6 +11,7 @@ async function handleGetProfile(
       FROM "USER" 
       WHERE id = $1;`;
     const { rows } = await db.query(query, [profileId]);
+    console.log("Profile data: ++++++++++++ ", rows[0]);
     return rows[0];
   } catch (error) {
     console.error("Error getting user:", error);
@@ -22,7 +23,7 @@ async function handleGetAllProfiles(user: User): Promise<any> {
   try {
     //get user's location
     const { rows: data } = await db.query(
-      `SELECT id, latitude, longitude, sexual_preferences, interests FROM "USER" WHERE id = $1;`,
+      `SELECT * FROM "USER" WHERE id = $1;`,
       [user.id]
     );
     const userData = data[0];
@@ -87,7 +88,7 @@ async function handleGetgetFilteredProfiles(
     user.id,
     profilesFilter.sexual_preferences,
     profilesFilter.interests,
-    profilesFilter.distance,
+    profilesFilter.distance
   );
   try {
     //get user's location and other data
@@ -100,12 +101,14 @@ async function handleGetgetFilteredProfiles(
 
     // get the filtered profiles, so for example if the user set distance to 10km, we will get all profiles within 10km
     // of the user position and so on for the other filters
-    const query = `
+    let query = `
         SELECT 
-          id, first_name, last_name, username, gender, bio, pictures, interests, location, latitude, longitude, fame_rating, distance, common_interests_count
+          id, first_name, last_name, username, gender, bio, pictures, interests, location, latitude,
+           longitude, fame_rating, distance, common_interests_count, age
         FROM (
           SELECT 
-            id, first_name, last_name, username, gender, bio, pictures, interests, location, latitude, longitude, fame_rating,
+            id, first_name, last_name, username, gender, bio, pictures, interests, 
+            location, latitude, longitude, fame_rating, age,
             (
               6371 * acos(
                 cos(radians($2)) * cos(radians(latitude)) * cos(radians(longitude) - radians($3)) +
@@ -129,14 +132,26 @@ async function handleGetgetFilteredProfiles(
                 sin(radians($2)) * sin(radians(latitude))
               )
             ) <= $6
-            AND (
-              -- age filter
-              age >= $7 AND age <= $8
-            )
+            AND age >= $7
+            AND age <= $8
         ) AS subquery
-        ORDER BY distance ASC, fame_rating DESC, common_interests_count DESC
-        LIMIT 5;
-      `;
+        ORDER BY
+        `;
+
+    if (profilesFilter.common_interests) {
+      query += ` common_interests_count DESC,`;
+    }
+    if (profilesFilter.fame_rating) {
+      query += ` fame_rating DESC,`;
+    }
+    if (profilesFilter.distance_sort) {
+      query += ` distance ASC, `;
+    }
+    if (profilesFilter.age) {
+      query += ` age ${profilesFilter.age},`;
+    }
+    query += ` id ASC
+      LIMIT 5;`;
 
     const { rows } = await db.query(query, [
       user.id,
@@ -144,7 +159,7 @@ async function handleGetgetFilteredProfiles(
       userData.longitude,
       userData.sexual_preferences || "bisexual",
       userData.interests,
-      profilesFilter.distance || 10,
+      profilesFilter.distance || 20,
       profilesFilter.min_age || 18,
       profilesFilter.max_age || 99,
     ]);
@@ -217,13 +232,37 @@ async function handleUpdateProfile(
   profileData: Profile,
   user: User
 ): Promise<string | null> {
-  console.log("Profile data: ", profileData);
   try {
-    const query = `UPDATE "USER" 
-      SET gender = $1, sexual_preferences = $2, bio = $3, interests = $4, pictures = $5, first_name = $6, last_name = $7, email = $8, password = $9,
-      latitude = $10, longitude = $11, address = $12
-      WHERE id = $13
-      RETURNING latitude;`;
+    const query = `UPDATE "USER" SET gender = $1, sexual_preferences = $2, bio = $3, interests = $4, pictures = $5,
+      age = $6 WHERE id = $7
+      RETURNING id;`;
+    const { rows } = await db.query(query, [
+      profileData.gender,
+      profileData.sexual_preferences,
+      profileData.biography,
+      JSON.parse(profileData.tags),
+      profileData.images,
+      profileData.age,
+      user.id,
+    ]);
+    console.log("Updated profile: ========>>", rows[0]);
+    return rows[0].id;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+}
+
+async function handleUpdateProfileSettings(
+  profileData: Profile,
+  user: User
+): Promise<string | null> {
+  try {
+    let query = `UPDATE "USER" 
+      SET gender = $1, sexual_preferences = $2, bio = $3, interests = $4, pictures = $5, first_name = $6, last_name = $7, email = $8,
+      latitude = $9, longitude = $10, address = $11, age = $12
+      WHERE id = $13 RETURNING id;
+     `;
     const { rows } = await db.query(query, [
       profileData.gender,
       profileData.sexual_preferences,
@@ -233,12 +272,19 @@ async function handleUpdateProfile(
       profileData.first_name,
       profileData.last_name,
       profileData.email,
-      profileData.new_password,
       profileData.latitude,
       profileData.longitude,
       profileData.address,
+      profileData.age,
       user.id,
     ]);
+    if (profileData.new_password) {
+      query = `UPDATE "USER" SET password = $1 WHERE id = $2 RETURNING id;`;
+      const { rows: data } = await db.query(query, [
+        profileData.new_password,
+        user.id,
+      ]);
+    }
     console.log("Updated profile: ========>>", rows[0]);
     return rows[0].id;
   } catch (error) {
@@ -286,4 +332,5 @@ export {
   handleLikeProfile,
   handleSetGeoLocation,
   handleUpdateProfile,
+  handleUpdateProfileSettings,
 };

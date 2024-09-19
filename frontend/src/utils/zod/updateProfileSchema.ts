@@ -23,6 +23,7 @@ const updateProfileSchema = z.object({
     .refine((images) => images.some((image) => image.trim().length > 0), {
       message: "At least one image is required",
     }),
+  age: z.number().int().min(18, "You must be at least 18 years old"),
 });
 
 export default updateProfileSchema;

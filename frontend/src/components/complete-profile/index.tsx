@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
-import UploadImage from "../upload-image";
+import { useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import { toast } from "react-toastify";
 import completeProfileSchema from "../../utils/zod/completeProfileSchema";
+import UploadImage from "../upload-image";
 
 const tagsList = [
   { label: "Reading", value: "Reading" },
@@ -25,73 +25,104 @@ const tagsList = [
   { label: "Knitting", value: "Knitting" },
   { label: "Crafting", value: "Crafting" },
   { label: "Gaming", value: "Gaming" },
-  { label: "Bird Watching", value: "Bird Watching" }
+  { label: "Bird Watching", value: "Bird Watching" },
 ];
 
 interface EditProfileProps {
   handleClose: () => void;
 }
 
-export default function EditProfile({
-  handleClose,
-}: EditProfileProps) {
+export default function EditProfile({ handleClose }: EditProfileProps) {
   const token = window.localStorage.getItem("token");
-  const [data, setData] = useState({
+  const initialData = {
+    first_name: "",
+    last_name: "",
+    age: "",
     gender: "",
     sexual_preferences: "",
     biography: "",
     tags: [],
     images: Array(5).fill(""),
-  });
-  
+  };
+  const [data, setData] = useState(initialData);
+
   const [error, setError] = useState({
+    first_name: "",
+    last_name: "",
+    age: "",
     gender: "",
     sexual_preferences: "",
     biography: "",
     tags: "",
     images: "",
   });
-  const [imageFiles, setImagFiles] = useState<(File | null)[]>(
+
+  const [imageFiles, setImageFiles] = useState<(File | null)[]>(
     Array(5).fill(null)
   );
   const [imagePreview, setImagePreview] = useState<(string | null)[]>(
     data.images
   );
 
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
-  const handleTagsChange = (e: any) => {
-    setData({ ...data, tags: e.map((tag: any) => tag.value) });
+
+  const handleSelectChange = (selectedOption: any, actionMeta: any) => {
+    const { name } = actionMeta;
+    setData({ ...data, [name]: selectedOption ? selectedOption.value : "" });
+  };
+
+  const handleTagsChange = (selectedOptions: any) => {
+    setData({
+      ...data,
+      tags: selectedOptions
+        ? selectedOptions.map((option: any) => option.value)
+        : [],
+    });
   };
 
   const onSubmit = async () => {
     console.log(data);
     setError({
-      images: "",
-      tags: "",
-      biography: "",
-      sexual_preferences: "",
+      first_name: "",
+      last_name: "",
+      age: "",
       gender: "",
+      sexual_preferences: "",
+      biography: "",
+      tags: "",
+      images: "",
     });
-    const result = completeProfileSchema.safeParse({...data, images: imagePreview});
+
+    const result = completeProfileSchema.safeParse({
+      ...data,
+      images: imagePreview,
+      age: parseInt(data.age),
+    });
     if (!result.success) {
-      result.error.errors.forEach((err) => {
-        setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
-      });
+      const validationErrors = result.error.errors.reduce(
+        (acc: any, err: any) => {
+          acc[err.path[0]] = err.message;
+          return acc;
+        },
+        {}
+      );
+      setError(validationErrors);
       return;
     }
+
     try {
-      console.log(data);
       const formData = new FormData();
+      formData.append("age", data.age);
       formData.append("gender", data.gender);
       formData.append("sexual_preferences", data.sexual_preferences);
       formData.append("biography", data.biography);
       formData.append("tags", JSON.stringify(data.tags));
-      formData.append("images", JSON.stringify(data.images));
-      imageFiles.forEach((file) => {
-        file && formData.append("images", file);
-      });
+      formData.append("images", JSON.stringify(imagePreview));
+
       await axios.post(
         `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/update`,
         formData,
@@ -104,7 +135,7 @@ export default function EditProfile({
       toast.success("Your profile has been updated");
       handleClose();
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       toast.error("Failed to update profile");
     }
   };
@@ -114,96 +145,178 @@ export default function EditProfile({
   }, [data.images]);
 
   return (
-    <div className="flex items-center fixed top-0 w-full h-full z-50 backdrop-blur-sm">
-      <div className="w-[90%] max-h-[80dvh] overflow-y-scroll rounded-lg mx-auto p-4 bg-gray-100">
-        <h1 className="text-xl font-bold text-center mb-5">
-          Edit your profile
+    <div className="flex items-center justify-center fixed inset-0 z-50 backdrop-blur-sm overflow-auto overflow-y-auto">
+      <div className="w-[100%] max-h-[80dvh] overflow-y-scroll rounded-lg mx-auto p-4 bg-gray-100">
+        <h1 className="text-2xl font-bold text-start pt-2 pb-6 text-gray-700">
+          Complete Your Profile
         </h1>
-        <div className="mb-3">
-          <label
-            className="block text-gray-600 text-sm font-bold mb-1"
-            htmlFor="email"
-          >
-            gender
-          </label>
-          <select
-            className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-            id="gender"
-            value={data.gender}
-            onChange={handleChange}
-          >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-          {error.gender && (
-            <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.gender}
-            </p>
-          )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          {/* Age */}
+          <div className="w-full">
+            <label
+              className="block text-gray-600 text-sm font-bold mb-1"
+              htmlFor="age"
+            >
+              Age
+            </label>
+            <input
+              className={`border-2 rounded w-full py-2 px-4 text-gray-700 border-gray-300 focus:border-indigo-500 focus:outline-none placeholder-gray-400 ${
+                error.age ? "border-red-500" : ""
+              }`}
+              id="age"
+              type="number"
+              placeholder="Age"
+              value={data.age}
+              onChange={handleChange}
+              min="0"
+            />
+            {error.age && (
+              <p className="text-red-500 text-xs mt-1">{error.age}</p>
+            )}
+          </div>
         </div>
-        <div className="mb-3"></div>
-        <div className="mb-3 w-full">
-          <label
-            className="block text-gray-600 text-sm font-bold mb-1"
-            htmlFor="first_name"
-          >
-            Sexual preferences
-          </label>
-          <select
-            className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
-            id="sexual_preferences"
-            value={data.sexual_preferences}
-            onChange={handleChange}
-          >
-            <option value="">Select Sexual preferences</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-          {error.sexual_preferences && (
-            <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.sexual_preferences}
-            </p>
-          )}
+
+        {/* Gender and Sexual Preferences */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {/* Gender */}
+          <div className="w-full">
+            <label
+              className="block text-gray-600 text-sm font-bold mb-1"
+              htmlFor="gender"
+            >
+              Gender
+            </label>
+            <ReactSelect
+              name="gender"
+              options={[
+                { value: "male", label: "Male" },
+                { value: "female", label: "Female" },
+                { value: "other", label: "Other" },
+                { value: "prefer_not_to_say", label: "Prefer not to say" },
+              ]}
+              value={
+                data.gender
+                  ? {
+                      value: data.gender,
+                      label:
+                        data.gender.charAt(0).toUpperCase() +
+                        data.gender.slice(1),
+                    }
+                  : null
+              }
+              onChange={handleSelectChange}
+              placeholder="Select Gender"
+              className={`react-select-container ${
+                error.gender ? "border-red-500" : ""
+              }`}
+              classNamePrefix="react-select"
+            />
+            {error.gender && (
+              <p className="text-red-500 text-xs mt-1">{error.gender}</p>
+            )}
+          </div>
+
+          {/* Sexual Preferences */}
+          <div className="w-full">
+            <label
+              className="block text-gray-600 text-sm font-bold mb-1"
+              htmlFor="sexual_preferences"
+            >
+              Sexual Preferences
+            </label>
+            <ReactSelect
+              name="sexual_preferences"
+              options={[
+                { value: "male", label: "Male" },
+                { value: "female", label: "Female" },
+                { value: "both", label: "Both" },
+                { value: "other", label: "Other" },
+                { value: "prefer_not_to_say", label: "Prefer not to say" },
+              ]}
+              value={
+                data.sexual_preferences
+                  ? {
+                      value: data.sexual_preferences,
+                      label:
+                        data.sexual_preferences.charAt(0).toUpperCase() +
+                        data.sexual_preferences.slice(1),
+                    }
+                  : null
+              }
+              onChange={handleSelectChange}
+              placeholder="Select Sexual Preferences"
+              className={`react-select-container ${
+                error.sexual_preferences ? "border-red-500" : ""
+              }`}
+              classNamePrefix="react-select"
+            />
+            {error.sexual_preferences && (
+              <p className="text-red-500 text-xs mt-1">
+                {error.sexual_preferences}
+              </p>
+            )}
+          </div>
         </div>
-        <div className="mb-3 w-full">
+
+        {/* Biography */}
+        <div className="mb-4">
           <label
             className="block text-gray-600 text-sm font-bold mb-1"
             htmlFor="biography"
           >
-            biography
+            Biography
           </label>
           <textarea
             rows={4}
-            className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
+            className={`border-2 rounded w-full py-2 px-4 text-gray-700 border-gray-300 focus:border-indigo-500 focus:outline-none placeholder-gray-400 ${
+              error.biography ? "border-red-500" : ""
+            }`}
             id="biography"
-            placeholder="biography"
+            placeholder="Tell us about yourself..."
             value={data.biography}
             onChange={handleChange}
           />
           {error.biography && (
-            <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.biography}
-            </p>
+            <p className="text-red-500 text-xs mt-1">{error.biography}</p>
           )}
         </div>
-        <div className="mb-3 w-full">
+
+        {/* Tags */}
+        <div className="mb-4">
+          <label
+            className="block text-gray-600 text-sm font-bold mb-1"
+            htmlFor="tags"
+          >
+            Interests & Hobbies
+          </label>
           <ReactSelect
-            defaultValue={tagsList.filter((tag) =>
-              data.tags?.includes(tag.value as never)
+            isMulti
+            options={tagsList}
+            value={tagsList.filter((tag) =>
+              data.tags.includes(tag.value as never)
             )}
             onChange={handleTagsChange}
-            options={tagsList}
-            isMulti
+            placeholder="Select your interests"
+            className={`react-select-container ${
+              error.tags ? "border-red-500" : ""
+            }`}
+            classNamePrefix="react-select"
           />
           {error.tags && (
-            <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.tags}
-            </p>
+            <p className="text-red-500 text-xs mt-1">{error.tags}</p>
           )}
         </div>
-        <div className="mb-5">
-          <div className="flex gap-2 flex-wrap">
+
+        {/* Image Upload */}
+        <div className="mb-6">
+          <label
+            className="block text-gray-600 text-sm font-bold mb-2"
+            htmlFor="images"
+          >
+            Upload Images
+          </label>
+          <div className="flex flex-wrap gap-4">
             {imagePreview.map((image, index) => (
               <UploadImage
                 key={index}
@@ -223,7 +336,7 @@ export default function EditProfile({
                   }
                 }}
                 setImgFile={(file) => {
-                  setImagFiles((prev) => {
+                  setImageFiles((prev) => {
                     const newFiles = [...prev];
                     newFiles[index] = file;
                     return newFiles;
@@ -233,23 +346,17 @@ export default function EditProfile({
             ))}
           </div>
           {error.images && (
-            <p className="text-red-400 font-medium text-xs -mb-[8px]">
-              {error.images}
-            </p>
+            <p className="text-red-500 text-xs mt-1">{error.images}</p>
           )}
         </div>
-        <div className="flex items-center justify-between gap-2">
+
+        {/* Action Buttons */}
+        <div className="flex flex-col md:flex-row justify-between gap-4">
           <button
-            className="w-full hover:bg-gray-500 border-2 border-gray-500 text-black font-bold py-1 px-4 rounded"
-            onClick={handleClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="w-full  border-2 border-gray-500 bg-gray-600 hover:bg-gray-500 text-white font-bold py-1 px-4 rounded"
+            className="w-full md:w-1/2 bg-red-500 hover:bg-red-300 text-white font-bold py-2 px-4 rounded transition duration-200"
             onClick={onSubmit}
           >
-            Update
+            Update Profile
           </button>
         </div>
       </div>

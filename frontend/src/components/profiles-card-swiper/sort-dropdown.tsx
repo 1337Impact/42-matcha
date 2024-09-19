@@ -4,23 +4,44 @@ import React from "react";
 import SortIcon from "@mui/icons-material/Sort";
 import ReactSelect from "react-select";
 
-const SortDropdown: React.FC = () => {
-  const [checked, setChecked] = React.useState(true);
+interface SortCriteria {
+  age: string;
+  interests: boolean;
+  distance: boolean;
+  fameRating: boolean;
+}
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-  };
+interface SortCriteriaProps {
+  sortCriteria: SortCriteria;
+  setSortCriteria: React.Dispatch<React.SetStateAction<SortCriteria>>;
+}
 
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(event.target.value);
+const SortDropdown: React.FC<SortCriteriaProps> = ({
+  sortCriteria,
+  setSortCriteria,
+}) => {
+  const [CIChecked, setCIChecked] = React.useState(true);
+  const [fameRateChecked, setFameRateChecked] = React.useState(true);
+  const [DistanceChecked, setDistanceChecked] = React.useState(true);
+  const [sort, setSort] = React.useState("asc");
+
+  const handleSortChange = (newValue: any) => {
+    console.log(newValue.value);
+    setSort(newValue.value);
   };
 
   const applySort = () => {
+    setSortCriteria({
+      age: sort,
+      interests: CIChecked,
+      distance: DistanceChecked,
+      fameRating: fameRateChecked,
+    });
     console.log("Sort applied");
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-left z-50">
+    <Menu as="div" className="relative inline-block text-left z-20">
       <div>
         <Menu.Button>
           <SortIcon
@@ -50,12 +71,16 @@ const SortDropdown: React.FC = () => {
               Sort by age
             </label>
             <ReactSelect
-                className="w-full"
-                onChange={handleSortChange}
-                options={[
-                    { value: "asc", label: "Ascending" },
-                    { value: "desc", label: "Descending" },
-                ]}
+              className="w-full"
+              onChange={handleSortChange}
+              value={{
+                value: sort,
+                label: sort === "asc" ? "Ascending" : "Descending",
+              }}
+              options={[
+                { value: "asc", label: "Ascending" },
+                { value: "desc", label: "Descending" },
+              ]}
             />
           </div>
         </div>
@@ -69,8 +94,8 @@ const SortDropdown: React.FC = () => {
               Sort by common Interests
             </label>
             <Switch
-              checked={checked}
-              onChange={handleChange}
+              checked={CIChecked}
+              onChange={() => setCIChecked(!CIChecked)}
               inputProps={{ "aria-label": "controlled" }}
               color="error"
             />
@@ -78,24 +103,36 @@ const SortDropdown: React.FC = () => {
         </div>
 
         <div className="p-4">
-          <div className="flex flex-col items-start gap-0 w-full">
+          <div className="flex justify-between items-center w-full">
             <label
               className="text-gray-700 text-sm font-bold mb-1"
               htmlFor="age range"
             >
-              age range
+              sort by fame rating
             </label>
+            <Switch
+              checked={fameRateChecked}
+              onChange={() => setFameRateChecked(!fameRateChecked)}
+              inputProps={{ "aria-label": "controlled" }}
+              color="error"
+            />
           </div>
         </div>
 
         <div className="p-4">
-          <div className="flex flex-col items-start gap-0 w-full">
+          <div className="flex items-center justify-between w-full">
             <label
               className="text-gray-700 text-sm font-bold mb-1"
               htmlFor="distance"
             >
-              Distance
+              Sort by Distance
             </label>
+            <Switch
+              checked={DistanceChecked}
+              onChange={() => setDistanceChecked(!DistanceChecked)}
+              inputProps={{ "aria-label": "controlled" }}
+              color="error"
+            />
           </div>
         </div>
 

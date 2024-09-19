@@ -1,4 +1,3 @@
-import { verifyToken } from "../utils/jwtUtils";
 import bcrypt from "bcrypt";
 import {
   getIsProfileCompleted,
@@ -9,6 +8,7 @@ import {
   handleLikeProfile,
   handleSetGeoLocation,
   handleUpdateProfile,
+  handleUpdateProfileSettings,
 } from "./profileService";
 
 const getProfile = async (req: any, res: any) => {
@@ -38,12 +38,15 @@ const getAllProfiles = async (req: any, res: any) => {
 const getFilteredProfiles = async (req: any, res: any) => {
   try {
     console.log("req.body: ", req.user);
-    const data = await handleGetgetFilteredProfiles(req.user, req.body.ProfilesFilter);
+    const data = await handleGetgetFilteredProfiles(
+      req.user,
+      req.body.ProfilesFilter
+    );
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
   }
-}
+};
 
 const getConnections = async (req: any, res: any) => {
   try {
@@ -69,14 +72,6 @@ const mergeArrays = (newImages: string[], imageFiles: any) => {
 
 const updateProfile = async (req: any, res: any) => {
   try {
-    console.log(
-      "req.body: ",
-      req.body,
-      "req.files: ",
-      req.files,
-      "req.user: ",
-      req.user
-    );
     const images = JSON.stringify(
       mergeArrays(JSON.parse(req.body.images), req.files)
     );
@@ -88,8 +83,41 @@ const updateProfile = async (req: any, res: any) => {
       hashedPassword = await bcrypt.hash(req.body.new_password, 10);
     }
 
-    // Call function to update profile and optionally the password
     await handleUpdateProfile(
+      {
+        gender: req.body.gender,
+        sexual_preferences: req.body.sexual_preferences,
+        biography: req.body.biography,
+        tags: req.body.tags,
+        images: images,
+        age: req.body.age,
+      },
+      req.user
+    );
+    res.send("Profile updated successfully");
+  } catch (error) {
+    console.log("update profile error: ", error);
+    res.status(400).send({ error: "Something went wrong." });
+  }
+};
+
+export const updateProfileSettings = async (req: any, res: any) => {
+  try {
+    console.log("req", req, "req.body: ", req.body);
+
+    const images = JSON.stringify(
+      mergeArrays(JSON.parse(req.body.images), req.files)
+    );
+
+    let hashedPassword = null;
+    if (req.body.new_password) {
+      if (req.body.new_password !== req.body.confirm_password) {
+        return res.status(400).send({ error: "Passwords do not match" });
+      }
+      hashedPassword = await bcrypt.hash(req.body.new_password, 10);
+    }
+
+    await handleUpdateProfileSettings(
       {
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -100,58 +128,10 @@ const updateProfile = async (req: any, res: any) => {
         tags: req.body.tags,
         images: images,
         new_password: hashedPassword as string,
-      },
-      req.user
-    );
-    console.log("images: ", images);
-    await handleUpdateProfile({ ...req.body, images: images }, req.user);
-    res.send("Profile updated successfully");
-  } catch (error) {
-    console.log("update profile error: ", error);
-    res.status(400).send({ error: "Something went wrong." });
-  }
-};
-
-export const updateProfileSettings = async (req: any, res: any) => {
-  try {
-    // console.log("req", req, "req.body: ", req.body);
-
-    // const imageFiles = req.body.files || [];
-    // const imageFilesData = imageFiles.map((file:any) => ({
-    //   filename: file.filename,
-    //   path: file.path
-    // }));
-
-    // Parsing and merging image data
-    const images = JSON.stringify(
-      mergeArrays(JSON.parse(req.body.images), req.files)
-    );
-
-    // Handle password update
-    let hashedPassword = null;
-    if (req.body.new_password) {
-      if (req.body.new_password !== req.body.confirm_password) {
-        return res.status(400).send({ error: "Passwords do not match" });
-      }
-      hashedPassword = await bcrypt.hash(req.body.new_password, 10);
-    }
-
-    // Call function to update profile and optionally the password
-    console.log("latitude: -----~~~~>", req.body.latitude, "longitude: ", req.body.longitude);
-    await handleUpdateProfile(
-      {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        gender: req.body.gender,
-        sexual_preferences: req.body.sexual_preferences,
-        biography: req.body.biography,
-        tags: JSON.parse(req.body.tags || "[]"),
-        images: images,
-        new_password: hashedPassword as string,
         address: req.body.address,
         latitude: req.body.latitude,
-        longitude: req.body.longitude
+        longitude: req.body.longitude,
+        age: req.body.age,
       },
       req.user
     );
@@ -197,12 +177,12 @@ const getGeoLocation = async (req: any, res: any) => {
 };
 
 export {
-  getProfile,
   getAllProfiles,
   getConnections,
-  updateProfile,
+  getFilteredProfiles,
+  getGeoLocation,
+  getProfile,
   isProfileCompleted,
   likeProfile,
-  getGeoLocation,
-  getFilteredProfiles,
+  updateProfile,
 };

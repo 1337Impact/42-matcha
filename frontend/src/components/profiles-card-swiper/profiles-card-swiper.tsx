@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
+import FemaleIcon from "@mui/icons-material/Female";
+import MaleIcon from "@mui/icons-material/Male";
+import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import axios from "axios";
+import { ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import SwiperCore from "swiper";
 import "swiper/css";
 import "swiper/css/effect-cards";
-import SwiperCore from "swiper";
 import { EffectCards, Navigation, Pagination } from "swiper/modules";
-import MaleIcon from "@mui/icons-material/Male";
-import FemaleIcon from "@mui/icons-material/Female";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import { Swiper, SwiperSlide } from "swiper/react";
 import FilterDropdown from "./filter-dropdown";
 import SortDropdown from "./sort-dropdown";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 SwiperCore.use([Navigation, Pagination, EffectCards]);
 
@@ -24,26 +26,157 @@ interface Profile {
   pictures: string[];
 }
 
-const ProfileSwiper = ({ profiles }: { profiles: Profile[] }) => {
+const ProfileSwiper = () => {
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const initialSortCriteria = {
+    age: "asc",
+    interests: false,
+    distance: false,
+    fameRating: false,
+  };
+  const initialFilterCriteria = {
+    distance: 20,
+    sexual_preferences: "",
+    interests: [] as string[],
+    agerange: [18, 99],
+  };
+
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [sortCriteria, setSortCriteria] = useState(initialSortCriteria);
+  const [filterCriteria, setFilterCriteria] = useState(initialFilterCriteria);
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    const applyFilters = async () => {
+      const token = window.localStorage.getItem("token");
+      console.log(filterCriteria);
+      try {
+        const response = await axios.post(
+          `${
+            import.meta.env.VITE_APP_BACKEND_URL
+          }/api/profile/FilteredProfiles`,
+          {
+            ProfilesFilter: {
+              distance: filterCriteria.distance,
+              sexual_preferences: filterCriteria.sexual_preferences,
+              interests: filterCriteria.interests,
+              min_age: filterCriteria.agerange[0],
+              max_age: filterCriteria.agerange[1],
+              age: sortCriteria.age,
+              common_interests: sortCriteria.interests,
+              distance_sort: sortCriteria.distance,
+              fame_rating: sortCriteria.fameRating,
+            },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("Filtered profiles: ", response.data);
+        setProfiles(
+          response.data.map((profile: any) => {
+            const pictures = JSON.parse(profile.pictures);
+            return {
+              id: profile.id,
+              first_name: profile.first_name,
+              last_name: profile.last_name,
+              username: profile.username,
+              bio: profile.bio,
+              tags: profile.interest,
+              pictures,
+            };
+          })
+        );
+        console.log("Profiles: ", profiles);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    applyFilters();
+  }, [sortCriteria, filterCriteria]);
+
+  useEffect(() => {
+    axios
+      .get(
+        `${import.meta.env.VITE_APP_API_URL}/profile/likes/is-profile-liked`,
+        {
+          params: {
+            profileId: profiles[currentIndex]?.id,
+          },
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        setIsLiked(response.data);
+      })
+      .catch((error) => {
+        console.log("Error getting likes:", error);
+      });
+  }, [profiles[currentIndex]?.id]);
 
   const handleSwipe = (direction: string) => {
     if (direction === "like") {
+      try {
+        axios.post(
+          `${import.meta.env.VITE_APP_API_URL}/profile/likes/like-profile-home`,
+          {
+            profileId: profiles[currentIndex].id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            },
+          }
+        );
+      } catch (err) {
+        console.log(err);
+      }
       console.log(`Liked profile ${profiles[currentIndex].username}`);
-    } else {
-      console.log(`Disliked profile ${profiles[currentIndex].username}`);
-    }
-
-    if (currentIndex < profiles.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
+      profiles.splice(currentIndex, 1);
+    } else if (direction === "dislike") {
+      try {
+        axios.post(
+          `${import.meta.env.VITE_APP_API_URL}/profile/likes/dislike-profile`,
+          {
+            profileId: profiles[currentIndex].id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            },
+          }
+        );
+      } catch (err) {
+        console.log(err);
+      }
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+      console.log(`Disliked profile ${profiles[currentIndex].username}`);
+      profiles.splice(currentIndex, 1);
+    } else {
+      if (currentIndex < profiles.length - 1) {
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+      }
     }
   };
 
   return (
     <div className="max-w-lg mx-auto h-full w-full flex flex-col justify-between overflow-hidden">
       <div className="flex-end gap-4 text-end items-end p-3 w-full">
-          <SortDropdown />
-          <FilterDropdown />
+        <SortDropdown
+          sortCriteria={sortCriteria}
+          setSortCriteria={setSortCriteria}
+        />
+
+        <FilterDropdown
+          ProfilesFilter={filterCriteria}
+          setProfilesFilter={setFilterCriteria}
+        />
       </div>
       {/* Outer Swiper for Profiles */}
       <Swiper
@@ -62,48 +195,48 @@ const ProfileSwiper = ({ profiles }: { profiles: Profile[] }) => {
               slidesPerView={1}
               className=" shadow-md h-full flex w-full overflow-hidden relative"
             >
-              {profile.pictures.map((picture, index) => (
-                <SwiperSlide key={index} className="h-full relative">
-                  <img
-                    src={picture || "https://via.placeholder.com/150"}
-                    alt={`Profile of ${profile.first_name}`}
-                    className="w-full h-full rounded-lg object-fit"
-                  />
-                  <div className="absolute bottom-0 left-0 flex flex-col items-start w-full backdrop-blur-sm p-3 h-1/5">
-                    {/* here show the user gender if it male show up an  male icon from mui icons  */}
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-xl text-gray-700 text-start  font-extrabold">
-                        {profile.username}
-                      </h3>
-                      {profile.gender === "male" ? (
-                        <MaleIcon className="w-8 h-8 " color="info" />
-                      ) : (
-                        <FemaleIcon
-                          sx={{
-                            width: 32,
-                            height: 32,
-                            color: "pink",
-                            fontWeight: "bold",
-                          }}
-                          color="info"
-                        />
-                      )}
+              {profile.pictures &&
+                profile.pictures.map((picture, index) => (
+                  <SwiperSlide key={index} className="h-full relative">
+                    <img
+                      src={picture || "https://via.placeholder.com/150"}
+                      alt={`Profile of ${profile.first_name}`}
+                      className="w-full h-full rounded-lg object-fit"
+                    />
+                    <div className="absolute bottom-0 left-0 flex flex-col items-start w-full backdrop-blur-sm p-3 h-1/5">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-xl text-gray-700 text-start  font-extrabold">
+                          {profile.username}
+                        </h3>
+                        {profile.gender === "male" ? (
+                          <MaleIcon className="w-8 h-8 " color="info" />
+                        ) : (
+                          <FemaleIcon
+                            sx={{
+                              width: 32,
+                              height: 32,
+                              color: "pink",
+                              fontWeight: "bold",
+                            }}
+                            color="info"
+                          />
+                        )}
+                      </div>
+                      <p className="text-gray-600 pt-2">{profile.bio} </p>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {profile.tags &&
+                          profile.tags.map((tag, index) => (
+                            <div
+                              key={index}
+                              className="bg-red-300 rounded-full px-3 py-1 text-xs font-medium text-white"
+                            >
+                              {tag}
+                            </div>
+                          ))}
+                      </div>
                     </div>
-                    <p className="text-gray-600 pt-2">{profile.bio} </p>
-                    <div className="flex flex-wrap gap-2 pt-3">
-                      {profile.tags &&
-                        profile.tags.map((tag, index) => (
-                          <div
-                            key={index}
-                            className="bg-red-300 rounded-full px-3 py-1 text-xs font-medium text-white"
-                          >
-                            {tag}
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </SwiperSlide>
-              ))}
+                  </SwiperSlide>
+                ))}
             </Swiper>
           </SwiperSlide>
         ))}
@@ -112,9 +245,10 @@ const ProfileSwiper = ({ profiles }: { profiles: Profile[] }) => {
       {/* Like/Dislike Buttons */}
       <div className="flex justify-around items-center text-center h-1/6 ">
         <button
-          onClick={() => handleSwipe("dislike")}
+          onClick={() => handleSwipe("like")}
+          disabled={isLiked}
           className="bg-white rounded-full p-4 transition-transform transform hover:scale-105"
-        >
+        > 
           <FavoriteIcon
             sx={{
               width: 32,
@@ -125,8 +259,14 @@ const ProfileSwiper = ({ profiles }: { profiles: Profile[] }) => {
           />
         </button>
         <button
-          onClick={() => handleSwipe("like")}
-          className="bg-white text-white rounded-full p-4 transition-transform transform hover:scale-105"
+          onClick={() => handleSwipe("skip")}
+          className="bg-white text-white rounded-full p-4 transition-transform transform hover:scale-105 shadow-xl"
+        >
+          <ChevronRight className="w-8 h-8 text-red-400" />
+        </button>
+        <button
+          onClick={() => handleSwipe("dislike")}
+          className="bg-white text-white rounded-full p-4 transition-transform transform hover:scale-105 shadow-xl"
         >
           <NotInterestedIcon
             sx={{

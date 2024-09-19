@@ -1,27 +1,30 @@
 import { Menu } from "@headlessui/react";
 import TuneIcon from "@mui/icons-material/Tune";
 import Slider from "@mui/material/Slider";
-import axios from "axios";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import ReactSelect from "react-select";
-import { RootState } from "../../store";
 import { tagsList } from "../edit-profile";
 
-const FilterDropdown: React.FC = () => {
-  const user = useSelector((state: RootState) => state.userSlice.user);
-  interface ProfileFilter {
-    distance: number;
-    sexual_preferences: string;
-    interests: string[];
-    agerange: number[] | number;
-  }
-  const [ProfilesFilter, setProfilesFilter] = useState({
-    distance: 10,
-    sexual_preferences: "",
-    interests: [],
-    agerange: [18, 22],
-  });
+interface ProfilesFilter {
+  distance: number;
+  sexual_preferences: string;
+  interests: string[];
+  agerange: number[];
+}
+
+interface FilterDropDownProps {
+  ProfilesFilter: ProfilesFilter;
+  setProfilesFilter: React.Dispatch<React.SetStateAction<ProfilesFilter>>;
+}
+
+const FilterDropdown: React.FC<FilterDropDownProps> = ({
+  ProfilesFilter,
+  setProfilesFilter,
+}) => {
+  const [sexual_preferences, setSexual_preferences] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [distance, setDistance] = useState<number>(10);
+  const [ageRange, setAgeRange] = useState<number[]>([18, 22]);
 
   const sexPreference = [
     { value: "Male", label: "Male" },
@@ -30,71 +33,39 @@ const FilterDropdown: React.FC = () => {
 
   const handleSexPreferenceChange = (choice: any) => {
     console.log(choice);
-    setProfilesFilter({
-      ...ProfilesFilter,
-      sexual_preferences: choice.value,
-    });
+    setSexual_preferences(choice.value);
   };
 
   const handleTagsChange = (tags: any) => {
     console.log(tags);
-    setProfilesFilter({
-      ...ProfilesFilter,
-      interests: tags.map((tag: any) => tag.value),
-    });
+    setTags(tags.map((tag: any) => tag.value));
   };
 
   const handleDistanceChange = (distance: any) => {
     console.log(distance.target.value);
-    setProfilesFilter({
-      ...ProfilesFilter,
-      distance: distance.target.value,
-    });
+    setDistance(distance.target.value);
   };
 
   const handleAgeRangeChange = (event: Event, newValue: number | number[]) => {
+    event.preventDefault();
     if (typeof newValue === "number") {
-      setProfilesFilter({
-        ...ProfilesFilter,
-        agerange: [newValue, newValue],
-      });
+      setAgeRange([newValue, ageRange[1]]);
       return;
     }
-    setProfilesFilter({
-      ...ProfilesFilter,
-      agerange: newValue as number[],
-    });
+    setAgeRange(newValue);
   };
 
   const applyFilter = async () => {
-    const token = window.localStorage.getItem("token");
-    console.log(ProfilesFilter);
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/FilteredProfiles`,
-        {
-          ProfilesFilter: {
-            distance: ProfilesFilter.distance,
-            sexual_preferences: ProfilesFilter.sexual_preferences,
-            interests: ProfilesFilter.interests,
-            min_age: ProfilesFilter.agerange[0],
-            max_age: ProfilesFilter.agerange[1],
-          },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("Filtered profiles: ", response.data);
-    } catch (err) {
-      console.log(err);
-    }
+    setProfilesFilter({
+      distance: distance,
+      sexual_preferences: sexual_preferences,
+      interests: tags,
+      agerange: ageRange,
+    });
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-right z-50">
+    <Menu as="div" className="relative inline-block text-right z-20">
       <div>
         <Menu.Button>
           <TuneIcon
@@ -116,7 +87,7 @@ const FilterDropdown: React.FC = () => {
         </div>
 
         <div className="p-4">
-          <div className="mb-3 w-full">
+          <div className="mb-3 w-full text-start">
             <label
               className="block text-gray-600 text-sm font-bold mb-1"
               htmlFor="first_name"
@@ -141,8 +112,8 @@ const FilterDropdown: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4">
-          <div className="flex flex-col items-start gap-2 w-full">
+        <div className="p-4 ">
+          <div className="flex flex-col text-start items-start gap-2 w-full">
             <label
               className="text-gray-700 text-sm font-bold mb-1"
               htmlFor="interests"
@@ -173,7 +144,7 @@ const FilterDropdown: React.FC = () => {
             <Slider
               getAriaLabel={() => "Temperature range"}
               value={
-                ProfilesFilter.agerange ? ProfilesFilter.agerange : [18, 22]
+                ProfilesFilter.agerange
               }
               onChange={handleAgeRangeChange}
               valueLabelDisplay="auto"

@@ -21,6 +21,7 @@ interface Profile {
   latitude?: string;
   longitude?: string;
   address?: string;
+  age?: number;
 }
 
 interface Filter {
@@ -29,6 +30,10 @@ interface Filter {
   interests?: string[];
   min_age?: number;
   max_age?: number;
+  age?: string;
+  common_interests?: boolean;
+  distance_sort?: boolean;
+  fame_rating?: boolean;
 }
 
 export { User, Profile, Filter };

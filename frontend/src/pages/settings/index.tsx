@@ -30,21 +30,23 @@ const tagsList = [
 
 export default function Settings() {
   const token = window.localStorage.getItem("token");
-  const [data, setData] = useState({
+  const initialData = {
     first_name: "",
     last_name: "",
     email: "",
     gender: "",
     sexual_preferences: "",
     biography: "",
-    tags: [],
+    tags: [] as string[],
     images: Array(5).fill(""),
     new_password: "",
     confirm_password: "",
     address: "",
     latitude: 0,
     longitude: 0,
-  });
+    age: "",
+  };  
+  const [data, setData] = useState(initialData);
 
   const [error, setError] = useState({
     first_name: "",
@@ -58,6 +60,7 @@ export default function Settings() {
     new_password: "",
     confirm_password: "",
     address: "",
+    age: "",
   });
 
   const [imageFiles, setImageFiles] = useState<(File | null)[]>(
@@ -84,11 +87,21 @@ export default function Settings() {
         console.log("pictureArray", pictureArrayFromString);
         setImagePreview(pictureArrayFromString);
         setData({
-          ...response.data,
-          tags: response.data.interests,
-          biography: response.data.bio,
-          images: pictureArrayFromString,
+          ...initialData, // Ensure all fields are present
+          first_name: response.data.first_name ?? "",
+          last_name: response.data.last_name ?? "",
+          email: response.data.email ?? "",
+          gender: response.data.gender ?? "",
+          sexual_preferences: response.data.sexual_preferences ?? "",
+          biography: response.data.bio ?? "",
+          tags: response.data.interests ?? [],
+          images: pictureArrayFromString ?? Array(5).fill(""),
+          address: response.data.address ?? "",
+          latitude: response.data.latitude ?? 0,
+          longitude: response.data.longitude ?? 0,
+          age: response.data.age ?? "",
           new_password: "",
+          confirm_password: "",
         });
       } catch (error) {
         console.error("Failed to fetch user profile data", error);
@@ -136,9 +149,13 @@ export default function Settings() {
 
   const onSelectAddress = (address: any) => {
     setSelectedAddress(address);
-    console.log("Selected address: -----------==> ", address, address.formatted, "lat-lon ---> ", address.lat, address.lon);
-    setData({ ...data, address: address.formatted, latitude: address.lat, longitude: address.lon });
-    setAddressSuggestions([]); // Hide suggestions once an address is selected
+    setData({
+      ...data,
+      address: address.formatted,
+      latitude: address.lat,
+      longitude: address.lon,
+    });
+    setAddressSuggestions([]);
   };
 
   const onSubmit = async () => {
@@ -154,6 +171,7 @@ export default function Settings() {
       new_password: "",
       confirm_password: "",
       address: "",
+      age: "",
     });
 
     if (data.new_password && data.new_password !== data.confirm_password) {
@@ -167,7 +185,8 @@ export default function Settings() {
     const result = completeProfileSchema.safeParse({
       ...data,
       images: imagePreview,
-      address: selectedAddress,
+      address: selectedAddress ? selectedAddress.formatted : data.address,
+      age: parseInt(data.age),
     });
     if (!result.success) {
       result.error.errors.forEach((err) => {
@@ -191,11 +210,12 @@ export default function Settings() {
       formData.append("address", data.address);
       formData.append("latitude", data.latitude.toString());
       formData.append("longitude", data.longitude.toString());
+      formData.append("age", parseInt(data.age).toString());
       imageFiles.forEach((file) => {
         file && formData.append("images", file);
       });
 
-      await axios.post("http://localhost:3000/api/profile/update", formData, {
+      await axios.post("http://localhost:3000/api/profile/settings", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -209,7 +229,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="w-full max-w-lg p-4 bg-white rounded-lg shadow-md">
+    <div className="w-full max-w-lg p-4 bg-white">
       <h1 className="text-2xl font-bold text-start mb-5">Edit Your Profile</h1>
 
       {/* First Name */}
@@ -296,17 +316,36 @@ export default function Settings() {
         {/* Display Address Suggestions */}
         {addressSuggestions.length > 0 && (
           <ul className="bg-white border rounded shadow-md">
-            {addressSuggestions && addressSuggestions.map((suggestion, index) => (
-              <li
-                key={index}
-                className="p-2 hover:bg-gray-200 cursor-pointer"
-                onClick={() => onSelectAddress(suggestion)}
-              >
-                {suggestion.formatted}
-              </li>
-            ))}
+            {addressSuggestions &&
+              addressSuggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="p-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => onSelectAddress(suggestion)}
+                >
+                  {suggestion.formatted}
+                </li>
+              ))}
           </ul>
         )}
+      </div>
+
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="age"
+        >
+          Age
+        </label>
+        <input
+          type="text"
+          placeholder="Enter your age"
+          className="border rounded w-full py-2 px-3 text-gray-700"
+          id="age"
+          value={data.age}
+          onChange={handleChange}
+        />
+        {error.age && <p className="text-red-500 text-xs mt-1">{error.age}</p>}
       </div>
 
       {/* Gender */}

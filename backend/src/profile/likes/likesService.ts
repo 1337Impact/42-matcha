@@ -49,4 +49,15 @@ async function handleLikeProfile(profileId: string, user: User): Promise<any> {
   }
 }
 
-export { handleGetLikes, handleLikeProfile, handleGetIsProfileLiked };
+async function handleLikeProfileHome(profileId: string, user: User): Promise<any> {
+  try {
+    const query = `INSERT INTO "user_likes" (liker_id, liked_id) VALUES ($1, $2);`;
+    await db.query(query, [user.id, profileId]);
+    return "Profile liked successfully";
+  } catch (error) {
+    console.error("Error liking profile:", error);
+    throw error;
+  }
+}
+
+export { handleGetLikes, handleLikeProfile, handleGetIsProfileLiked, handleLikeProfileHome };

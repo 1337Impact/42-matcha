@@ -38,7 +38,10 @@ async function createUser(userData: User): Promise<string | null> {
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
     const values = [username, first_name, last_name, email, hashedPass];
-    const { rows } = await db.query(query, values);
+    const { rows } = await db.query(query, [username, first_name, last_name, email, hashedPass]);
+    const query1 = `SELECT * FROM "USER" WHERE id = $1;`;
+    const { rows: user } = await db.query(query1, [rows[0].id]);
+    console.log("user registred --------> : ", user);
     return rows[0].id;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -112,6 +115,7 @@ const getUserData = async (email: string) => {
     `;
   try {
     const { rows } = await db.query(query, [email]);
+    console.log("rows: ---\\\\\\\/////////----> ", rows);
     return rows[0];
   } catch (error) {
     console.error("Error getting user data:", error);
@@ -156,7 +160,8 @@ const updateEmailVerification = async (userId: string) => {
       WHERE id = $1;
     `;
   try {
-    await db.query(query, [userId]);
+    const {rows} = await db.query(query, [userId]);
+    console.log("rows verificated ----> : ", rows);
   } catch (error) {
     console.error("Error updating email verification:", error);
     throw error;
