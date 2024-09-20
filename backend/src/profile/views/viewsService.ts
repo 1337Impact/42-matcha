@@ -3,7 +3,7 @@ import { User, Profile } from "../types";
 
 async function handleGetViews(user: User): Promise<string[] | null> {
   try {
-    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_views"."view_time"
+    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "USER".pictures, "user_views"."view_time"
       FROM "user_views" 
       INNER JOIN "USER" ON "user_views"."viewer_id" = "USER"."id"
       WHERE "viewed_id" = $1
@@ -18,7 +18,7 @@ async function handleGetViews(user: User): Promise<string[] | null> {
 
 async function handleGetViewesHistory(user: User): Promise<string[] | null> {
   try {
-    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_views"."view_time"
+    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "USER".pictures, "user_views"."view_time"
       FROM "user_views" 
       INNER JOIN "USER" ON "user_views"."viewed_id" = "USER"."id"
       WHERE "viewer_id" = $1

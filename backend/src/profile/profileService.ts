@@ -5,13 +5,13 @@ async function handleGetProfile(
   profileId: string,
   user: User
 ): Promise<string | null> {
-  console.log("User data: ", user);
+  // //"User data: ", user);
   try {
     const query = `SELECT *
       FROM "USER" 
       WHERE id = $1;`;
     const { rows } = await db.query(query, [profileId]);
-    console.log("Profile data: ++++++++++++ ", rows[0]);
+    //"Profile data: ++++++++++++ ", rows[0]);
     return rows[0];
   } catch (error) {
     console.error("Error getting user:", error);
@@ -51,14 +51,14 @@ async function handleGetAllProfiles(user: User): Promise<any> {
       userData.sexual_preferences || "bisexual",
       userData.interests,
     ]);
-    // console.log(
+    // //
     //   "latitude",
     //   "longitude",
     //   "distance",
     //   "fame_rating",
     //   "common_interests_c"
     // );
-    // console.log(
+    // //
     //   rows.map((row: any) => [
     //     row.latitude,
     //     row.longitude,
@@ -83,13 +83,6 @@ async function handleGetgetFilteredProfiles(
     sexual_preferences: "",
     interests: ["music", "sports"],
   };
-  console.log(
-    "req_body: ---------> ",
-    user.id,
-    profilesFilter.sexual_preferences,
-    profilesFilter.interests,
-    profilesFilter.distance
-  );
   try {
     //get user's location and other data
     const { rows: data } = await db.query(
@@ -97,7 +90,7 @@ async function handleGetgetFilteredProfiles(
       [user.id]
     );
     const userData = data[0];
-    console.log("userData: ", userData);
+    //"userData: ", userData);
 
     // get the filtered profiles, so for example if the user set distance to 10km, we will get all profiles within 10km
     // of the user position and so on for the other filters
@@ -169,7 +162,7 @@ async function handleGetgetFilteredProfiles(
       WHERE id != $1
     `;
     const { rows: rows1 } = await db.query(query1, [user.id]);
-    console.log("all rows: ", rows1, "filtred : --------!!!----> ", rows);
+    // //"all rows: ", rows1, "filtred : --------!!!----> ", rows);
     return rows;
   } catch (error) {
     console.error("Error getting filtered Profiles:", error);
@@ -179,7 +172,7 @@ async function handleGetgetFilteredProfiles(
 
 async function handleGetConnections(user: User): Promise<any> {
   try {
-    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_likes_1"."like_time" AS "like_time"
+    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "USER".pictures, "user_likes_1"."like_time" AS "like_time"
     FROM "user_likes" AS "user_likes_1"
     INNER JOIN "user_likes" AS "user_likes_2" 
       ON "user_likes_1"."liker_id" = "user_likes_2"."liked_id" 
@@ -189,7 +182,7 @@ async function handleGetConnections(user: User): Promise<any> {
     WHERE "user_likes_1"."liked_id" = $1
     ORDER BY "user_likes_1"."like_time" DESC;`;
     const { rows: data } = await db.query(query, [user.id]);
-    console.log("Connections data: ", data);
+    //"Connections data: ", data);
     return data;
   } catch (error) {
     console.error("Error getting Connections:", error);
@@ -210,12 +203,12 @@ async function handleSetGeoLocation(userId: string, ip: any): Promise<any> {
       }
     );
     const data = await geoLocation.json();
-    console.log(
-      "Geo location data: ",
-      data.location,
-      data.city.name,
-      data.country.name
-    );
+    // //
+    //   "Geo location data: ",
+    //   data.location,
+    //   data.city.name,
+    //   data.country.name
+    // );
     await db.query(query, [
       data.location.latitude,
       data.location.longitude,
@@ -245,7 +238,7 @@ async function handleUpdateProfile(
       profileData.age,
       user.id,
     ]);
-    console.log("Updated profile: ========>>", rows[0]);
+    //"Updated profile: ========>>", rows[0]);
     return rows[0].id;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -285,7 +278,7 @@ async function handleUpdateProfileSettings(
         user.id,
       ]);
     }
-    console.log("Updated profile: ========>>", rows[0]);
+    //"Updated profile: ========>>", rows[0]);
     return rows[0].id;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -310,7 +303,7 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
     const { rows } = await db.query(query, [userId]);
     if (rows[0]) {
       const { gender, sexual_preferences, interests, bio } = rows[0];
-      console.log(gender, sexual_preferences, interests, bio);
+      //gender, sexual_preferences, interests, bio);
       if (gender && sexual_preferences && interests && bio) {
         return true;
       }

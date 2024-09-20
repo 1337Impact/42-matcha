@@ -73,7 +73,7 @@ ADD COLUMN IF NOT EXISTS "address" VARCHAR(255);
 // async function alterTables() {
 //   try {
 //     await pool.query(alterTableUserQuery);
-//     console.log("User table updated successfully with new columns.");
+//     //"User table updated successfully with new columns.");
 //     pool.end();
 //   } catch (error) {
 //     console.error("Error updating User table:", error);
@@ -87,13 +87,13 @@ ADD COLUMN IF NOT EXISTS "address" VARCHAR(255);
 async function createTables() {
   try {
     await pool.query(createTableUserQuery);
-    console.log("User table created successfully");
+    //"User table created successfully");
     await pool.query(createTableViewQuery);
-    console.log("User views table created successfully");
+    //"User views table created successfully");
     await pool.query(createTableLikesQuery);
-    console.log("User likes table created successfully");
+    //"User likes table created successfully");
     await pool.query(createTableMessageQuery);
-    console.log("Message table created successfully");
+    //"Message table created successfully");
     pool.end();
   } catch (error) {
     console.error("Error creating tables:", error);

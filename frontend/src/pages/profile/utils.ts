@@ -33,9 +33,10 @@ const handleViewProfile = async (profileId: string, token: string | null) => {
         },
       }
     );
-    console.log(res.data);
+    console.log("Viewed profile: ", res.data);
   } catch (error: any) {
-    console.error("Error viewing profile:", error);
+    console.error("Error viewing profile:", error.message);
+    throw error;
   }
 };
 

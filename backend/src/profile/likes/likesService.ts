@@ -5,7 +5,8 @@ async function handleGetLikes(
   user: User
 ): Promise<string[] | null> {
   try {
-    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_likes"."like_time"
+    const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_likes"."like_time",
+      "USER".pictures
       FROM "user_likes" 
       INNER JOIN "USER" ON "user_likes"."liker_id" = "USER"."id"
       WHERE "liked_id" = $1
@@ -37,11 +38,15 @@ async function handleLikeProfile(profileId: string, user: User): Promise<any> {
     const isProfileLiked = await handleGetIsProfileLiked(profileId, user);
     if (isProfileLiked) {
       const query = `DELETE FROM "user_likes" WHERE liker_id = $1 AND liked_id = $2;`;
+      const query1 = `UPDATE "USER" SET fame_rating = fame_rating - 1 WHERE id = $1;`;
+      await db.query(query1, [profileId]);
       await db.query(query, [user.id, profileId]);
       return false;
     }
     const query = `INSERT INTO "user_likes" (liker_id, liked_id) VALUES ($1, $2);`;
+    const query1 = `UPDATE "USER" SET fame_rating = fame_rating + 1 WHERE id = $1;`;
     await db.query(query, [user.id, profileId]);
+    await db.query(query1, [profileId]);
     return true;
   } catch (error) {
     console.error("Error liking profile:", error);

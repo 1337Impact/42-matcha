@@ -13,10 +13,10 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     socketInstance.on("connect", () => {
-      console.log("Connected to server");
+      //"Connected to server");
     });
     return () => {
-      console.log("Disconnecting from server");  
+      //"Disconnecting from server");  
       socketInstance.disconnect();
     };
   }, []);

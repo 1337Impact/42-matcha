@@ -1,17 +1,18 @@
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
-import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import axios from "axios";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import SwiperCore from "swiper";
 import "swiper/css";
 import "swiper/css/effect-cards";
 import { EffectCards, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import LikeDislikeButton from "../like-button/like-button";
 import FilterDropdown from "./filter-dropdown";
 import SortDropdown from "./sort-dropdown";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 
 SwiperCore.use([Navigation, Pagination, EffectCards]);
 
@@ -27,7 +28,6 @@ interface Profile {
 }
 
 const ProfileSwiper = () => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
   const initialSortCriteria = {
     age: "asc",
     interests: false,
@@ -41,15 +41,14 @@ const ProfileSwiper = () => {
     agerange: [18, 99],
   };
 
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sortCriteria, setSortCriteria] = useState(initialSortCriteria);
   const [filterCriteria, setFilterCriteria] = useState(initialFilterCriteria);
-  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     const applyFilters = async () => {
       const token = window.localStorage.getItem("token");
-      console.log(filterCriteria);
       try {
         const response = await axios.post(
           `${
@@ -74,7 +73,6 @@ const ProfileSwiper = () => {
             },
           }
         );
-        console.log("Filtered profiles: ", response.data);
         setProfiles(
           response.data.map((profile: any) => {
             const pictures = JSON.parse(profile.pictures);
@@ -84,84 +82,26 @@ const ProfileSwiper = () => {
               last_name: profile.last_name,
               username: profile.username,
               bio: profile.bio,
-              tags: profile.interest,
+              tags: profile.interests,
               pictures,
             };
           })
         );
-        console.log("Profiles: ", profiles);
       } catch (err) {
-        console.log(err);
+        setProfiles([]);
+        toast.error("Error fetching profiles");
       }
     };
-
     applyFilters();
   }, [sortCriteria, filterCriteria]);
 
-  useEffect(() => {
-    axios
-      .get(
-        `${import.meta.env.VITE_APP_API_URL}/profile/likes/is-profile-liked`,
-        {
-          params: {
-            profileId: profiles[currentIndex]?.id,
-          },
-          headers: {
-            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          },
-        }
-      )
-      .then((response) => {
-        setIsLiked(response.data);
-      })
-      .catch((error) => {
-        console.log("Error getting likes:", error);
-      });
-  }, [profiles[currentIndex]?.id]);
-
   const handleSwipe = (direction: string) => {
     if (direction === "like") {
-      try {
-        axios.post(
-          `${import.meta.env.VITE_APP_API_URL}/profile/likes/like-profile-home`,
-          {
-            profileId: profiles[currentIndex].id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-            },
-          }
-        );
-      } catch (err) {
-        console.log(err);
-      }
-      console.log(`Liked profile ${profiles[currentIndex].username}`);
       setCurrentIndex((prevIndex) => prevIndex + 1);
       profiles.splice(currentIndex, 1);
     } else if (direction === "dislike") {
-      try {
-        axios.post(
-          `${import.meta.env.VITE_APP_API_URL}/profile/likes/dislike-profile`,
-          {
-            profileId: profiles[currentIndex].id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-            },
-          }
-        );
-      } catch (err) {
-        console.log(err);
-      }
       setCurrentIndex((prevIndex) => prevIndex + 1);
-      console.log(`Disliked profile ${profiles[currentIndex].username}`);
       profiles.splice(currentIndex, 1);
-    } else {
-      if (currentIndex < profiles.length - 1) {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
-      }
     }
   };
 
@@ -172,7 +112,6 @@ const ProfileSwiper = () => {
           sortCriteria={sortCriteria}
           setSortCriteria={setSortCriteria}
         />
-
         <FilterDropdown
           ProfilesFilter={filterCriteria}
           setProfilesFilter={setFilterCriteria}
@@ -185,97 +124,91 @@ const ProfileSwiper = () => {
         modules={[EffectCards]}
         className="h-5/6 flex flex-col items-center border-2 rounded-xl border-gray-200 shadow-lg bg-white justify-center w-full "
       >
-        {profiles.map((profile) => (
-          <SwiperSlide
-            key={profile.id}
-            className="h-full w-full flex items-center justify-center  "
-          >
-            {/* Inner Swiper for Profile Pictures */}
-            <Swiper
-              slidesPerView={1}
-              className=" shadow-md h-full flex w-full overflow-hidden relative"
+        {profiles.length > 0 ? (
+          profiles.map((profile) => (
+            <SwiperSlide
+              key={profile.id}
+              className="h-full w-full flex items-center justify-center"
             >
-              {profile.pictures &&
-                profile.pictures.map((picture, index) => (
-                  <SwiperSlide key={index} className="h-full relative">
-                    <img
-                      src={picture || "https://via.placeholder.com/150"}
-                      alt={`Profile of ${profile.first_name}`}
-                      className="w-full h-full rounded-lg object-fit"
-                    />
-                    <div className="absolute bottom-0 left-0 flex flex-col items-start w-full backdrop-blur-sm p-3 h-1/5">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-xl text-gray-700 text-start  font-extrabold">
-                          {profile.username}
-                        </h3>
-                        {profile.gender === "male" ? (
-                          <MaleIcon className="w-8 h-8 " color="info" />
-                        ) : (
-                          <FemaleIcon
-                            sx={{
-                              width: 32,
-                              height: 32,
-                              color: "pink",
-                              fontWeight: "bold",
-                            }}
-                            color="info"
-                          />
-                        )}
+              {/* Inner Swiper for Profile Pictures */}
+              <Swiper
+                slidesPerView={1}
+                className=" shadow-md h-full flex w-full overflow-hidden relative"
+              >
+                {profile.pictures &&
+                  profile.pictures.map((picture, index) => (
+                    <SwiperSlide key={index} className="h-full relative">
+                      <Link to={`/profile/${profile.id}`}>
+                        <img
+                          src={picture || "https://via.placeholder.com/blur                          "}
+                          alt={`Profile of ${profile.first_name}`}
+                          className="w-full h-full rounded-lg object-fit"
+                        />
+                      </Link>
+                      <div className="absolute bottom-0 left-0 flex flex-col items-start w-full backdrop-blur-sm p-3">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-xl text-gray-800 text-start font-extrabold">
+                            {profile.username}
+                          </h3>
+                          {profile.gender === "male" ? (
+                            <MaleIcon className="w-8 h-8 " color="info" />
+                          ) : (
+                            <FemaleIcon
+                              sx={{
+                                width: 32,
+                                height: 32,
+                                color: "pink",
+                                fontWeight: "bold",
+                              }}
+                              color="info"
+                            />
+                          )}
+                        </div>
+                        <p className="text-gray-600">
+                          {profile.bio.length > 100
+                            ? profile.bio.substring(0, 100) + "..."
+                            : profile.bio}{" "}
+                        </p>
+                        <div className="flex flex-wrap gap-2 pt-4">
+                          {profile.tags &&
+                            profile.tags.map((tag, index) => (
+                              <div
+                                key={index}
+                                className="bg-red-400 rounded-full px-3 py-1 text-xs font-medium text-white"
+                              >
+                                {tag}
+                              </div>
+                            ))}
+                        </div>
                       </div>
-                      <p className="text-gray-600 pt-2">{profile.bio} </p>
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        {profile.tags &&
-                          profile.tags.map((tag, index) => (
-                            <div
-                              key={index}
-                              className="bg-red-300 rounded-full px-3 py-1 text-xs font-medium text-white"
-                            >
-                              {tag}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
-            </Swiper>
+                    </SwiperSlide>
+                  ))}
+              </Swiper>
+            </SwiperSlide>
+          ))
+        ) : (
+          <SwiperSlide className="h-full w-full flex items-center justify-center">
+            <img
+              src="https://via.placeholder.com/150"
+              alt="Placeholder"
+              className="w-full h-full rounded-lg object-fit"
+            />
           </SwiperSlide>
-        ))}
+        )}
       </Swiper>
 
-      {/* Like/Dislike Buttons */}
       <div className="flex justify-around items-center text-center h-1/6 ">
-        <button
-          onClick={() => handleSwipe("like")}
-          disabled={isLiked}
-          className="bg-white rounded-full p-4 transition-transform transform hover:scale-105"
-        > 
-          <FavoriteIcon
-            sx={{
-              width: 32,
-              height: 32,
-              color: "red",
-              fontWeight: "bold",
-            }}
-          />
-        </button>
-        <button
-          onClick={() => handleSwipe("skip")}
-          className="bg-white text-white rounded-full p-4 transition-transform transform hover:scale-105 shadow-xl"
-        >
-          <ChevronRight className="w-8 h-8 text-red-400" />
-        </button>
+        <LikeDislikeButton
+          profileId={profiles[currentIndex]?.id}
+          handleSwipe={handleSwipe}
+          disabled={profiles.length === 0}
+        />
         <button
           onClick={() => handleSwipe("dislike")}
+          disabled={profiles.length === 0}
           className="bg-white text-white rounded-full p-4 transition-transform transform hover:scale-105 shadow-xl"
         >
-          <NotInterestedIcon
-            sx={{
-              width: 32,
-              height: 32,
-              color: "green",
-              fontWeight: "bold",
-            }}
-          />
+          <ChevronRight className="w-8 h-8 text-green-500" />
         </button>
       </div>
     </div>

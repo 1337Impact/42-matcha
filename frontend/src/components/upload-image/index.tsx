@@ -31,7 +31,7 @@ export default function UploadImage({
   };
 
   useEffect (() => {
-    console.log("image: ", image);
+    //"image: ", image);
   }
   ,[image]);
 

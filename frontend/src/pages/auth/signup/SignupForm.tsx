@@ -46,7 +46,7 @@ export default function SingUpForm({
       );
       setStatus("success");
       // window.localStorage.setItem("token", response.data.token);
-      console.log(response);
+      //response);
     } catch (error: any) {
       setStatus("failed");
       setSignUpError(error.response.data.error);

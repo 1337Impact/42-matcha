@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import LikeDislikeButton from "../../components/like-button/like-button";
 import formatDate from "../../utils/formateDate";
 import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 const getConnectionsData = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
@@ -16,7 +16,6 @@ const getConnectionsData = async (): Promise<any> => {
     );
     return response.data;
   } catch (error) {
-    console.log("Error getting connections: ", error);
     return [];
   }
 };
@@ -26,31 +25,76 @@ export default function Chat() {
 
   useEffect(() => {
     getConnectionsData().then((data) => {
-      console.log("connections: ", data);
-      setConnections(data);
+      setConnections(
+        data.map((connection: any) => {
+          return {
+            ...connection,
+            pictures: JSON.parse(connection.pictures),
+          };
+        })
+      );
     });
   }, []);
+
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-gray-700 p-2">Messages</h1>
-      <ul className="flex flex-col gap-2 mt-4">
+    <div className="max-w-[790px] w-full">
+      <div className="flex items-center justify-between p-6">
+        <ArrowLeft size={24} onClick={handleBack} />
+        <h1 className="text-xl font-semibold text-gray-700">Chat</h1>
+      </div>
+
+      <ul className="flex flex-col gap-6 p-4 ">
         {connections.map((profile: any) => (
-          <li key={profile.id}>
-            <Link to={`/chat/${profile.id}`}>
-            <p className="py-2 px-4 w-full rounded-md bg-red-100 flex items-start justify-between">
-              <div>
-                <h1 className="text-gray-600 font-semibold">
-                  {profile.first_name} {profile.last_name}
-                </h1>
-                <h2 className="text-gray-500">@{profile.username}</h2>
-                <h3 className="text-sm text-gray-500">
-                  {formatDate(profile.like_time)}
-                </h3>
-              </div>
-              <LikeDislikeButton profileId={profile.id} />
-            </p>
-            </Link>
-          </li>
+          <>
+            <li key={profile.id}>
+              <Link to={`/chat/${profile.id}`}>
+                <div className="flex items-center gap-2 rounded-sm">
+                  <img
+                    src={profile.pictures[0]}
+                    key={profile.id}
+                    alt="Profile"
+                    className="w-16 h-16 rounded-full object-cover border-red-200 border-2"
+                  />
+                  <div className="flex justify-between items-start w-11/12">
+                    <div>
+                      <h1 className="text-lg font-semibold text-gray-700">
+                        {profile.first_name} {profile.last_name}
+                      </h1>
+                      <p className="text-sm text-gray-500">Last message</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-700">11:59</p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </li>
+
+            <li key={profile.id}>
+              <Link to={`/chat/${profile.id}`}>
+                <div className="flex items-center gap-2 rounded-sm">
+                  <img
+                    src={profile.pictures[0]}
+                    key={profile.id}
+                    alt="Profile"
+                    className="w-16 h-16 rounded-full object-cover border-red-200 border-2"
+                  />
+                  <div>
+                    <h1 className="text-lg font-semibold text-gray-700">
+                      {profile.first_name} {profile.last_name}
+                    </h1>
+                    <p className="text-sm text-gray-500">
+                      Last message Last message Last{" "}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </li>
+          </>
         ))}
       </ul>
     </div>

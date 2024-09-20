@@ -17,7 +17,7 @@ export const login = async (req: any, res: any) => {
   const user = await loginUser(req.body);
   if (user) {
     const isProfileCompleted = await getIsProfileCompleted(user.id);
-    console.log("sending res !", isProfileCompleted);
+    //"sending res !", isProfileCompleted);
     res.send({token: user.token, isProfileCompleted: isProfileCompleted});
   } else {
     res.status(400).send({ error: "Invalid email or password." });

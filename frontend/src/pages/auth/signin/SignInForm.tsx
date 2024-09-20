@@ -38,7 +38,7 @@ export default function SignInForm() {
         "http://localhost:3000/api/auth/login",
         data
       );
-      console.log("login res: ", response);
+      //"login res: ", response);
       window.localStorage.setItem("token", response.data.token);
       const isProfileCompleted = response.data.isProfileCompleted;
       setRedirecting(true);
@@ -47,7 +47,7 @@ export default function SignInForm() {
       // }, 1000);
     } catch (error: any) {
       setSignInError(error.message);
-      console.log(error.message);
+      //error.message);
       setLoading(false);
     }
   };

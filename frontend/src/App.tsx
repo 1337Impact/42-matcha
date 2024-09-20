@@ -31,11 +31,11 @@ function App() {
     if (token) {
       let decodedToken = jwtDecode(token);
       const { exp, iat, iss, ...userData } = decodedToken;
-      console.log("user: ", userData);
+      //"user: ", userData);
       var current_time = new Date().getTime() / 1000;
       if (exp && current_time > exp) {
         toast.error("Session expired. Please sign in again.");
-        console.log("Token expired");
+        //"Token expired");
         window.localStorage.removeItem("token");
         navigate("/signin");
       } else {

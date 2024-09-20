@@ -1,22 +1,22 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Route, Routes, useSearchParams } from "react-router-dom";
-import Home from "./index";
-import Profile from "./profile";
 import { useSelector } from "react-redux";
-import { RootState } from "../store";
-import Navbar from "../components/Navbar";
+import { Route, Routes, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 import CompleteProfile from "../components/complete-profile";
-import Likes from "./profile/likes";
-import Views from "./profile/views";
-import History from "./profile/history";
-import Connections from "./connections";
+import { SocketProvider } from "../contexts/SocketContext";
+import { RootState } from "../store";
 import Chat from "./chat";
 import ChatRoom from "./chat/chat-room";
-import { SocketProvider } from "../contexts/SocketContext";
-import axios from "axios";
+import Connections from "./connections";
+import Home from "./index";
+import Profile from "./profile";
+import History from "./profile/history";
+import Likes from "./profile/likes";
+import Views from "./profile/views";
 import Settings from "./settings";
-import { toast } from "react-toastify";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -26,7 +26,7 @@ const ProtectedLayout: React.FC = () => {
 
   useEffect(() => {
     /// check if the user already completed the profile setup
-    console.log("Checking if profile is completed", user);
+    //"Checking if profile is completed", user);
     const checkProfileCompletion = async () => {
       try {
         if (!user) return;
@@ -39,19 +39,19 @@ const ProtectedLayout: React.FC = () => {
             },
           }
         );
-        console.log("Profile completed: ", profileCompleted.data.isCompleted);
+        //"Profile completed: ", profileCompleted.data.isCompleted);
         if (profileCompleted.data.isCompleted == false) {
           setIsOpenProfileCompleted(true);
         }
       } catch (err) {
-        console.log(err);
+        //err);
         toast.error("Failed to check profile completion");
       }
     };
     const userGeoLocation = async () => {
       try {
         if (!user) return;
-        const geoLocation = await axios.post(
+        await axios.post(
           `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/geolocation`,
           { user: user.id },
           {
@@ -60,13 +60,10 @@ const ProtectedLayout: React.FC = () => {
             },
           }
         );
-        console.log("User GeoLocation: ", geoLocation.data);
       } catch (err) {
-        console.log(err);
         toast.error("Failed to get user location");
       }
     };
-
     userGeoLocation();
     checkProfileCompletion();
   }, [user]);
@@ -96,7 +93,7 @@ const ProtectedLayout: React.FC = () => {
           </div>
         )}
         <Navbar />
-        <main className="flex-1 overflow-auto xl:w-[1200px] mx-2 md:mx-6 lg:mx-8 xl:mx-auto h-auto bg-white">
+        <main className="flex-1 overflow-auto w-full max-w-[786px] mx-auto h-auto bg-white">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/connections" element={<Connections />} />

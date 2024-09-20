@@ -32,17 +32,17 @@ const FilterDropdown: React.FC<FilterDropDownProps> = ({
   ];
 
   const handleSexPreferenceChange = (choice: any) => {
-    console.log(choice);
+    //choice);
     setSexual_preferences(choice.value);
   };
 
   const handleTagsChange = (tags: any) => {
-    console.log(tags);
+    //tags);
     setTags(tags.map((tag: any) => tag.value));
   };
 
   const handleDistanceChange = (distance: any) => {
-    console.log(distance.target.value);
+    //distance.target.value);
     setDistance(distance.target.value);
   };
 

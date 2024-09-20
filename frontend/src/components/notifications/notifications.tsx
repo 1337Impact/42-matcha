@@ -50,7 +50,7 @@ const Notifications: React.FC = () => {
   useEffect(() => {
     if (socket) {
       socket.on("notification", (data) => {
-        console.log("notification", data);
+        //"notification", data);
         setNotifications((prev) => [
           {
             id: prev.length + 1,

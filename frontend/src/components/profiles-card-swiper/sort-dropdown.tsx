@@ -26,18 +26,19 @@ const SortDropdown: React.FC<SortCriteriaProps> = ({
   const [sort, setSort] = React.useState("asc");
 
   const handleSortChange = (newValue: any) => {
-    console.log(newValue.value);
+    //newValue.value);
     setSort(newValue.value);
   };
 
   const applySort = () => {
     setSortCriteria({
+      ...sortCriteria,
       age: sort,
       interests: CIChecked,
       distance: DistanceChecked,
       fameRating: fameRateChecked,
     });
-    console.log("Sort applied");
+    //"Sort applied");
   };
 
   return (

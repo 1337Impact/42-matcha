@@ -28,7 +28,6 @@ const getViewesHistory = async (req: any, res: any) => {
 const vieweProfile = async (req: any, res: any) => {
   try {
     const profileId = req.body.profileId;
-    console.log("view profile: ", profileId);
     const data = await handleViewedProfile(profileId, req.user);
     sendNotification({ content: `@${req.user.username} has viewed you profile.`, type: "view" }, profileId);
     res.send(data);

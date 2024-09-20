@@ -24,7 +24,7 @@ export const generateToken = (payload: Payload) => {
   return jwt.sign(payload, secretKey, options);
 };
 export const generateEmailVerificationToken = (payload: string) => {
-  console.log("Generating email verification token for: ", payload);
+  //"Generating email verification token for: ", payload);
   const options = {
     expiresIn: "4h",
     issuer: process.env.FRONTEND_URL, 

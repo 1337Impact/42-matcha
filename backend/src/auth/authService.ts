@@ -20,11 +20,11 @@ interface User {
 }
 
 async function createUser(userData: User): Promise<string | null> {
-  console.log("userData: ", userData);
+  //"userData: ", userData);
   const { username, first_name, last_name, email, password } = userData;
   const query = `
-      INSERT INTO "USER" (username, first_name, last_name, email, password)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO "USER" (username, first_name, last_name, email, password, fame_rating)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id;
     `;
   try {
@@ -38,7 +38,7 @@ async function createUser(userData: User): Promise<string | null> {
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
     const values = [username, first_name, last_name, email, hashedPass];
-    const { rows } = await db.query(query, [username, first_name, last_name, email, hashedPass]);
+    const { rows } = await db.query(query, [username, first_name, last_name, email, hashedPass, 0]);
     const query1 = `SELECT * FROM "USER" WHERE id = $1;`;
     const { rows: user } = await db.query(query1, [rows[0].id]);
     console.log("user registred --------> : ", user);
@@ -60,7 +60,7 @@ async function deleteUser(userId: string) {
 }
 
 export const registerUser = async (userData: User) => {
-  console.log("registerUser: ", userData);
+  //"registerUser: ", userData);
   try {
     const result = signupSchema.safeParse(userData);
     if (!result.success) {
@@ -93,12 +93,12 @@ export const registerUser = async (userData: User) => {
         data: "User created successfully. Please verify your email.",
       };
     } catch (error) {
-      console.log("Error catched. deleting user from db...");
+      //"Error catched. deleting user from db...");
       deleteUser(userId);
       throw error;
     }
   } catch (error) {
-    console.log("Unhandled error:", error);
+    //"Unhandled error:", error);
     return {
       code: 500,
       error: "Internal Server Error.",
@@ -115,7 +115,7 @@ const getUserData = async (email: string) => {
     `;
   try {
     const { rows } = await db.query(query, [email]);
-    console.log("rows: ---\\\\\\\/////////----> ", rows);
+    //"rows: ---\\\\\\\/////////----> ", rows);
     return rows[0];
   } catch (error) {
     console.error("Error getting user data:", error);
@@ -127,18 +127,18 @@ export const loginUser = async (data: { email: string; password: string }) => {
   try {
     const result = loginSchema.safeParse(data);
     if (!result.success) {
-      console.log("Invalid data");
+      //"Invalid data");
       return null;
     }
     const userData = await getUserData(data.email);
     if (!userData) {
-      console.log("User not found");
+      //"User not found");
       return null;
     }
     const { password: userPassword, pictures, ...user } = userData;
     const isMatch = await bcrypt.compare(data.password, userPassword);
     if (!isMatch) {
-      console.log("Invalid password");
+      //"Invalid password");
       return null;
     }
 
@@ -148,7 +148,7 @@ export const loginUser = async (data: { email: string; password: string }) => {
     });
     return { id: user.id, token: token };
   } catch (error) {
-    console.log("error: ", error);
+    //"error: ", error);
     return null;
   }
 };
@@ -161,7 +161,7 @@ const updateEmailVerification = async (userId: string) => {
     `;
   try {
     const {rows} = await db.query(query, [userId]);
-    console.log("rows verificated ----> : ", rows);
+    //"rows verificated ----> : ", rows);
   } catch (error) {
     console.error("Error updating email verification:", error);
     throw error;
@@ -208,7 +208,7 @@ export const handleForgetPasswordEamil = async (email: string, res: any) => {
   try {
     const { rows } = await db.query(query, [email]);
 
-    console.log("rows: -------> ", email);
+    //"rows: -------> ", email);
 
     if (rows.length === 0) {
       return res
@@ -269,7 +269,7 @@ export const handleUpdatePassword = async (password: string, token: string) => {
 
     await db.query(updatePasswordQuery, [hashedPass, user.id]);
 
-    console.log(`Password updated successfully for user ID ${user.id}`);
+    //`Password updated successfully for user ID ${user.id}`);
   } catch (error) {
     console.error("Error updating user password:", error);
     throw error;

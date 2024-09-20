@@ -57,9 +57,6 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
     images: "",
   });
 
-  const [imageFiles, setImageFiles] = useState<(File | null)[]>(
-    Array(5).fill(null)
-  );
   const [imagePreview, setImagePreview] = useState<(string | null)[]>(
     data.images
   );
@@ -85,7 +82,7 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
   };
 
   const onSubmit = async () => {
-    console.log(data);
+    //data);
     setError({
       first_name: "",
       last_name: "",
@@ -141,7 +138,7 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
   };
 
   useEffect(() => {
-    console.log("images: ", data.images);
+    //"images: ", data.images);
   }, [data.images]);
 
   return (
@@ -336,11 +333,7 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
                   }
                 }}
                 setImgFile={(file) => {
-                  setImageFiles((prev) => {
-                    const newFiles = [...prev];
-                    newFiles[index] = file;
-                    return newFiles;
-                  });
+                  return file;
                 }}
               />
             ))}

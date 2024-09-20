@@ -6,8 +6,14 @@ import { toast } from "react-toastify";
 
 export default function LikeDislikeButton({
   profileId,
+  handleSwipe = () => {},
+  disabled = false,
+  style = {},
 }: {
   profileId: string;
+  disabled?: boolean;
+  handleSwipe?: (direction: string) => void;
+  style?: React.CSSProperties;
 }) {
   const token = window.localStorage.getItem("token");
   const [isLiked, setIsLiked] = useState(false);
@@ -26,6 +32,7 @@ export default function LikeDislikeButton({
       );
       setIsLiked(!isLiked);
       toast.success(res.data);
+      handleSwipe("like");
     } catch (error: any) {
       console.error("Error liking profile:", error);
       toast.error("Failed to like profile");
@@ -33,6 +40,7 @@ export default function LikeDislikeButton({
   };
 
   useEffect(() => {
+    //"Profile ID: ", profileId);
     axios
       .get(
         `${import.meta.env.VITE_APP_API_URL}/profile/likes/is-profile-liked`,
@@ -49,14 +57,16 @@ export default function LikeDislikeButton({
         setIsLiked(response.data);
       })
       .catch((error) => {
-        console.log("Error getting likes:", error);
+        //"Error getting likes:", error);
       });
-  }, []);
+  }, [profileId]);
 
   return (
     <button
+      disabled={disabled}
       onClick={handleLikeDislike}
-      className="text-red-400 hover:scale-105"
+      className="text-red-400 rounded-full p-4 transition-transform transform hover:scale-105 shadow-lg "
+      style={style}
     >
       {isLiked ? (
         <RiDislikeLine className="w-8 h-8" />

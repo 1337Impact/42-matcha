@@ -83,7 +83,7 @@ export default function EditProfile({
   };
 
   const onSubmit = async () => {
-    console.log(data);
+    //data);
     setError({
       first_name: "",
       last_name: "",
@@ -105,7 +105,7 @@ export default function EditProfile({
       return;
     }
     try {
-      console.log(data);
+      //data);
       const formData = new FormData();
       formData.append("gender", data.gender);
       formData.append("sexual_preferences", data.sexual_preferences);
@@ -124,13 +124,13 @@ export default function EditProfile({
       toast.success("Your profile has been updated");
       handleClose();
     } catch (error: any) {
-      console.log(error);
+      //error);
       toast.error("Failed to update profile");
     }
   };
 
   useEffect(() => {
-    console.log("images: ", data.images);
+    //"images: ", data.images);
   }, [data.images]);
 
   return (

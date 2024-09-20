@@ -12,7 +12,7 @@ import {
 } from "./profileService";
 
 const getProfile = async (req: any, res: any) => {
-  console.log("req: ", req.query);
+  //"req: ------/////////------>  ", req.query);
   const query = req.query;
   try {
     const profileId =
@@ -37,7 +37,7 @@ const getAllProfiles = async (req: any, res: any) => {
 
 const getFilteredProfiles = async (req: any, res: any) => {
   try {
-    console.log("req.body: ", req.user);
+    //"req.body: ", req.user);
     const data = await handleGetgetFilteredProfiles(
       req.user,
       req.body.ProfilesFilter
@@ -96,15 +96,12 @@ const updateProfile = async (req: any, res: any) => {
     );
     res.send("Profile updated successfully");
   } catch (error) {
-    console.log("update profile error: ", error);
     res.status(400).send({ error: "Something went wrong." });
   }
 };
 
 export const updateProfileSettings = async (req: any, res: any) => {
   try {
-    console.log("req", req, "req.body: ", req.body);
-
     const images = JSON.stringify(
       mergeArrays(JSON.parse(req.body.images), req.files)
     );
@@ -155,9 +152,9 @@ const likeProfile = async (req: any, res: any) => {
 
 const isProfileCompleted = async (req: any, res: any) => {
   try {
-    console.log("req.user: ", req.body.user);
+    //"req.user: ", req.body.user);
     const isCompleted = await getIsProfileCompleted(req.body.user);
-    console.log("isCompleted: ", isCompleted);
+    //"isCompleted: ", isCompleted);
     res.send({ isCompleted });
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
@@ -167,9 +164,9 @@ const isProfileCompleted = async (req: any, res: any) => {
 const getGeoLocation = async (req: any, res: any) => {
   try {
     const ip = req.headers["x-forwarded-for"] || req.socket.address().address;
-    console.log("ip: ", ip);
+    //"ip: ", ip);
     const data = await handleSetGeoLocation(req.user.id, ip);
-    // console.log("data back: ---------> ", data);
+    // //"data back: ---------> ", data);
   } catch (error) {
     console.error("Error getting geo location: ", error);
     res.status(400).send({ error: "Something went wrong." });

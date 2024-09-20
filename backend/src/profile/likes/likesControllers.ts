@@ -19,7 +19,7 @@ const getLikes = async (req: any, res: any) => {
 const likeProfile = async (req: any, res: any) => {
   try {
     const profileId = req.body.profileId;
-    console.log("like profile: ", profileId);
+    //"like profile: ", profileId);
     const response = await handleLikeProfile(profileId, req.user);
     // handle notification
     if (response) {
@@ -92,7 +92,7 @@ const dislikeProfile = async (req: any, res: any) => {
 const isProfileLiked = async (req: any, res: any) => {
   try {
     const profileId = req.query.profileId;
-    console.log("isProfileLiked: ", profileId);
+    //"isProfileLiked: ", profileId);
     const isLiked = await handleGetIsProfileLiked(profileId, req.user);
     res.send(isLiked);
   } catch (error) {

@@ -82,9 +82,9 @@ export default function Settings() {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           },
         });
-        console.log("response", response.data, response.data.pictures.length);
+        //"response", response.data, response.data.pictures.length);
         const pictureArrayFromString = JSON.parse(response.data.pictures);
-        console.log("pictureArray", pictureArrayFromString);
+        //"pictureArray", pictureArrayFromString);
         setImagePreview(pictureArrayFromString);
         setData({
           ...initialData, // Ensure all fields are present
@@ -137,7 +137,7 @@ export default function Settings() {
           import.meta.env.VITE_APP_GEOAPIFY_API_KEY
         }`
       );
-      console.log("Address suggestions: --------> ", response.data);
+      //"Address suggestions: --------> ", response.data);
       const suggestions = response.data.features.map(
         (feature: any) => feature.properties
       );
@@ -229,7 +229,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="w-full max-w-lg p-4 bg-white">
+    <div className="w-full p-4 bg-white ">
       <h1 className="text-2xl font-bold text-start mb-5">Edit Your Profile</h1>
 
       {/* First Name */}

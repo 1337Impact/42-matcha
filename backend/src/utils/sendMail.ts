@@ -20,7 +20,7 @@ export const transporter = nodemailer.createTransport({
 });
 
 async function sendVerificationEmail(data: SendEmailProps) {
-  console.log("sending verification mail: ", data);
+  //"sending verification mail: ", data);
   try {
     const info = await transporter.sendMail({
       from: `"Matcha 👻" <${process.env.EMAIL_LOGIN}>`,
@@ -33,7 +33,7 @@ async function sendVerificationEmail(data: SendEmailProps) {
       </div>`,
     });
 
-    console.log("Message sent: %s", info);
+    //"Message sent: %s", info);
     return { data: "Email sent successfully", error: null };
   } catch (error) {
     console.error("Error sending email: ", error);

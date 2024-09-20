@@ -5,7 +5,7 @@ import {
 
 // const messageSocketHandlers = (socket: Socket, ) => {
 //     socket.on('message', (msg: string) => {
-//       console.log('Message received:', msg);
+//       //'Message received:', msg);
 //       io.emit('message', msg); 
 //     });
 // };
@@ -14,7 +14,7 @@ import {
 const getMessages = async (req: any, res: any) => {
   try {
     const profileId = req.query.profileId;
-    console.log("getMessages: ", profileId, req.user);
+    //"getMessages: ", profileId, req.user);
     const messages = await handleGetMessages(profileId, req.user);
     res.send(messages);
   } catch (error) {

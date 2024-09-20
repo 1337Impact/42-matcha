@@ -16,7 +16,7 @@ const gethistoryData = async (): Promise<any> => {
     );
     return response.data;
   } catch (error) {
-    console.log("Error getting history: ", error);
+    //"Error getting history: ", error);
     return [];
   }
 };
@@ -26,30 +26,48 @@ export default function History() {
 
   useEffect(() => {
     gethistoryData().then((data) => {
-      console.log("history: ", data);
-      setHistory(data);
+      setHistory(
+        data.map((profile: any) => ({
+          ...profile,
+          view_time: formatDate(profile.view_time),
+          pictures: JSON.parse(profile.pictures),
+        }))
+      );
     });
   }, []);
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-gray-700 p-2">
-        History
-      </h1>
-      <ul className="flex flex-col gap-2 mt-4">
+    <div className="p-4">
+      <h1 className="text-3xl font-bold text-gray-800 mb-3">History</h1>
+      <p className="text-gray-600 text-base mb-4">
+        Here are the people whose profiles you viewed.
+      </p>
+      <ul className="flex flex-col gap-4">
         {history.map((profile: any) => (
-          <li key={profile.id}>
-            <p className="py-2 px-4 w-full rounded-md bg-red-100 flex items-start justify-between">
-              <div>
-                <h1 className="text-gray-600 font-semibold">
-                  {profile.first_name} {profile.last_name}
-                </h1>
-                <h2 className="text-gray-500">@{profile.username}</h2>
-                <h3 className="text-sm text-gray-500">
-                  {formatDate(profile.view_time)}
-                </h3>
+          <li
+            key={profile.id}
+            className="transition-transform transform hover:scale-105"
+          >
+            <div className="py-3 px-4 w-full rounded-lg bg-red-50 border border-red-200 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-4">
+                <div className="border-2 border-red-300 rounded-full overflow-hidden">
+                  <img
+                    src={profile.pictures[0]}
+                    alt="Profile"
+                    className="w-12 h-12 object-cover"
+                  />
+                </div>
+                <div>
+                  <h1 className="text-gray-800 font-semibold text-lg">
+                    {profile.first_name} {profile.last_name}
+                  </h1>
+                  <h2 className="text-gray-600 text-md">@{profile.username}</h2>
+                  <h3 className="text-sm text-gray-500">
+                    Viewed on: {profile.view_time}
+                  </h3>
+                </div>
               </div>
               <LikeDislikeButton profileId={profile.id} />
-            </p>
+            </div>
           </li>
         ))}
       </ul>

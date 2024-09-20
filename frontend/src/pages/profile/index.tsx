@@ -3,11 +3,9 @@ import { BsSearchHeart } from "react-icons/bs";
 import { FaCalendarAlt } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { UserProfile, getProfileData, handleViewProfile } from "./utils";
-
 import { IoMaleFemale } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import EditProfile from "../../components/edit-profile";
 import LikeButton from "../../components/like-button/like-button";
 import { RootState } from "../../store";
 
@@ -15,13 +13,12 @@ export default function Profile() {
   const params = useParams();
   const user = useSelector((state: RootState) => state.userSlice.user);
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
+
   useEffect(() => {
     getProfileData(params.profileId as string)
       .then((data) => {
-        console.log("data: ", data);
         setProfileData(data);
+        console.log("data 000000000  : ", data);
       })
       .catch((error) => {
         console.log("error: ", error);
@@ -29,10 +26,17 @@ export default function Profile() {
   }, [params]);
 
   useEffect(() => {
-    if (profileData) {
-      const token = localStorage.getItem("token");
-      handleViewProfile(profileData.id, token);
-    }
+    const viewProfile = async () => {
+      if (profileData) {
+        try {
+          const token = localStorage.getItem("token");
+          await handleViewProfile(profileData.id, token);
+        } catch (error) {
+          console.log("error: ", error);
+        }
+      }
+    };
+    viewProfile();
   }, [profileData]);
 
   if (!profileData) {
@@ -43,91 +47,89 @@ export default function Profile() {
     );
   }
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
   return (
-    <>
-      {openModal && (
-        <EditProfile
-          initialData={profileData}
-          handleClose={() => setOpenModal(false)}
+    <div className="w-full relative h-2/3 bg-gray-100">
+      <div className="w-full h-full relative marker:overflow-hidden">
+        <img
+          src={profileData.pictures[0]}
+          alt="Profile"
+          className="w-full h-full object-fill aspect-square"
         />
-      )}
-      <div className="w-full max-w-5xl md:mx-auto pb-16">
-        <div className="bg-muted rounded-t-lg p-6">
-          <div className="flex items-center gap-6">
-            <div className="relative flex shrink-0 overflow-hidden rounded-full h-32 w-32">
-              <img
-                className="aspect-square object-cover h-full w-full"
-                alt={profileData.username}
-                src={
-                  profileData.pictures
-                    ? profileData.pictures[0]
-                    : `${import.meta.env.VITE_APP_IMAGES_URL}/default.jpg`
-                }
-              />
-            </div>
-            <div className="grid gap-1">
-              <h2 className="text-2xl font-bold">
-                {profileData.first_name} {profileData.last_name}
-              </h2>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>@{profileData.username}</span>
-                <span className="text-red-400">{profileData.fame_rating}</span>
-              </div>
-              {user?.id === profileData.id ? (
+      </div>
+      <div className="absolute top-3/4 w-full z-10 bg-white h-full rounded-t-[2.5rem] p-4 flex">
+        <div className="p-4 justify-between flex-col w-full h-full">
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-xl font-bold text-gray-800 text-center">
+              {profileData.first_name} {profileData.last_name}
+            </h1>
+            {user?.id === profileData.id ? (
+              <Link to="/settings">
                 <button
-                  onClick={handleOpenModal}
                   className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50"
                 >
                   Edit Profile
                 </button>
-              ) : (
-                <div className="flex gap-2">
-                  <Link to={`/chat/${profileData.id}`}>
-                    <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
-                      Message
-                    </button>
-                  </Link>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Link to={`/chat/${profileData.id}`}>
                   <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
-                    Report
+                    Message
                   </button>
-                  <LikeButton profileId={profileData.id} />
-                </div>
-              )}
-            </div>
+                </Link>
+                <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
+                  Report
+                </button>
+                <LikeButton
+                  style={{
+                    width: "3.5rem",
+                    height: "3.5rem",
+                    alignItems: "center",
+                    backgroundColor: "#faf7ef",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                  profileId={profileData.id}
+                />
+              </div>
+            )}
           </div>
-        </div>
-        <div className="bg-background rounded-b-lg p-6 grid gap-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <FaCalendarAlt className="text-red-400" />
-            <span>28 years old</span>
+          <div className="flex items-center gap-2 text-sm text-gray-500 pl-1">
+            <span>@{profileData.username}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <IoMaleFemale className="text-red-400" />
+          <div className="flex items-center gap-2 text-lg text-gray-500 mt-5">
+            <FaCalendarAlt className="text-red-400 text-xl" />
+            <span>{profileData.age} years old</span>
+          </div>
+          <div className="flex items-center gap-2 text-lg mt-2 text-gray-500">
+            <IoMaleFemale className="text-red-400 text-xl" />
             <span>I'm a {profileData.gender}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <BsSearchHeart className="text-red-400" />
+          <div className="flex items-center gap-2 text-lg mt-2 text-gray-500">
+            <BsSearchHeart className="text-red-400 text-xl" />
             <span>I'm looking for {profileData.sexual_preferences}</span>
           </div>
           <div className="grid gap-1">
-            <p className="text-sm text-muted-foreground line-clamp-3">
-              {profileData.bio}
-            </p>
+            <h2 className="text-lg text-gray-600 font-semibold mt-2">
+              About me
+            </h2>
+            <p className="text-gray-600">{profileData.bio}</p>
           </div>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {profileData.interests &&
-              profileData.interests.map((interest, index) => (
-                <div
-                  key={index}
-                  className="bg-red-300 rounded-full px-3 py-1 text-xs font-medium text-white"
-                >
-                  {interest}
-                </div>
-              ))}
+          <div className="flex-col gap-2 mt-1">
+            <h2 className="text-lg text-gray-600 font-semibold mt-2">
+              Interests
+            </h2>
+            <div className="flex flex-wrap gap-2 pt-2">
+              {profileData.interests &&
+                profileData.interests.map((interest, index) => (
+                  <div
+                    key={index}
+                    className="bg-red-400 rounded-full px-3 py-2 text-xs font-medium text-white "
+                  >
+                    {interest}
+                  </div>
+                ))}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-4 mt-4">
             {profileData.pictures &&
@@ -138,13 +140,13 @@ export default function Profile() {
                       key={index}
                       src={image}
                       alt="Profile Picture"
-                      className="aspect-square rounded-md object-cover"
+                      className="aspect-square rounded-md object-fill w-60 h-60 mb-4 shadow-lg border-[0.01rem] border-gray-200"
                     />
                   )
               )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
