@@ -63,25 +63,36 @@ CREATE TABLE IF NOT EXISTS "Message" (
 );
 `;
 
+// Table for blocking users
 
+const createTableBlockQuery = `
+CREATE TABLE IF NOT EXISTS "Blocked" (
+  "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  "blocker_id" UUID,
+  "blocked_id" UUID,
+  "block_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_blocker_id FOREIGN KEY ("blocker_id") REFERENCES "USER" ("id"),
+  CONSTRAINT fk_blocked_id FOREIGN KEY ("blocked_id") REFERENCES "USER" ("id")
+);
+`;
 
 const alterTableUserQuery = `
 ALTER TABLE "USER"
-ADD COLUMN IF NOT EXISTS "address" VARCHAR(255);
+ADD COLUMN IF NOT EXISTS "report_count" NUMERIC DEFAULT 0;
 `;
 
-// async function alterTables() {
-//   try {
-//     await pool.query(alterTableUserQuery);
-//     //"User table updated successfully with new columns.");
-//     pool.end();
-//   } catch (error) {
-//     console.error("Error updating User table:", error);
-//     pool.end();
-//   }
-// }
+async function alterTables() {
+  try {
+    await pool.query(createTableBlockQuery);
+    //"User table updated successfully with new columns.");
+    pool.end();
+  } catch (error) {
+    console.error("Error updating User table:", error);
+    pool.end();
+  }
+}
 
-// alterTables();
+alterTables();
 
 
 async function createTables() {
@@ -101,4 +112,4 @@ async function createTables() {
   }
 }
 
-createTables();
+// createTables();

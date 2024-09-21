@@ -107,7 +107,7 @@ const ProfileSwiper = () => {
 
   return (
     <div className="max-w-lg mx-auto h-full w-full flex flex-col justify-between overflow-hidden">
-      <div className="flex-end gap-4 text-end items-end p-3 w-full">
+      <div className="flex-end gap-4 text-end items-end pl-3 pr-3 pb-1 pt-1 w-full">
         <SortDropdown
           sortCriteria={sortCriteria}
           setSortCriteria={setSortCriteria}
@@ -140,7 +140,7 @@ const ProfileSwiper = () => {
                     <SwiperSlide key={index} className="h-full relative">
                       <Link to={`/profile/${profile.id}`}>
                         <img
-                          src={picture || "https://via.placeholder.com/blur                          "}
+                          src={picture || "https://via.placeholder.com/blur"}
                           alt={`Profile of ${profile.first_name}`}
                           className="w-full h-full rounded-lg object-fit"
                         />
@@ -166,11 +166,11 @@ const ProfileSwiper = () => {
                         </div>
                         <p className="text-gray-600">
                           {profile.bio.length > 100
-                            ? profile.bio.substring(0, 100) + "..."
+                            ? profile.bio.substring(0, 80) + " ..."
                             : profile.bio}{" "}
                         </p>
                         <div className="flex flex-wrap gap-2 pt-4">
-                          {profile.tags &&
+                          {profile.tags.length < 4 ? (
                             profile.tags.map((tag, index) => (
                               <div
                                 key={index}
@@ -178,7 +178,22 @@ const ProfileSwiper = () => {
                               >
                                 {tag}
                               </div>
-                            ))}
+                            ))
+                          ) : (
+                            <>
+                              {profile.tags.slice(0, 3).map((tag, index) => (
+                                <div
+                                  key={index}
+                                  className="bg-red-400 rounded-full px-3 py-1 text-xs font-medium text-white"
+                                >
+                                  {tag}
+                                </div>
+                              ))}
+                              <div className="bg-red-400 rounded-full px-3 py-1 text-xs font-medium text-white">
+                                +{profile.tags.length - 3}
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </SwiperSlide>

@@ -1,18 +1,19 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
-import { BsSearchHeart } from "react-icons/bs";
+import { BsSearchHeart, BsThreeDotsVertical } from "react-icons/bs";
 import { FaCalendarAlt } from "react-icons/fa";
-import { useParams } from "react-router-dom";
-import { UserProfile, getProfileData, handleViewProfile } from "./utils";
 import { IoMaleFemale } from "react-icons/io5";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import LikeButton from "../../components/like-button/like-button";
 import { RootState } from "../../store";
+import { UserProfile, getProfileData, handleViewProfile } from "./utils";
 
 export default function Profile() {
   const params = useParams();
   const user = useSelector((state: RootState) => state.userSlice.user);
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const [openMenu, setOpenMenu] = useState(false);
 
   useEffect(() => {
     getProfileData(params.profileId as string)
@@ -39,6 +40,42 @@ export default function Profile() {
     viewProfile();
   }, [profileData]);
 
+  const handleReport = async () => {
+    try {
+      const token = window.localStorage.getItem("token");
+      const response = await axios.post(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/report`,
+        { userId: profileData?.id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("response: ", response);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
+  const handleBlock = async () => {
+    try {
+      const token = window.localStorage.getItem("token");
+      const response = await axios.post(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/block`,
+        { userId: profileData?.id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("response: ", response);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
   if (!profileData) {
     return (
       <div>
@@ -64,33 +101,52 @@ export default function Profile() {
             </h1>
             {user?.id === profileData.id ? (
               <Link to="/settings">
-                <button
-                  className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50"
-                >
+                <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
                   Edit Profile
                 </button>
               </Link>
             ) : (
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Link to={`/chat/${profileData.id}`}>
-                  <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
-                    Message
-                  </button>
-                </Link>
-                <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
-                  Report
-                </button>
-                <LikeButton
-                  style={{
-                    width: "3.5rem",
-                    height: "3.5rem",
-                    alignItems: "center",
-                    backgroundColor: "#faf7ef",
-                    justifyContent: "center",
-                    display: "flex",
+                <div className="flex items-center gap-2">
+                  <LikeButton
+                    style={{
+                      width: "3.5rem",
+                      height: "3.5rem",
+                      alignItems: "center",
+                      backgroundColor: "#faf7ef",
+                      justifyContent: "center",
+                      display: "flex",
+                    }}
+                    profileId={profileData.id}
+                  />
+                  <Link to={`/chat/${profileData.id}`}>
+                    <button className="border-2 border-red-400 rounded-md py-[2px] px-2 text-red-400 hover:bg-red-50">
+                      Message
+                    </button>
+                  </Link>
+                </div>
+                <BsThreeDotsVertical
+                  className="text-2xl relative"
+                  onClick={() => {
+                    setOpenMenu(!openMenu);
                   }}
-                  profileId={profileData.id}
                 />
+                {openMenu && (
+                  <div className="absolute top-16 right-5 bg-white shadow-lg rounded-md p-2 ">
+                    <button
+                      onClick={handleReport}
+                      className="w-full py-2 px-4 text-left hover:bg-gray-100 border-b-[0.02rem] border-gray-300"
+                    >
+                      Report
+                    </button>
+                    <button
+                      onClick={handleBlock}
+                      className="w-full py-2 px-4 text-left hover:bg-gray-100"
+                    >
+                      Block
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

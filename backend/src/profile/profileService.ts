@@ -84,53 +84,54 @@ async function handleGetgetFilteredProfiles(
     interests: ["music", "sports"],
   };
   try {
-    //get user's location and other data
     const { rows: data } = await db.query(
       `SELECT id, latitude, longitude, sexual_preferences, interests FROM "USER" WHERE id = $1;`,
       [user.id]
     );
     const userData = data[0];
-    //"userData: ", userData);
 
     // get the filtered profiles, so for example if the user set distance to 10km, we will get all profiles within 10km
     // of the user position and so on for the other filters
     let query = `
+    SELECT 
+        id, first_name, last_name, username, gender, bio, pictures, interests, location, latitude,
+        longitude, fame_rating, distance, common_interests_count, age
+    FROM (
         SELECT 
-          id, first_name, last_name, username, gender, bio, pictures, interests, location, latitude,
-           longitude, fame_rating, distance, common_interests_count, age
-        FROM (
-          SELECT 
-            id, first_name, last_name, username, gender, bio, pictures, interests, 
-            location, latitude, longitude, fame_rating, age,
+            u.id, u.first_name, u.last_name, u.username, u.gender, u.bio, u.pictures, u.interests, 
+            u.location, u.latitude, u.longitude, u.fame_rating, u.age,
             (
-              6371 * acos(
-                cos(radians($2)) * cos(radians(latitude)) * cos(radians(longitude) - radians($3)) +
-                sin(radians($2)) * sin(radians(latitude))
-              )
+                6371 * acos(
+                    cos(radians($2)) * cos(radians(u.latitude)) * cos(radians(u.longitude) - radians($3)) +
+                    sin(radians($2)) * sin(radians(u.latitude))
+                )
             ) AS distance,
             array_length(array(
-              SELECT unnest(interests)
-              INTERSECT
-              SELECT unnest($5::text[])
+                SELECT unnest(u.interests)
+                INTERSECT
+                SELECT unnest($5::text[])
             ), 1) AS common_interests_count
-          FROM "USER"
-          WHERE id != $1
+        FROM "USER" u
+        LEFT JOIN "Blocked" b1 ON b1.blocker_id = $1 AND b1.blocked_id = u.id
+        LEFT JOIN "Blocked" b2 ON b2.blocker_id = u.id AND b2.blocked_id = $1
+        WHERE u.id != $1
+            AND b1.blocked_id IS NULL -- The user has not blocked the other user
+            AND b2.blocked_id IS NULL -- The other user has not blocked the user
             AND (
-              $4 = 'bisexual'
-              OR gender = $4
+                $4 = 'bisexual'
+                OR u.gender = $4
             )
             AND (
-              6371 * acos(
-                cos(radians($2)) * cos(radians(latitude)) * cos(radians(longitude) - radians($3)) +
-                sin(radians($2)) * sin(radians(latitude))
-              )
+                6371 * acos(
+                    cos(radians($2)) * cos(radians(u.latitude)) * cos(radians(u.longitude) - radians($3)) +
+                    sin(radians($2)) * sin(radians(u.latitude))
+                )
             ) <= $6
-            AND age >= $7
-            AND age <= $8
-        ) AS subquery
-        ORDER BY
-        `;
-
+            AND u.age >= $7
+            AND u.age <= $8
+    ) AS subquery
+    ORDER BY
+    `;
     if (profilesFilter.common_interests) {
       query += ` common_interests_count DESC,`;
     }
@@ -203,12 +204,6 @@ async function handleSetGeoLocation(userId: string, ip: any): Promise<any> {
       }
     );
     const data = await geoLocation.json();
-    // //
-    //   "Geo location data: ",
-    //   data.location,
-    //   data.city.name,
-    //   data.country.name
-    // );
     await db.query(query, [
       data.location.latitude,
       data.location.longitude,
@@ -238,7 +233,6 @@ async function handleUpdateProfile(
       profileData.age,
       user.id,
     ]);
-    //"Updated profile: ========>>", rows[0]);
     return rows[0].id;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -278,7 +272,6 @@ async function handleUpdateProfileSettings(
         user.id,
       ]);
     }
-    //"Updated profile: ========>>", rows[0]);
     return rows[0].id;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -303,7 +296,6 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
     const { rows } = await db.query(query, [userId]);
     if (rows[0]) {
       const { gender, sexual_preferences, interests, bio } = rows[0];
-      //gender, sexual_preferences, interests, bio);
       if (gender && sexual_preferences && interests && bio) {
         return true;
       }
@@ -316,6 +308,32 @@ async function getIsProfileCompleted(userId: string): Promise<boolean> {
   }
 }
 
+const handleReportUser = async (userId: string, user: User) => {
+  try {
+    const query = `UPDATE "USER" SET report_count = report_count + 1 WHERE id = $1 RETURNING report_count;`;
+    const { rows } = await db.query(query, [userId]);
+    if (rows[0].report_count >= 3) {
+      const query = `UPDATE "USER" SET is_verified = false WHERE id = $1 RETURNING id;`;
+      const { rows } = await db.query(query, [userId]);
+    }
+    return rows[0].id;
+  } catch (error) {
+    console.error("Error reporting user:", error);
+    throw error;
+  }
+};
+
+const handleBlockUser = async (userId: string, user: User) => {
+  try {
+    const query = `INSERT INTO "Blocked" (blocker_id, blocked_id) VALUES ($1, $2);`;
+    await db.query(query, [user.id, userId]);
+    return "User blocked successfully";
+  } catch (error) {
+    console.error("Error blocking user:", error);
+    throw error;
+  }
+};
+
 export {
   getIsProfileCompleted,
   handleGetAllProfiles,
@@ -326,4 +344,6 @@ export {
   handleSetGeoLocation,
   handleUpdateProfile,
   handleUpdateProfileSettings,
+  handleReportUser,
+  handleBlockUser,
 };

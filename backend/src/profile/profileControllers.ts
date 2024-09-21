@@ -1,18 +1,19 @@
 import bcrypt from "bcrypt";
 import {
   getIsProfileCompleted,
+  handleBlockUser,
   handleGetAllProfiles,
   handleGetConnections,
   handleGetProfile,
   handleGetgetFilteredProfiles,
   handleLikeProfile,
+  handleReportUser,
   handleSetGeoLocation,
   handleUpdateProfile,
   handleUpdateProfileSettings,
 } from "./profileService";
 
 const getProfile = async (req: any, res: any) => {
-  //"req: ------/////////------>  ", req.query);
   const query = req.query;
   try {
     const profileId =
@@ -37,7 +38,6 @@ const getAllProfiles = async (req: any, res: any) => {
 
 const getFilteredProfiles = async (req: any, res: any) => {
   try {
-    //"req.body: ", req.user);
     const data = await handleGetgetFilteredProfiles(
       req.user,
       req.body.ProfilesFilter
@@ -152,9 +152,7 @@ const likeProfile = async (req: any, res: any) => {
 
 const isProfileCompleted = async (req: any, res: any) => {
   try {
-    //"req.user: ", req.body.user);
     const isCompleted = await getIsProfileCompleted(req.body.user);
-    //"isCompleted: ", isCompleted);
     res.send({ isCompleted });
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
@@ -164,14 +162,30 @@ const isProfileCompleted = async (req: any, res: any) => {
 const getGeoLocation = async (req: any, res: any) => {
   try {
     const ip = req.headers["x-forwarded-for"] || req.socket.address().address;
-    //"ip: ", ip);
     const data = await handleSetGeoLocation(req.user.id, ip);
-    // //"data back: ---------> ", data);
   } catch (error) {
     console.error("Error getting geo location: ", error);
     res.status(400).send({ error: "Something went wrong." });
   }
 };
+
+const reportUser = async (req: any, res: any) => {
+  try {
+    const data = await handleReportUser(req.body.userId, req.user);
+    res.send(data);
+  } catch (error) {
+    res.status(400).send({ error: "Something went wrong." });
+  }
+}
+
+const blockUser = async (req: any, res: any) => {
+  try {
+    const data = await handleBlockUser(req.body.userId, req.user);
+    res.send(data);
+  } catch (error) {
+    res.status(400).send({ error: "Something went wrong." });
+  }
+}
 
 export {
   getAllProfiles,
@@ -182,4 +196,6 @@ export {
   isProfileCompleted,
   likeProfile,
   updateProfile,
+  reportUser,
+  blockUser,
 };
