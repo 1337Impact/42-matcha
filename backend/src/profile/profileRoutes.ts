@@ -34,7 +34,7 @@ router.use("/views", viewsRouter);
 router.post("/report", reportUser);
 router.post("/block", blockUser);
 router.post("/update", upload.array("images", 5), updateProfile);
-router.post("/settings", upload.array("images"), updateProfileSettings);
+router.post("/settings", upload.array("images", 5), updateProfileSettings);
 router.post("/iscompleted", isProfileCompleted);
 router.get("/", getProfile);
 router.get("/connections", getConnections);

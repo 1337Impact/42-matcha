@@ -42,6 +42,7 @@ const getFilteredProfiles = async (req: any, res: any) => {
       req.user,
       req.body.ProfilesFilter
     );
+    
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });

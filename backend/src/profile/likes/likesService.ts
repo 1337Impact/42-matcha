@@ -1,9 +1,7 @@
 import db from "../../utils/db/client";
 import { User, Profile } from "../types";
 
-async function handleGetLikes(
-  user: User
-): Promise<string[] | null> {
+async function handleGetLikes(user: User): Promise<string[] | null> {
   try {
     const query = `SELECT "USER".id, "USER".first_name, "USER".last_name, "USER".username, "user_likes"."like_time",
       "USER".pictures
@@ -44,9 +42,23 @@ async function handleLikeProfile(profileId: string, user: User): Promise<any> {
       return false;
     }
     const query = `INSERT INTO "user_likes" (liker_id, liked_id) VALUES ($1, $2);`;
-    const query1 = `UPDATE "USER" SET fame_rating = fame_rating + 1 WHERE id = $1;`;
     await db.query(query, [user.id, profileId]);
-    await db.query(query1, [profileId]);
+
+    const { rows: fame_rating } = await db.query(
+      `SELECT fame_rating FROM "USER" WHERE id = $1;`,
+      [profileId]
+    );
+    if (fame_rating[0].fame_rating < 0) {
+      const query1 = `UPDATE "USER" SET fame_rating = 0 WHERE id = $1;`;
+      await db.query(query1, [profileId]);
+    } else if (fame_rating[0].fame_rating > 10) {
+      const query1 = `UPDATE "USER" SET fame_rating = 10 WHERE id = $1;`;
+      await db.query(query1, [profileId]);
+    } else {
+      const query1 = `UPDATE "USER" SET fame_rating = fame_rating + 1 WHERE id = $1;`;
+      await db.query(query1, [profileId]);
+    }
+    
     return true;
   } catch (error) {
     console.error("Error liking profile:", error);
@@ -54,7 +66,10 @@ async function handleLikeProfile(profileId: string, user: User): Promise<any> {
   }
 }
 
-async function handleLikeProfileHome(profileId: string, user: User): Promise<any> {
+async function handleLikeProfileHome(
+  profileId: string,
+  user: User
+): Promise<any> {
   try {
     const query = `INSERT INTO "user_likes" (liker_id, liked_id) VALUES ($1, $2);`;
     await db.query(query, [user.id, profileId]);
@@ -65,4 +80,9 @@ async function handleLikeProfileHome(profileId: string, user: User): Promise<any
   }
 }
 
-export { handleGetLikes, handleLikeProfile, handleGetIsProfileLiked, handleLikeProfileHome };
+export {
+  handleGetLikes,
+  handleLikeProfile,
+  handleGetIsProfileLiked,
+  handleLikeProfileHome,
+};

@@ -8,11 +8,18 @@ import { toast } from "react-toastify";
 import SwiperCore from "swiper";
 import "swiper/css";
 import "swiper/css/effect-cards";
-import { EffectCards, Navigation, Pagination } from "swiper/modules";
+import {
+  EffectCards,
+  EffectCoverflow,
+  Navigation,
+  Pagination,
+} from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import LikeDislikeButton from "../like-button/like-button";
 import FilterDropdown from "./filter-dropdown";
 import SortDropdown from "./sort-dropdown";
+import AdvancedSearchMenu from "../search";
+import { tagsList } from "../edit-profile";
 
 SwiperCore.use([Navigation, Pagination, EffectCards]);
 
@@ -29,7 +36,7 @@ interface Profile {
 
 const ProfileSwiper = () => {
   const initialSortCriteria = {
-    age: "asc",
+    age: "",
     interests: false,
     distance: false,
     fameRating: false,
@@ -39,14 +46,23 @@ const ProfileSwiper = () => {
     sexual_preferences: "",
     interests: [] as string[],
     agerange: [18, 99],
+    fameRating: [0, 10],
+  };
+  const initialSearchCriteria = {
+    ageRange: [18, 99],
+    fameRating: [0, 10],
+    location: "",
+    interests: [] as string[],
   };
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sortCriteria, setSortCriteria] = useState(initialSortCriteria);
   const [filterCriteria, setFilterCriteria] = useState(initialFilterCriteria);
+  const [searchCriteria, setSearchCriteria] = useState(initialSearchCriteria);
 
   useEffect(() => {
+    console.log("filter Criteria:", filterCriteria);
     const applyFilters = async () => {
       const token = window.localStorage.getItem("token");
       try {
@@ -65,6 +81,8 @@ const ProfileSwiper = () => {
               common_interests: sortCriteria.interests,
               distance_sort: sortCriteria.distance,
               fame_rating: sortCriteria.fameRating,
+              min_fame_rating: filterCriteria.fameRating[0],
+              max_fame_rating: filterCriteria.fameRating[1],
             },
           },
           {
@@ -93,15 +111,14 @@ const ProfileSwiper = () => {
       }
     };
     applyFilters();
-  }, [sortCriteria, filterCriteria]);
+  }, [sortCriteria, filterCriteria, searchCriteria]); // Add searchCriteria to the dependency array
 
   const handleSwipe = (direction: string) => {
-    if (direction === "like") {
+    if (direction === "like" || direction === "dislike") {
+      console.log("next profile", currentIndex + 1, profiles[currentIndex + 1]);
+      profiles.shift();
+      console.log("profiles", profiles);
       setCurrentIndex((prevIndex) => prevIndex + 1);
-      profiles.splice(currentIndex, 1);
-    } else if (direction === "dislike") {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-      profiles.splice(currentIndex, 1);
     }
   };
 
@@ -116,13 +133,28 @@ const ProfileSwiper = () => {
           ProfilesFilter={filterCriteria}
           setProfilesFilter={setFilterCriteria}
         />
+        <AdvancedSearchMenu
+          searchCriteria={filterCriteria}
+          setSearchCriteria={setFilterCriteria}
+        />
       </div>
+
       {/* Outer Swiper for Profiles */}
       <Swiper
-        effect={"cards"}
+        effect={"coverflow"}
         grabCursor={true}
-        modules={[EffectCards]}
-        className="h-5/6 flex flex-col items-center border-2 rounded-xl border-gray-200 shadow-lg bg-white justify-center w-full "
+        centeredSlides={true}
+        slidesPerView={"auto"}
+        coverflowEffect={{
+          rotate: 50,
+          stretch: 0,
+          depth: 100,
+          modifier: 1,
+          slideShadows: true,
+        }}
+        allowTouchMove={false}
+        modules={[EffectCoverflow]} // Use Coverflow effect
+        className="h-5/6 flex flex-col items-center border-2 rounded-xl border-gray-200 shadow-lg bg-white justify-center w-full"
       >
         {profiles.length > 0 ? (
           profiles.map((profile) => (
@@ -133,7 +165,8 @@ const ProfileSwiper = () => {
               {/* Inner Swiper for Profile Pictures */}
               <Swiper
                 slidesPerView={1}
-                className=" shadow-md h-full flex w-full overflow-hidden relative"
+                className="shadow-md h-full flex w-full overflow-hidden relative"
+                allowTouchMove={true} // Allow swiping for pictures only
               >
                 {profile.pictures &&
                   profile.pictures.map((picture, index) => (
@@ -167,7 +200,7 @@ const ProfileSwiper = () => {
                         <p className="text-gray-600">
                           {profile.bio.length > 100
                             ? profile.bio.substring(0, 80) + " ..."
-                            : profile.bio}{" "}
+                            : profile.bio}
                         </p>
                         <div className="flex flex-wrap gap-2 pt-4">
                           {profile.tags.length < 4 ? (

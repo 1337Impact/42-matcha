@@ -8,6 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import LikeButton from "../../components/like-button/like-button";
 import { RootState } from "../../store";
 import { UserProfile, getProfileData, handleViewProfile } from "./utils";
+import { MedalIcon } from "lucide-react";
 
 export default function Profile() {
   const params = useParams();
@@ -84,6 +85,7 @@ export default function Profile() {
     );
   }
 
+    
   return (
     <div className="w-full relative h-2/3 bg-gray-100">
       <div className="w-full h-full relative marker:overflow-hidden">
@@ -152,6 +154,10 @@ export default function Profile() {
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500 pl-1">
             <span>@{profileData.username}</span>
+          </div>
+          <div className="flex items-center gap-2 text-lg text-gray-500 mt-5">
+            <MedalIcon className="text-red-400 text-xl" />
+            <span>{profileData.fame_rating}</span>
           </div>
           <div className="flex items-center gap-2 text-lg text-gray-500 mt-5">
             <FaCalendarAlt className="text-red-400 text-xl" />

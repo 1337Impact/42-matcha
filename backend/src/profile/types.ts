@@ -34,6 +34,8 @@ interface Filter {
   common_interests?: boolean;
   distance_sort?: boolean;
   fame_rating?: boolean;
+  min_fame_rating?: number;
+  max_fame_rating?: number;
 }
 
 export { User, Profile, Filter };

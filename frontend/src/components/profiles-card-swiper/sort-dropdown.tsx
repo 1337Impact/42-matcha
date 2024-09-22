@@ -20,10 +20,10 @@ const SortDropdown: React.FC<SortCriteriaProps> = ({
   sortCriteria,
   setSortCriteria,
 }) => {
-  const [CIChecked, setCIChecked] = React.useState(true);
-  const [fameRateChecked, setFameRateChecked] = React.useState(true);
-  const [DistanceChecked, setDistanceChecked] = React.useState(true);
-  const [sort, setSort] = React.useState("asc");
+  const [CIChecked, setCIChecked] = React.useState(false);
+  const [fameRateChecked, setFameRateChecked] = React.useState(false);
+  const [DistanceChecked, setDistanceChecked] = React.useState(false);
+  const [sort, setSort] = React.useState("");
 
   const handleSortChange = (newValue: any) => {
     //newValue.value);

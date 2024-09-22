@@ -86,7 +86,7 @@ export const registerUser = async (userData: User) => {
         email: userData.email,
         link: `${process.env.FRONTEND_URL}/verify?token=${emailToken}`,
       });
-
+      console.log(`${process.env.FRONTEND_URL}/verify?token=${emailToken}`)
       return {
         code: 200,
         error: null,

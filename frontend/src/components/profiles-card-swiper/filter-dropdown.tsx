@@ -10,6 +10,7 @@ interface ProfilesFilter {
   sexual_preferences: string;
   interests: string[];
   agerange: number[];
+  fameRating: number[];
 }
 
 interface FilterDropDownProps {
@@ -21,10 +22,11 @@ const FilterDropdown: React.FC<FilterDropDownProps> = ({
   ProfilesFilter,
   setProfilesFilter,
 }) => {
+  const initialageRange = [18, 99];
   const [sexual_preferences, setSexual_preferences] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [distance, setDistance] = useState<number>(10);
-  const [ageRange, setAgeRange] = useState<number[]>([18, 22]);
+  const [ageRange, setAgeRange] = useState<number[]>(initialageRange);
 
   const sexPreference = [
     { value: "Male", label: "Male" },
@@ -32,35 +34,28 @@ const FilterDropdown: React.FC<FilterDropDownProps> = ({
   ];
 
   const handleSexPreferenceChange = (choice: any) => {
-    //choice);
     setSexual_preferences(choice.value);
   };
 
   const handleTagsChange = (tags: any) => {
-    //tags);
     setTags(tags.map((tag: any) => tag.value));
   };
 
-  const handleDistanceChange = (distance: any) => {
-    //distance.target.value);
-    setDistance(distance.target.value);
+  const handleDistanceChange = (event: any, newValue: number | number[]) => {
+    setDistance(newValue as number);
   };
 
-  const handleAgeRangeChange = (event: Event, newValue: number | number[]) => {
-    event.preventDefault();
-    if (typeof newValue === "number") {
-      setAgeRange([newValue, ageRange[1]]);
-      return;
-    }
-    setAgeRange(newValue);
+  const handleAgeRangeChange = (event: any, newValue: number | number[]) => {
+    setAgeRange(newValue as number[]);
   };
 
-  const applyFilter = async () => {
+  const applyFilter = () => {
     setProfilesFilter({
-      distance: distance,
-      sexual_preferences: sexual_preferences,
+      distance,
+      sexual_preferences,
       interests: tags,
       agerange: ageRange,
+      fameRating: ProfilesFilter.fameRating,
     });
   };
 
@@ -88,25 +83,18 @@ const FilterDropdown: React.FC<FilterDropDownProps> = ({
 
         <div className="p-4">
           <div className="mb-3 w-full text-start">
-            <label
-              className="block text-gray-600 text-sm font-bold mb-1"
-              htmlFor="first_name"
-            >
+            <label className="block text-gray-600 text-sm font-bold mb-1">
               Sexual preferences
             </label>
             <ReactSelect
               className="w-full"
               onChange={handleSexPreferenceChange}
-              defaultValue={
-                ProfilesFilter.sexual_preferences
-                  ? {
-                      value: ProfilesFilter.sexual_preferences,
-                      label: ProfilesFilter.sexual_preferences,
-                    }
+              value={
+                sexual_preferences
+                  ? { value: sexual_preferences, label: sexual_preferences }
                   : null
               }
               options={sexPreference}
-              isMulti={false}
               placeholder="Select your preference"
             />
           </div>
@@ -114,18 +102,12 @@ const FilterDropdown: React.FC<FilterDropDownProps> = ({
 
         <div className="p-4 ">
           <div className="flex flex-col text-start items-start gap-2 w-full">
-            <label
-              className="text-gray-700 text-sm font-bold mb-1"
-              htmlFor="interests"
-            >
+            <label className="text-gray-700 text-sm font-bold mb-1">
               Common Interests
             </label>
             <ReactSelect
               className="w-full"
-              defaultValue={ProfilesFilter.interests.map((tag) => ({
-                value: tag,
-                label: tag,
-              }))}
+              value={tags.map((tag) => ({ value: tag, label: tag }))}
               onChange={handleTagsChange}
               options={tagsList as any}
               isMulti
@@ -135,45 +117,32 @@ const FilterDropdown: React.FC<FilterDropDownProps> = ({
 
         <div className="p-4">
           <div className="flex flex-col items-start gap-0 w-full">
-            <label
-              className="text-gray-700 text-sm font-bold mb-1"
-              htmlFor="age range"
-            >
-              age range
+            <label className="text-gray-700 text-sm font-bold mb-1">
+              Age range
             </label>
             <Slider
-              getAriaLabel={() => "Temperature range"}
-              value={
-                ProfilesFilter.agerange
-              }
+              value={ageRange}
               onChange={handleAgeRangeChange}
               valueLabelDisplay="auto"
-              sx={{
-                color: "red",
-              }}
+              min={0}
+              max={99}
+              sx={{ color: "red" }}
             />
           </div>
         </div>
 
         <div className="p-4">
           <div className="flex flex-col items-start gap-0 w-full">
-            <label
-              className="text-gray-700 text-sm font-bold mb-1"
-              htmlFor="distance"
-            >
+            <label className="text-gray-700 text-sm font-bold mb-1">
               Distance
             </label>
             <Slider
-              className="w-full"
-              defaultValue={
-                ProfilesFilter.distance ? ProfilesFilter.distance : 10
-              }
+              value={distance}
               onChange={handleDistanceChange}
-              aria-label="Default"
               valueLabelDisplay="auto"
-              sx={{
-                color: "red",
-              }}
+              min={1}
+              max={100}
+              sx={{ color: "red" }}
             />
           </div>
         </div>

@@ -51,22 +51,6 @@ async function handleGetAllProfiles(user: User): Promise<any> {
       userData.sexual_preferences || "bisexual",
       userData.interests,
     ]);
-    // //
-    //   "latitude",
-    //   "longitude",
-    //   "distance",
-    //   "fame_rating",
-    //   "common_interests_c"
-    // );
-    // //
-    //   rows.map((row: any) => [
-    //     row.latitude,
-    //     row.longitude,
-    //     row.distance,
-    //     row.fame_rating,
-    //     row.common_interests_count,
-    //   ])
-    // );
     return rows;
   } catch (error) {
     console.error("Error getting all Profiles:", error);
@@ -78,18 +62,13 @@ async function handleGetgetFilteredProfiles(
   user: User,
   profilesFilter: Filter
 ): Promise<any> {
-  const filter: Filter = {
-    distance: 10,
-    sexual_preferences: "",
-    interests: ["music", "sports"],
-  };
   try {
     const { rows: data } = await db.query(
       `SELECT id, latitude, longitude, sexual_preferences, interests FROM "USER" WHERE id = $1;`,
       [user.id]
     );
     const userData = data[0];
-
+    console.log("userData: ", profilesFilter.min_fame_rating, profilesFilter.max_fame_rating);
     // get the filtered profiles, so for example if the user set distance to 10km, we will get all profiles within 10km
     // of the user position and so on for the other filters
     let query = `
@@ -129,6 +108,8 @@ async function handleGetgetFilteredProfiles(
             ) <= $6
             AND u.age >= $7
             AND u.age <= $8
+            AND u.fame_rating >= $9
+            AND u.fame_rating <= $10
     ) AS subquery
     ORDER BY
     `;
@@ -144,18 +125,26 @@ async function handleGetgetFilteredProfiles(
     if (profilesFilter.age) {
       query += ` age ${profilesFilter.age},`;
     }
-    query += ` id ASC
+    query += ` id DESC
       LIMIT 5;`;
+
+    console.log(
+      "s_pref: ",
+      profilesFilter.sexual_preferences?.toLocaleLowerCase()
+    );
 
     const { rows } = await db.query(query, [
       user.id,
       userData.latitude,
       userData.longitude,
-      userData.sexual_preferences || "bisexual",
-      userData.interests,
+      profilesFilter.sexual_preferences?.toLocaleLowerCase() ||
+        userData.sexual_preferences,
+      profilesFilter.interests || userData.interests,
       profilesFilter.distance || 20,
       profilesFilter.min_age || 18,
       profilesFilter.max_age || 99,
+      profilesFilter.min_fame_rating || 0,
+      profilesFilter.max_fame_rating || 10,
     ]);
 
     const query1 = `
@@ -163,7 +152,7 @@ async function handleGetgetFilteredProfiles(
       WHERE id != $1
     `;
     const { rows: rows1 } = await db.query(query1, [user.id]);
-    // //"all rows: ", rows1, "filtred : --------!!!----> ", rows);
+    console.log("filtred : --------!!!----> ", rows);
     return rows;
   } catch (error) {
     console.error("Error getting filtered Profiles:", error);
@@ -183,7 +172,6 @@ async function handleGetConnections(user: User): Promise<any> {
     WHERE "user_likes_1"."liked_id" = $1
     ORDER BY "user_likes_1"."like_time" DESC;`;
     const { rows: data } = await db.query(query, [user.id]);
-    //"Connections data: ", data);
     return data;
   } catch (error) {
     console.error("Error getting Connections:", error);
