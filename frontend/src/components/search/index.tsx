@@ -1,9 +1,9 @@
 import { Menu } from "@headlessui/react";
-import TuneIcon from "@mui/icons-material/Tune"; // Assuming you're using Material Icons
 import Slider from "@mui/material/Slider";
 import { useState } from "react";
 import ReactSelect from "react-select";
 import { tagsList } from "../edit-profile";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface SearchCriteria {
   agerange: number[];
@@ -58,18 +58,20 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
 
   return (
     <Menu as="div" className="relative inline-block text-right z-20">
-      <div>
-        <Menu.Button>
-          <TuneIcon
-            sx={{
-              width: 32,
-              height: 32,
-              color: "blue",
-              fontWeight: "bold",
-            }}
-          />
-        </Menu.Button>
-      </div>
+      <Menu.Button>
+        <div>
+          <Menu.Button>
+            <SearchIcon
+              sx={{
+                width: 32,
+                height: 32,
+                color: "gray",
+                fontWeight: "bold",
+              }}
+            />
+          </Menu.Button>
+        </div>
+      </Menu.Button>
 
       <Menu.Items className="absolute right-0 w-[20rem] mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
         {/* Header */}

@@ -152,7 +152,7 @@ async function handleGetgetFilteredProfiles(
       WHERE id != $1
     `;
     const { rows: rows1 } = await db.query(query1, [user.id]);
-    console.log("filtred : --------!!!----> ", rows);
+    console.log("filtred : --------!!!----> ", rows );
     return rows;
   } catch (error) {
     console.error("Error getting filtered Profiles:", error);
@@ -300,8 +300,8 @@ const handleReportUser = async (userId: string, user: User) => {
   try {
     const query = `UPDATE "USER" SET report_count = report_count + 1 WHERE id = $1 RETURNING report_count;`;
     const { rows } = await db.query(query, [userId]);
-    if (rows[0].report_count >= 3) {
-      const query = `UPDATE "USER" SET is_verified = false WHERE id = $1 RETURNING id;`;
+    if (rows[0].report_count === 5) {
+      const query = `DELETE FROM "USER" WHERE id = $1;`;
       const { rows } = await db.query(query, [userId]);
     }
     return rows[0].id;
