@@ -9,6 +9,7 @@ import cors from "cors";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import { handleCreateMessage } from "./messages/messageService";
+import { handleVideoCall } from "./utils/socket";
 
 const app = express();
 const httpServer = createServer(app);
@@ -28,6 +29,7 @@ io.on("connection", (socket) => {
   // @ts-ignore
   const user = socket.request.user;
   userSocketMap.set(user.id, socket.id);
+  console.log("user connected: ", user.id);
 
   socket.on("disconnect", () => {
     userSocketMap.delete(user.id);
@@ -42,6 +44,7 @@ io.on("connection", (socket) => {
       sender_id: user.id,
     });
   });
+  handleVideoCall(io, socket);
 });
 
 app.use(cors());

@@ -18,6 +18,7 @@ import Likes from "./profile/likes";
 import Views from "./profile/views";
 import Settings from "./settings";
 import Map from "./map";
+import VideoCall from "./chat/video-call";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -100,6 +101,7 @@ const ProtectedLayout: React.FC = () => {
             <Route path="/connections" element={<Connections />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/chat/:profileId" element={<ChatRoom />} />
+            <Route path="/chat/:profileId/video-call" element={<VideoCall />} />
             <Route path="/profile/:profileId" element={<Profile />} />
             <Route path="/profile/likes" element={<Likes />} />
             <Route path="/profile/views" element={<Views />} />
