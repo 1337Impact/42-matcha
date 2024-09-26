@@ -4,6 +4,7 @@ import {
   handleBlockUser,
   handleGetAllProfiles,
   handleGetConnections,
+  handleGetMapProfiles,
   handleGetProfile,
   handleGetgetFilteredProfiles,
   handleLikeProfile,
@@ -30,6 +31,15 @@ const getProfile = async (req: any, res: any) => {
 const getAllProfiles = async (req: any, res: any) => {
   try {
     const data = await handleGetAllProfiles(req.user);
+    res.send(data);
+  } catch (error) {
+    res.status(400).send({ error: "Something went wrong." });
+  }
+};
+
+const getMapProfiles = async (req: any, res: any) => {
+  try {
+    const data = await handleGetMapProfiles(req.user);
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
@@ -198,4 +208,5 @@ export {
   updateProfile,
   reportUser,
   blockUser,
+  getMapProfiles,
 };

@@ -17,6 +17,7 @@ import History from "./profile/history";
 import Likes from "./profile/likes";
 import Views from "./profile/views";
 import Settings from "./settings";
+import Map from "./map";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -104,6 +105,7 @@ const ProtectedLayout: React.FC = () => {
             <Route path="/profile/views" element={<Views />} />
             <Route path="/profile/history" element={<History />} />
             <Route path="/Settings" element={<Settings />} />
+            <Route path="/map" element={<Map />} />
           </Routes>
         </main>
         <Footer />

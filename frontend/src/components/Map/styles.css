@@ -1,0 +1,16 @@
+.leaflet-bottom{
+    display: none;
+}
+
+.leaflet-popup-content {
+    width: 200px;
+    min-height: 200px;
+    overflow: hidden;
+    margin: 0 !important;
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+}
+
+.leaflet-pane {
+    z-index: 10 !important;
+}

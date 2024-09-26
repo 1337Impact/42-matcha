@@ -7,6 +7,7 @@ import {
   getConnections,
   getFilteredProfiles,
   getGeoLocation,
+  getMapProfiles,
   getProfile,
   isProfileCompleted,
   reportUser,
@@ -41,5 +42,6 @@ router.get("/connections", getConnections);
 router.get("/all", getAllProfiles);
 router.post("/FilteredProfiles", getFilteredProfiles);
 router.post("/geolocation", getGeoLocation);
+router.get("/map", getMapProfiles);
 
 export default router;

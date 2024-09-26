@@ -19,6 +19,19 @@ async function handleGetProfile(
   }
 }
 
+async function handleGetMapProfiles(user: User): Promise<any> {
+  try {
+    //get user's location
+    const { rows: data } = await db.query(
+      `SELECT id, latitude, longitude FROM "USER"`
+    );
+    return data;
+  } catch (error) {
+    console.error("Error getting Map Profiles:", error);
+    throw error;
+  }
+}
+
 async function handleGetAllProfiles(user: User): Promise<any> {
   try {
     //get user's location
@@ -68,7 +81,11 @@ async function handleGetgetFilteredProfiles(
       [user.id]
     );
     const userData = data[0];
-    console.log("userData: ", profilesFilter.min_fame_rating, profilesFilter.max_fame_rating);
+    console.log(
+      "userData: ",
+      profilesFilter.min_fame_rating,
+      profilesFilter.max_fame_rating
+    );
     // get the filtered profiles, so for example if the user set distance to 10km, we will get all profiles within 10km
     // of the user position and so on for the other filters
     let query = `
@@ -152,7 +169,7 @@ async function handleGetgetFilteredProfiles(
       WHERE id != $1
     `;
     const { rows: rows1 } = await db.query(query1, [user.id]);
-    console.log("filtred : --------!!!----> ", rows );
+    console.log("filtred : --------!!!----> ", rows);
     return rows;
   } catch (error) {
     console.error("Error getting filtered Profiles:", error);
@@ -191,6 +208,7 @@ async function handleSetGeoLocation(userId: string): Promise<any> {
         method: "GET",
       }
     );
+
     const data = await geoLocation.json();
     await db.query(query, [
       data.location.latitude,
@@ -334,4 +352,5 @@ export {
   handleUpdateProfileSettings,
   handleReportUser,
   handleBlockUser,
+  handleGetMapProfiles,
 };

@@ -21,6 +21,7 @@ import ChatRoom from "./pages/chat/chat-room";
 import ResetPassword from "./pages/auth/resetPassword";
 import UpdatePassword from "./pages/auth/resetPassword/[token]";
 import Settings from "./pages/settings";
+import Map from "./pages/map";
 
 function App() {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ function App() {
       } else {
         dispatch(setUser(userData as any));
         if (
-          location.pathname === "/signin" || 
+          location.pathname === "/signin" ||
           location.pathname.startsWith("/resetPassword") ||
           location.pathname === "/signup"
         ) {
@@ -51,7 +52,7 @@ function App() {
     } else if (
       location.pathname !== "/signin" &&
       location.pathname !== "/signup" &&
-      !location.pathname.startsWith("/resetPassword") && 
+      !location.pathname.startsWith("/resetPassword") &&
       location.pathname !== "/verify"
     ) {
       navigate("/signin");
@@ -72,6 +73,7 @@ function App() {
           <Route path="/profile/views" element={<Views />} />
           <Route path="/profile/history" element={<History />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/map" element={<Map />} />
         </Route>
         <Route path="/" element={<AuthLayout />}>
           <Route path="/signin" element={<SignIn />} />
