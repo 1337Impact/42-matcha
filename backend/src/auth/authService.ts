@@ -17,13 +17,14 @@ interface User {
   last_name: string;
   username: string;
   password: string;
+  pictures?: string[];
 }
 
 export async function createUser(userData: User): Promise<string | null> {
   //"userData: ", userData);
-  const { username, first_name, last_name, email, password } = userData;
+  const { username, first_name, last_name, email, password, pictures } = userData;
   const query = `
-      INSERT INTO "USER" (username, first_name, last_name, email, password, fame_rating)
+      INSERT INTO "USER" (username, first_name, last_name, email, password, fame_rating, pictures)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id;
     `;
@@ -38,7 +39,7 @@ export async function createUser(userData: User): Promise<string | null> {
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
     const values = [username, first_name, last_name, email, hashedPass];
-    const { rows } = await db.query(query, [username, first_name, last_name, email, hashedPass, 0]);
+    const { rows } = await db.query(query, [username, first_name, last_name, email, hashedPass, 0, pictures || []]);
     const query1 = `SELECT * FROM "USER" WHERE id = $1;`;
     const { rows: user } = await db.query(query1, [rows[0].id]);
     console.log("user registred --------> : ", user);
@@ -115,7 +116,7 @@ export const getUserData = async (email: string) => {
     `;
   try {
     const { rows } = await db.query(query, [email]);
-    //"rows: ---\\\\\\\/////////----> ", rows);
+    console.log("rows: ---\\\\\\\/////////----> ", rows);
     return rows[0];
   } catch (error) {
     console.error("Error getting user data:", error);

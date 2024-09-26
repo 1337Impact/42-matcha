@@ -169,7 +169,7 @@ async function handleGetgetFilteredProfiles(
       WHERE id != $1
     `;
     const { rows: rows1 } = await db.query(query1, [user.id]);
-    console.log("filtred : --------!!!----> ", rows);
+    // console.log("filtred : --------!!!----> ", rows);
     return rows;
   } catch (error) {
     console.error("Error getting filtered Profiles:", error);

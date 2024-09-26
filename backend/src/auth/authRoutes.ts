@@ -30,12 +30,12 @@ router.post("/reset-password/", async (req, res) => {
   }
 });
 
-router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile', 'user_photos'] }));
 
 // Route to handle Facebook login callback
 router.get(
   '/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
+  passport.authenticate('facebook', { failureRedirect: '/signin', session: false }),
   (req: any, res) => {
     // Successful authentication, send JWT token to the client
     console.log("req.user", req.user);

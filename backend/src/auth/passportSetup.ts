@@ -11,20 +11,14 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: `${process.env.BACKEND_URL}/api/auth/facebook/callback`,
-      profileFields: [
-        "id",
-        "emails",
-        "name",
-        "displayName",
-        "gender",
-        "profileUrl",
-      ], // Request more fields
+      profileFields: ["id", "email", "name", "displayName", "gender", "profileUrl", "photos"],
     },
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
       try {
-        console.log("profile: ", profile);
+        // console.log("profile: \n", profile);
+        console.log("\nnewUser: ++++++++++++++++++++++++++++++=\n ", profile.photos[0].value);
         // Check if the user already exists
-        const existingUser = await getUserData("");
+        const existingUser = await getUserData(`${profile.name?.givenName}@facebook.com`);
 
         if (existingUser) {
           // Return existing user
@@ -33,13 +27,13 @@ passport.use(
 
         // User doesn't exist, create new user
         const newUser = {
-          email: "", // Ensure email is fetched
+          email: `${profile.name?.givenName}@facebook.com`, // Ensure email is fetched
           first_name: profile.name?.givenName,
           last_name: profile.name?.familyName,
-          username: profile.id, // Fallback to Facebook ID
+          username: profile.familyName, // Fallback to Facebook ID
           password: "", // No password for OAuth users
+          pictures: profile.photos[0].value,
         };
-
         const userId = await createUser(newUser);
         if (userId) {
           const newUserData = await getUserData(newUser.email);

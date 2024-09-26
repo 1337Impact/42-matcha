@@ -127,12 +127,6 @@ export default function SignInForm() {
             to="/resetPassword"
           >
             Forget password ?{" "}
-
-          <Link
-            className="text-blue-400 text-xs italic text-end justify-self-end"
-            to="/resetPassword"
-          >
-            Forget password ?{" "}
           </Link>
         </div>
         <div className="flex items-center justify-between">
@@ -176,7 +170,9 @@ export default function SignInForm() {
         </div>
         <div className="flex items-center justify-center gap-4 mt-6">
           <button
-            onClick={handleSignInFacebook}
+            onClick={() => {
+              window.location.href = "http://localhost:3000/api/auth/facebook";
+            }}
             className="w-12 h-12 rounded-full flex items-center justify-center "
           >
             <IoLogoFacebook className="w-12 h-12" />
@@ -185,13 +181,6 @@ export default function SignInForm() {
             <IoLogoInstagram onClick={handSignInInsta} className="w-12 h-12" />
           </button>
         </div>
-      </div>
-      <div>
-        <p className="text-gray-600 text-sm mt-3">
-          Or sign in with <button onClick={() => {
-            window.location.href = "http://localhost:3000/api/auth/facebook";
-          }}>Facebook</button>
-        </p>
       </div>
     </div>
   );

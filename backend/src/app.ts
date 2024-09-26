@@ -11,7 +11,6 @@ import { createServer } from "http";
 import { handleCreateMessage } from "./messages/messageService";
 import passport from "./auth/passportSetup";
 
-const session = require("express-session");
 const FacebookStrategy = require("passport-facebook").Strategy;
 
 const app = express();
@@ -47,14 +46,6 @@ io.on("connection", (socket) => {
     });
   });
 });
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
 
 app.use(cors());
 app.use(bodyParser.json());

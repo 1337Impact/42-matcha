@@ -142,8 +142,8 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
   }, [data.images]);
 
   return (
-    <div className="flex items-center justify-center fixed inset-0 z-50 backdrop-blur-sm overflow-auto overflow-y-auto">
-      <div className="w-[100%] max-h-[80dvh] overflow-y-scroll rounded-lg mx-auto p-4 bg-gray-100">
+    <div className="flex items-center justify-center fixed inset-0 z-50 backdrop-blur-sm overflow-auto overflow-y-auto ">
+      <div className="w-[100%] max-w-[790px] max-h-[80dvh] overflow-y-scroll rounded-lg mx-auto p-8 bg-gray-100">
         <h1 className="text-2xl font-bold text-start pt-2 pb-6 text-gray-700">
           Complete Your Profile
         </h1>
@@ -344,7 +344,7 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row justify-between gap-4">
+        <div className="flex flex-col md:flex-row justify-end gap-4">
           <button
             className="w-full md:w-1/2 bg-red-500 hover:bg-red-300 text-white font-bold py-2 px-4 rounded transition duration-200"
             onClick={onSubmit}
