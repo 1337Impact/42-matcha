@@ -162,8 +162,7 @@ const isProfileCompleted = async (req: any, res: any) => {
 
 const getGeoLocation = async (req: any, res: any) => {
   try {
-    const ip = req.headers["x-forwarded-for"] || req.socket.address().address;
-    const data = await handleSetGeoLocation(req.user.id, ip);
+    const data = await handleSetGeoLocation(req.user.id);
   } catch (error) {
     console.error("Error getting geo location: ", error);
     res.status(400).send({ error: "Something went wrong." });

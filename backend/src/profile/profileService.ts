@@ -179,7 +179,7 @@ async function handleGetConnections(user: User): Promise<any> {
   }
 }
 
-async function handleSetGeoLocation(userId: string, ip: any): Promise<any> {
+async function handleSetGeoLocation(userId: string): Promise<any> {
   const query = `UPDATE "USER" 
   SET latitude = $1, longitude = $2
   WHERE id = $3

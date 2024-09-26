@@ -3,6 +3,10 @@ import { loginSchema } from "../../../utils/zod/loginSchema";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ImSpinner3 } from "react-icons/im";
+import { FaFacebook, FaInstagram } from "react-icons/fa";
+import { Divider } from "@mui/material";
+import { IoLogoFacebook } from "react-icons/io";
+import { IoLogoInstagram } from "react-icons/io5";
 
 export default function SignInForm() {
   const [data, setData] = useState({
@@ -14,10 +18,18 @@ export default function SignInForm() {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
+
+  const handleSignInFacebook = () => {
+    //console.log("Sign in with facebook");
+  };
+
+  const handSignInInsta = () => {
+    //console.log("Sign in with instagram");
+  }
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
@@ -42,7 +54,7 @@ export default function SignInForm() {
       window.localStorage.setItem("token", response.data.token);
       const isProfileCompleted = response.data.isProfileCompleted;
       setRedirecting(true);
-      navigate(`/${!isProfileCompleted ? "?profilecompleted=false" : ""}`)
+      navigate(`/${!isProfileCompleted ? "?profilecompleted=false" : ""}`);
       // setTimeout(() => {
       // }, 1000);
     } catch (error: any) {
@@ -99,9 +111,12 @@ export default function SignInForm() {
             onChange={handleChange}
           />
           <p className="text-red-500 text-xs italic">{error.password}</p>
-      
-          <Link className="text-blue-400 text-xs italic text-end justify-self-end" to="/resetPassword">
-            Forget password ? {" "}
+
+          <Link
+            className="text-blue-400 text-xs italic text-end justify-self-end"
+            to="/resetPassword"
+          >
+            Forget password ?{" "}
           </Link>
         </div>
         <div className="flex items-center justify-between">
@@ -121,6 +136,39 @@ export default function SignInForm() {
             Sign Up
           </Link>
         </p>
+      </div>
+      {/* Instagram and facebook  */}
+      <div className="flex-col items-center justify-center gap-4 mt-6">
+        <div className="flex items-center text-center justify-center gap-4 w-full">
+          <Divider
+            sx={{
+              height: 0.5,
+              width: "35%",
+              bgcolor: "black",
+            }}
+          />
+          <div className="text-gray-500 text-sm text-center">
+            Or Sign In with
+          </div>
+          <Divider
+            sx={{
+              height: 0.5,
+              width: "35%",
+              bgcolor: "black",
+            }}
+          />
+        </div>
+        <div className="flex items-center justify-center gap-4 mt-6">
+          <button
+            onClick={handleSignInFacebook}
+            className="w-12 h-12 rounded-full flex items-center justify-center "
+          >
+            <IoLogoFacebook className="w-12 h-12" />
+          </button>
+          <button className="w-12 h-12 rounded-full flex items-center justify-center">
+            <IoLogoInstagram onClick={handSignInInsta} className="w-12 h-12" />
+          </button>
+        </div>
       </div>
     </div>
   );
