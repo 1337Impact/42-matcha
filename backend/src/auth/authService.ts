@@ -19,7 +19,7 @@ interface User {
   password: string;
 }
 
-async function createUser(userData: User): Promise<string | null> {
+export async function createUser(userData: User): Promise<string | null> {
   //"userData: ", userData);
   const { username, first_name, last_name, email, password } = userData;
   const query = `
@@ -107,7 +107,7 @@ export const registerUser = async (userData: User) => {
   }
 };
 
-const getUserData = async (email: string) => {
+export const getUserData = async (email: string) => {
   const query = `
       SELECT id, username, first_name, last_name, email, password, pictures, is_verified
       FROM "USER"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loginSchema } from "../../../utils/zod/loginSchema";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -14,7 +14,7 @@ export default function SignInForm() {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
@@ -42,7 +42,7 @@ export default function SignInForm() {
       window.localStorage.setItem("token", response.data.token);
       const isProfileCompleted = response.data.isProfileCompleted;
       setRedirecting(true);
-      navigate(`/${!isProfileCompleted ? "?profilecompleted=false" : ""}`)
+      navigate(`/${!isProfileCompleted ? "?profilecompleted=false" : ""}`);
       // setTimeout(() => {
       // }, 1000);
     } catch (error: any) {
@@ -51,6 +51,14 @@ export default function SignInForm() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const token =  new URLSearchParams(window.location.search).get("token");
+    if (token) {
+      window.localStorage.setItem("token", token);
+      window.location.href = "/";
+    }
+  } ,[]);
 
   return (
     <div className="w-full mx-auto relative">
@@ -99,9 +107,12 @@ export default function SignInForm() {
             onChange={handleChange}
           />
           <p className="text-red-500 text-xs italic">{error.password}</p>
-      
-          <Link className="text-blue-400 text-xs italic text-end justify-self-end" to="/resetPassword">
-            Forget password ? {" "}
+
+          <Link
+            className="text-blue-400 text-xs italic text-end justify-self-end"
+            to="/resetPassword"
+          >
+            Forget password ?{" "}
           </Link>
         </div>
         <div className="flex items-center justify-between">
@@ -120,6 +131,13 @@ export default function SignInForm() {
           <Link className="text-blue-500" to="/signup">
             Sign Up
           </Link>
+        </p>
+      </div>
+      <div>
+        <p className="text-gray-600 text-sm mt-3">
+          Or sign in with <button onClick={() => {
+            window.location.href = "http://localhost:3000/api/auth/facebook";
+          }}>Facebook</button>
         </p>
       </div>
     </div>
