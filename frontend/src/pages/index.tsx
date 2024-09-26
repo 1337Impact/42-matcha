@@ -49,6 +49,8 @@ const Home: React.FC = () => {
     }
   }, [socket]);
 
+
+
   return (
     <div className="w-full h-full p-1 pt-2">
       <ProfileSwiper />

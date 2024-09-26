@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { login, signup, verifyEmail } from "./authControllers";
 import { handleForgetPasswordEamil, handleUpdatePassword } from "./authService";
+import { generateToken } from "../utils/jwtUtils";
+import passport from "./passportSetup";
 
 const router = Router();
 
@@ -27,4 +29,19 @@ router.post("/reset-password/", async (req, res) => {
     return res.status(500).send("Internal Server Error.");
   }
 });
+
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+
+// Route to handle Facebook login callback
+router.get(
+  '/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
+  (req: any, res) => {
+    // Successful authentication, send JWT token to the client
+    console.log("req.user", req.user);
+    const token = generateToken(req.user);
+    res.redirect(`${process.env.FRONTEND_URL}/signin?token=${token}`);
+  }
+);
+
 export default router;

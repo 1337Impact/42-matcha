@@ -9,6 +9,10 @@ import cors from "cors";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import { handleCreateMessage } from "./messages/messageService";
+import passport from "./auth/passportSetup";
+
+const session = require("express-session");
+const FacebookStrategy = require("passport-facebook").Strategy;
 
 const app = express();
 const httpServer = createServer(app);
@@ -44,10 +48,18 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use(cors());
-app.use("/images", express.static("uploads"));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
+app.use(cors());
 app.use(bodyParser.json());
+app.use(passport.initialize()); // Initialize passport
+app.use("/images", express.static("uploads"));
 app.use("/api/auth", authRouter);
 app.use("/api/profile", authorize, profileRouter);
 app.use("/api/user", authorize, userRouter);
