@@ -18,15 +18,12 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   path: "",
   cors: {
-    origin: process.env.FRONTEND_URL,
-    methods: ["GET", "POST"],
+    origin: "*",
   },
 });
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true,
+  origin: "*",
 };
 
 const userSocketMap = new Map();
