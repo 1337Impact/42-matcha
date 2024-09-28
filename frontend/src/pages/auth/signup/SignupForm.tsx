@@ -40,7 +40,7 @@ export default function SingUpForm({
     }
     try {
       setStatus("loading");
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:3000/api/auth/signup",
         data
       );

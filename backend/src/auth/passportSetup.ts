@@ -11,34 +11,48 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: `${process.env.BACKEND_URL}/api/auth/facebook/callback`,
-      profileFields: ["id", "email", "name", "displayName", "gender", "profileUrl", "photos"],
+      profileFields: [
+        "id",
+        "email",
+        "name",
+        "displayName",
+        "gender",
+        "profileUrl",
+        "photos",
+      ],
     },
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
       try {
-        // console.log("profile: \n", profile);
-        console.log("\nnewUser: ++++++++++++++++++++++++++++++=\n ", profile.photos[0].value);
+        // console.log(
+        //   "\nnewUser: \n ",
+        //   profile
+        // )
         // Check if the user already exists
-        const existingUser = await getUserData(`${profile.name?.givenName}@facebook.com`);
+        const existingUser = await getUserData(
+          `${profile.name?.givenName}@facebook.com`
+        );
 
         if (existingUser) {
-          // Return existing user
           return done(null, existingUser);
         }
 
         // User doesn't exist, create new user
         const newUser = {
-          email: `${profile.name?.givenName}@facebook.com`, // Ensure email is fetched
+          email: `${profile.name?.givenName}@facebook.com`,
           first_name: profile.name?.givenName,
           last_name: profile.name?.familyName,
-          username: profile.familyName, // Fallback to Facebook ID
-          password: "", // No password for OAuth users
-          pictures: profile.photos[0].value,
+          username: profile.name?.familyName,
+          password: "",
+          pictures: [profile.photos[0].value],
+          is_verified: true,
         };
+        console.log(  "\nnewUser: \n ", newUser);
         const userId = await createUser(newUser);
         if (userId) {
           const newUserData = await getUserData(newUser.email);
           return done(null, newUserData);
         }
+
       } catch (error) {
         done(error, null);
       }
@@ -69,7 +83,6 @@ const getUserDataById = async (id: string) => {
     `;
   try {
     const { rows } = await db.query(query, [id]);
-    //"rows: ---\\\\\\\/////////----> ", rows);
     return rows[0];
   } catch (error) {
     console.error("Error getting user data:", error);

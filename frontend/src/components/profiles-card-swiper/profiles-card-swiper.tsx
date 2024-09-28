@@ -16,10 +16,9 @@ import {
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import LikeDislikeButton from "../like-button/like-button";
+import AdvancedSearchMenu from "../search";
 import FilterDropdown from "./filter-dropdown";
 import SortDropdown from "./sort-dropdown";
-import AdvancedSearchMenu from "../search";
-import { tagsList } from "../edit-profile";
 
 SwiperCore.use([Navigation, Pagination, EffectCards]);
 
@@ -48,18 +47,11 @@ const ProfileSwiper = () => {
     agerange: [18, 99],
     fameRating: [0, 10],
   };
-  const initialSearchCriteria = {
-    ageRange: [18, 99],
-    fameRating: [0, 10],
-    location: "",
-    interests: [] as string[],
-  };
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sortCriteria, setSortCriteria] = useState(initialSortCriteria);
   const [filterCriteria, setFilterCriteria] = useState(initialFilterCriteria);
-  const [searchCriteria, setSearchCriteria] = useState(initialSearchCriteria);
 
   useEffect(() => {
     console.log("filter Criteria:", filterCriteria);
@@ -111,14 +103,23 @@ const ProfileSwiper = () => {
       }
     };
     applyFilters();
-  }, [sortCriteria, filterCriteria, searchCriteria]); // Add searchCriteria to the dependency array
+  }, [sortCriteria, filterCriteria]);
 
   const handleSwipe = (direction: string) => {
+    if (profiles.length === 0) return;
+
+    const currentProfile = profiles[currentIndex];
+
     if (direction === "like" || direction === "dislike") {
-      console.log("next profile", currentIndex + 1, profiles[currentIndex + 1]);
+      console.log("name: ", currentProfile.username, "id: ", currentProfile.id);
+
+      if (currentIndex < profiles.length - 1) {
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+      } else {
+        console.log("No more profiles to swipe.");
+        setCurrentIndex(0);
+      }
       profiles.shift();
-      console.log("profiles", profiles);
-      setCurrentIndex((prevIndex) => prevIndex + 1);
     }
   };
 

@@ -63,9 +63,9 @@ export default function Settings() {
     age: "",
   });
 
-  const [imageFiles, setImageFiles] = useState<(File | null)[]>(
-    Array(5).fill(null)
-  );
+  // const [imageFiles, setImageFiles] = useState<(File | null)[]>(
+  //   Array(5).fill(null)
+  // );
   const [imagePreview, setImagePreview] = useState<(string | null)[]>(
     data.images
   );
@@ -211,9 +211,9 @@ export default function Settings() {
       formData.append("latitude", data.latitude.toString());
       formData.append("longitude", data.longitude.toString());
       formData.append("age", parseInt(data.age).toString());
-      imageFiles.forEach((file) => {
-        file && formData.append("images", file);
-      });
+      // imageFiles.forEach((file) => {
+      //   file && formData.append("images", file);
+      // });
 
       await axios.post("http://localhost:3000/api/profile/settings", formData, {
         headers: {
@@ -501,11 +501,7 @@ export default function Settings() {
                   }
                 }}
                 setImgFile={(file) => {
-                  setImageFiles((prev) => {
-                    const newFiles = [...prev];
-                    newFiles[index] = file;
-                    return newFiles;
-                  });
+                  return file;
                 }}
               />
             ))}

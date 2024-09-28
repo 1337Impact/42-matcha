@@ -33,6 +33,7 @@ async function handleGetIsProfileLiked(
 
 async function handleLikeProfile(profileId: string, user: User): Promise<any> {
   try {
+    console.log("profileId: ", profileId);
     const isProfileLiked = await handleGetIsProfileLiked(profileId, user);
     if (isProfileLiked) {
       const query = `DELETE FROM "user_likes" WHERE liker_id = $1 AND liked_id = $2;`;

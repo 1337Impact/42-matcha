@@ -18,14 +18,23 @@ interface User {
   username: string;
   password: string;
   pictures?: string[];
+  is_verified?: boolean;
 }
 
 export async function createUser(userData: User): Promise<string | null> {
   //"userData: ", userData);
-  const { username, first_name, last_name, email, password, pictures } = userData;
+  const {
+    username,
+    first_name,
+    last_name,
+    email,
+    password,
+    pictures,
+    is_verified,
+  } = userData;
   const query = `
-      INSERT INTO "USER" (username, first_name, last_name, email, password, fame_rating, pictures)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO "USER" (username, first_name, last_name, email, password, fame_rating, pictures, is_verified)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id;
     `;
   try {
@@ -37,9 +46,22 @@ export async function createUser(userData: User): Promise<string | null> {
       return null;
     }
     const salt = await bcrypt.genSalt(10);
+    const pictures_arr = Array(5).fill('');
+    if (pictures)
+      pictures_arr[0] = pictures[0];
     const hashedPass = await bcrypt.hash(password, salt);
-    const values = [username, first_name, last_name, email, hashedPass];
-    const { rows } = await db.query(query, [username, first_name, last_name, email, hashedPass, 0, pictures || []]);
+    const values = [
+      username,
+      first_name,
+      last_name,
+      email,
+      hashedPass,
+      0,
+      JSON.stringify(pictures_arr) || JSON.stringify([pictures_arr]),
+      is_verified || false,
+    ];
+    console.log("values: ++++++++++++++ ", values);
+    const { rows } = await db.query(query, values);
     const query1 = `SELECT * FROM "USER" WHERE id = $1;`;
     const { rows: user } = await db.query(query1, [rows[0].id]);
     console.log("user registred --------> : ", user);
@@ -87,7 +109,7 @@ export const registerUser = async (userData: User) => {
         email: userData.email,
         link: `${process.env.FRONTEND_URL}/verify?token=${emailToken}`,
       });
-      console.log(`${process.env.FRONTEND_URL}/verify?token=${emailToken}`)
+      console.log(`${process.env.FRONTEND_URL}/verify?token=${emailToken}`);
       return {
         code: 200,
         error: null,
@@ -116,7 +138,7 @@ export const getUserData = async (email: string) => {
     `;
   try {
     const { rows } = await db.query(query, [email]);
-    console.log("rows: ---\\\\\\\/////////----> ", rows);
+    console.log("rows: ---\\\\\\/////////----> ", rows);
     return rows[0];
   } catch (error) {
     console.error("Error getting user data:", error);
@@ -128,18 +150,15 @@ export const loginUser = async (data: { email: string; password: string }) => {
   try {
     const result = loginSchema.safeParse(data);
     if (!result.success) {
-      //"Invalid data");
       return null;
     }
     const userData = await getUserData(data.email);
     if (!userData) {
-      //"User not found");
       return null;
     }
     const { password: userPassword, pictures, ...user } = userData;
     const isMatch = await bcrypt.compare(data.password, userPassword);
     if (!isMatch) {
-      //"Invalid password");
       return null;
     }
 
@@ -149,7 +168,6 @@ export const loginUser = async (data: { email: string; password: string }) => {
     });
     return { id: user.id, token: token };
   } catch (error) {
-    //"error: ", error);
     return null;
   }
 };
@@ -161,7 +179,7 @@ const updateEmailVerification = async (userId: string) => {
       WHERE id = $1;
     `;
   try {
-    const {rows} = await db.query(query, [userId]);
+    const { rows } = await db.query(query, [userId]);
     //"rows verificated ----> : ", rows);
   } catch (error) {
     console.error("Error updating email verification:", error);
@@ -201,16 +219,13 @@ export const handleForgetPasswordEamil = async (email: string, res: any) => {
       FROM "USER"
       WHERE email = $1;
     `;
-    const updateQuery = `
+  const updateQuery = `
     UPDATE "USER"
     SET reset_password_token = $1, reset_password_expires = $2
     WHERE email = $3;
   `;
   try {
     const { rows } = await db.query(query, [email]);
-
-    //"rows: -------> ", email);
-
     if (rows.length === 0) {
       return res
         .status(400)
@@ -223,7 +238,7 @@ export const handleForgetPasswordEamil = async (email: string, res: any) => {
     rows[0].reset_password_token = token;
     rows[0].reset_password_expires = new Date(expiration);
     await db.query(updateQuery, [token, expiration, email]);
-      
+
     const mailOptions = {
       to: rows[0].email,
       from: `"Matcha 👻" <${process.env.EMAIL_LOGIN}>`,

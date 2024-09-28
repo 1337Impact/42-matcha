@@ -29,6 +29,7 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
 
   const handleAgeGapChange = (event: any, newValue: number | number[]) => {
     setAgeGap(newValue as number[]);
+    return event;
   };
 
   const handleFameRatingGapChange = (
@@ -36,6 +37,7 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
     newValue: number | number[]
   ) => {
     setFameRatingGap(newValue as number[]);
+    return event;
   };
 
   const handleLocationChange = (newValue: any) => {

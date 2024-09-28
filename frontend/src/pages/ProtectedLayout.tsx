@@ -18,6 +18,7 @@ import Likes from "./profile/likes";
 import Views from "./profile/views";
 import Settings from "./settings";
 import Map from "./map";
+import ScheduleDate from "./connections/schedule_date";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -26,8 +27,6 @@ const ProtectedLayout: React.FC = () => {
   const token = window.localStorage.getItem("token");
 
   useEffect(() => {
-    /// check if the user already completed the profile setup
-    //"Checking if profile is completed", user);
     const checkProfileCompletion = async () => {
       try {
         if (!user) return;
@@ -40,15 +39,17 @@ const ProtectedLayout: React.FC = () => {
             },
           }
         );
-        //"Profile completed: ", profileCompleted.data.isCompleted);
         if (profileCompleted.data.isCompleted == false) {
           setIsOpenProfileCompleted(true);
         }
       } catch (err) {
-        //err);
         toast.error("Failed to check profile completion");
       }
     };
+    checkProfileCompletion();
+  } , [user]);
+
+  useEffect(() => {
     const userGeoLocation = async () => {
       try {
         if (!user) return;
@@ -66,8 +67,7 @@ const ProtectedLayout: React.FC = () => {
       }
     };
     userGeoLocation();
-    checkProfileCompletion();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (searchParams.get("profilecompleted") == "false") {
@@ -87,7 +87,7 @@ const ProtectedLayout: React.FC = () => {
           <CompleteProfile handleClose={handleCloseProfileCompletion} />
         )}
         {user && !user.is_verified && (
-          <div className="w-full p-1 bg-yellow-400">
+          <div className="w-full max-w-[786px] p-1 bg-yellow-400">
             <div className="text-sm text-center">
               Verfiy your email address to access all features.
             </div>
@@ -98,6 +98,7 @@ const ProtectedLayout: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/connections" element={<Connections />} />
+            <Route path="/connections/schedule_date/" element={<ScheduleDate />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/chat/:profileId" element={<ChatRoom />} />
             <Route path="/profile/:profileId" element={<Profile />} />

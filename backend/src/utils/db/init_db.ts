@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS "user_views" (
   "viewer_id" UUID,
   "viewed_id" UUID,
   "view_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_viewer_id FOREIGN KEY ("viewer_id") REFERENCES "USER" ("id"),
-  CONSTRAINT fk_viewed_id FOREIGN KEY ("viewed_id") REFERENCES "USER" ("id")
+  CONSTRAINT fk_viewer_id FOREIGN KEY ("viewer_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
+  CONSTRAINT fk_viewed_id FOREIGN KEY ("viewed_id") REFERENCES "USER" ("id") ON DELETE CASCADE
 );
 `;
 
@@ -45,11 +45,10 @@ CREATE TABLE IF NOT EXISTS "user_likes" (
   "liker_id" UUID,
   "liked_id" UUID,
   "like_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_liker_id FOREIGN KEY ("liker_id") REFERENCES "USER" ("id"),
-  CONSTRAINT fk_liked_id FOREIGN KEY ("liked_id") REFERENCES "USER" ("id")
+  CONSTRAINT fk_liker_id FOREIGN KEY ("liker_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
+  CONSTRAINT fk_liked_id FOREIGN KEY ("liked_id") REFERENCES "USER" ("id")  ON DELETE CASCADE
 );
 `;
-
 
 const createTableMessageQuery = `
 CREATE TABLE IF NOT EXISTS "Message" (
@@ -58,8 +57,8 @@ CREATE TABLE IF NOT EXISTS "Message" (
   "receiver_id" UUID,
   "time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "content" TEXT,
-  CONSTRAINT fk_sender_id FOREIGN KEY ("sender_id") REFERENCES "USER" ("id"),
-  CONSTRAINT fk_receiver_id FOREIGN KEY ("receiver_id") REFERENCES "USER" ("id")
+  CONSTRAINT fk_sender_id FOREIGN KEY ("sender_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
+  CONSTRAINT fk_receiver_id FOREIGN KEY ("receiver_id") REFERENCES "USER" ("id") ON DELETE CASCADE
 );
 `;
 
@@ -71,8 +70,39 @@ CREATE TABLE IF NOT EXISTS "Blocked" (
   "blocker_id" UUID,
   "blocked_id" UUID,
   "block_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_blocker_id FOREIGN KEY ("blocker_id") REFERENCES "USER" ("id"),
-  CONSTRAINT fk_blocked_id FOREIGN KEY ("blocked_id") REFERENCES "USER" ("id")
+  CONSTRAINT fk_blocker_id FOREIGN KEY ("blocker_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
+  CONSTRAINT fk_blocked_id FOREIGN KEY ("blocked_id") REFERENCES "USER" ("id") ON DELETE CASCADE
+);
+`;
+
+const EventsTable = `
+CREATE TABLE IF NOT EXISTS "Events" (
+  "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  "user1_id" UUID,
+  "user2_id" UUID,
+  "event_name" VARCHAR(255),
+  "event_date" TIMESTAMP,
+  "event_location" VARCHAR(255),
+  "event_description" TEXT,
+  "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_user1_id FOREIGN KEY ("user1_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
+  CONSTRAINT fk_user2_id FOREIGN KEY ("user2_id") REFERENCES "USER" ("id") ON DELETE CASCADE
+);
+`;
+
+// request scheduling an event
+const createTableRequestQuery = `
+CREATE TABLE IF NOT EXISTS "EventRequests" (
+  "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  "sender_id" UUID,
+  "receiver_id" UUID,
+  "event_id" UUID,
+  "request_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  "status" VARCHAR(255),
+  CONSTRAINT fk_sender_id FOREIGN KEY ("sender_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
+  CONSTRAINT fk_receiver_id FOREIGN KEY ("receiver_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
+  CONSTRAINT fk_event_id FOREIGN KEY ("event_id") REFERENCES "Events" ("id") ON DELETE CASCADE
 );
 `;
 
@@ -83,7 +113,7 @@ ADD COLUMN IF NOT EXISTS "report_count" NUMERIC DEFAULT 0;
 
 async function alterTables() {
   try {
-    await pool.query(createTableBlockQuery);
+    await pool.query(createTableRequestQuery);
     //"User table updated successfully with new columns.");
     pool.end();
   } catch (error) {
@@ -93,7 +123,6 @@ async function alterTables() {
 }
 
 alterTables();
-
 
 async function createTables() {
   try {

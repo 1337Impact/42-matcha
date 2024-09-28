@@ -42,7 +42,7 @@ const handleViewProfile = async (profileId: string, token: string | null) => {
 
 const getProfileData = async (profileId: string): Promise<UserProfile> => {
   const token = localStorage.getItem("token");
-  const response = await axios.get("http://localhost:3000/api/profile", {
+  const response = await axios.get(`${import.meta.env.VITE_APP_BACKEND_URL}/api/profile`, {
     params: {
       profileId,
     },
@@ -50,6 +50,7 @@ const getProfileData = async (profileId: string): Promise<UserProfile> => {
       Authorization: `Bearer ${token}`,
     },
   });
+  console.log("response: ", response.data, JSON.parse(response.data.pictures));
   return {
     ...response.data,
     pictures: JSON.parse(response.data.pictures),

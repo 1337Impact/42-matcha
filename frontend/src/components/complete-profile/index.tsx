@@ -4,6 +4,9 @@ import ReactSelect from "react-select";
 import { toast } from "react-toastify";
 import completeProfileSchema from "../../utils/zod/completeProfileSchema";
 import UploadImage from "../upload-image";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { getProfileData } from "../../pages/profile/utils";
 
 const tagsList = [
   { label: "Reading", value: "Reading" },
@@ -34,6 +37,7 @@ interface EditProfileProps {
 
 export default function EditProfile({ handleClose }: EditProfileProps) {
   const token = window.localStorage.getItem("token");
+  const user = useSelector((state: RootState) => state.userSlice.user);
   const initialData = {
     first_name: "",
     last_name: "",
@@ -61,6 +65,27 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
     data.images
   );
 
+  useEffect(() => {
+    getProfileData(user?.id as string)
+      .then((data: any) => {
+        setData({
+          ...initialData,
+          images: data.pictures ? data.pictures : Array(5).fill(""),
+        });
+        console.log("data 000000000  : ", data);
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    console.log("images: ", data.images);
+    console.log("legnth: ", imagePreview.length);
+    setImagePreview(data.images);
+  }, [data.images]);
+ 
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -82,7 +107,6 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
   };
 
   const onSubmit = async () => {
-    //data);
     setError({
       first_name: "",
       last_name: "",
@@ -93,7 +117,8 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
       tags: "",
       images: "",
     });
-
+    
+    console.log("iameges preview  : ", imagePreview);
     const result = completeProfileSchema.safeParse({
       ...data,
       images: imagePreview,
@@ -136,10 +161,6 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
       toast.error("Failed to update profile");
     }
   };
-
-  useEffect(() => {
-    //"images: ", data.images);
-  }, [data.images]);
 
   return (
     <div className="flex items-center justify-center fixed inset-0 z-50 backdrop-blur-sm overflow-auto overflow-y-auto ">
@@ -189,8 +210,6 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
               options={[
                 { value: "male", label: "Male" },
                 { value: "female", label: "Female" },
-                { value: "other", label: "Other" },
-                { value: "prefer_not_to_say", label: "Prefer not to say" },
               ]}
               value={
                 data.gender
@@ -227,9 +246,6 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
               options={[
                 { value: "male", label: "Male" },
                 { value: "female", label: "Female" },
-                { value: "both", label: "Both" },
-                { value: "other", label: "Other" },
-                { value: "prefer_not_to_say", label: "Prefer not to say" },
               ]}
               value={
                 data.sexual_preferences
@@ -314,29 +330,30 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
             Upload Images
           </label>
           <div className="flex flex-wrap gap-4">
-            {imagePreview.map((image, index) => (
-              <UploadImage
-                key={index}
-                image={image}
-                setImage={(image) => {
-                  setImagePreview((prev) => {
-                    const newImages = [...prev];
-                    newImages[index] = image;
-                    return newImages;
-                  });
-                  if (!image) {
-                    setData((prev) => {
-                      const newImages = [...prev.images];
-                      newImages[index] = "";
-                      return { ...prev, images: newImages };
+            {imagePreview &&
+              imagePreview.map((image, index) => (
+                <UploadImage
+                  key={index}
+                  image={image}
+                  setImage={(image) => {
+                    setImagePreview((prev) => {
+                      const newImages = [...prev];
+                      newImages[index] = image;
+                      return newImages;
                     });
-                  }
-                }}
-                setImgFile={(file) => {
-                  return file;
-                }}
-              />
-            ))}
+                    if (!image) {
+                      setData((prev) => {
+                        const newImages = [...prev.images];
+                        newImages[index] = "";
+                        return { ...prev, images: newImages };
+                      });
+                    }
+                  }}
+                  setImgFile={(file) => {
+                    return file;
+                  }}
+                />
+              ))}
           </div>
           {error.images && (
             <p className="text-red-500 text-xs mt-1">{error.images}</p>

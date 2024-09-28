@@ -22,6 +22,7 @@ import ResetPassword from "./pages/auth/resetPassword";
 import UpdatePassword from "./pages/auth/resetPassword/[token]";
 import Settings from "./pages/settings";
 import Map from "./pages/map";
+import ScheduleDate from "./pages/connections/schedule_date";
 
 function App() {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ function App() {
         <Route path="/" element={<ProtectedLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/connections" element={<Connections />} />
+          <Route path="/connections/schedule_date" element={<ScheduleDate />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chat/:profileId" element={<ChatRoom />} />
           <Route path="/profile/:profileId" element={<Profile />} />

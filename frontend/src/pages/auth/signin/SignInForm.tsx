@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
-import { loginSchema } from "../../../utils/zod/loginSchema";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { ImSpinner3 } from "react-icons/im";
-import { FaFacebook, FaInstagram } from "react-icons/fa";
 import { Divider } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { ImSpinner3 } from "react-icons/im";
 import { IoLogoFacebook } from "react-icons/io";
-import { IoLogoInstagram } from "react-icons/io5";
+import { Link, useNavigate } from "react-router-dom";
+import { loginSchema } from "../../../utils/zod/loginSchema";
 
 export default function SignInForm() {
   const [data, setData] = useState({
@@ -19,18 +17,9 @@ export default function SignInForm() {
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
-
-  const handleSignInFacebook = () => {
-    //console.log("Sign in with facebook");
-  };
-
-  const handSignInInsta = () => {
-    //console.log("Sign in with instagram");
-  }
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
@@ -67,12 +56,12 @@ export default function SignInForm() {
   };
 
   useEffect(() => {
-    const token =  new URLSearchParams(window.location.search).get("token");
+    const token = new URLSearchParams(window.location.search).get("token");
     if (token) {
       window.localStorage.setItem("token", token);
       window.location.href = "/";
     }
-  } ,[]);
+  }, []);
 
   return (
     <div className="w-full mx-auto relative">
@@ -177,9 +166,9 @@ export default function SignInForm() {
           >
             <IoLogoFacebook className="w-12 h-12" />
           </button>
-          <button className="w-12 h-12 rounded-full flex items-center justify-center">
+          {/* <button className="w-12 h-12 rounded-full flex items-center justify-center">
             <IoLogoInstagram onClick={handSignInInsta} className="w-12 h-12" />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
