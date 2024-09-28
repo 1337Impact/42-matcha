@@ -40,7 +40,7 @@ export default function SingUpForm({
     }
     try {
       setStatus("loading");
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_APP_API_URL}/auth/signup`,
         data
       );
