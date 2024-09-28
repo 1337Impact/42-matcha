@@ -18,9 +18,16 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   path: "",
   cors: {
-    origin: "*",
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST"],
   },
 });
+
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+};
 
 const userSocketMap = new Map();
 
@@ -48,7 +55,7 @@ io.on("connection", (socket) => {
   handleVideoCall(io, socket);
 });
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(passport.initialize()); // Initialize passport
 app.use("/images", express.static("uploads"));
