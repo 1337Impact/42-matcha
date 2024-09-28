@@ -9,13 +9,13 @@ function sendNotification(message: any, receiver_id: string) {
 }
 
 function handleVideoCall(io: any, socket: any) {
-  socket.on("video-offer", (data: any) => {
-    const { receiver_id, offer } = data;
+  socket.on("rtc-message", (data: any) => {
+    const { receiver_id, ...rest } = data;
     const receiverSocketId = userSocketMap.get(receiver_id);
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("video-offer", offer);
+      io.to(receiverSocketId).emit("rtc-message", rest);
     }
-    console.log("video-offer", data);
+    console.log("rtc-message", data);
   });
 
   socket.on("video-answer", (data: any) => {
@@ -25,6 +25,14 @@ function handleVideoCall(io: any, socket: any) {
       io.to(receiverSocketId).emit("video-answer", answer);
     }
     console.log("video-answer", data);
+  });
+  socket.on("ice-candidate", (data: any) => {
+    const { receiver_id, ice_candidate } = data;
+    const receiverSocketId = userSocketMap.get(receiver_id);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("ice-candidate", ice_candidate);
+    }
+    console.log("ice-candidate", data);
   });
 }
 
