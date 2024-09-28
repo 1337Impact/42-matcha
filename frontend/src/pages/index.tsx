@@ -14,7 +14,7 @@ import { SocketContext } from "../contexts/SocketContext";
 // }
 
 // const getProfiles = async (token: string): Promise<Profile[]> => {
-//   const result = await axios.get("http://localhost:3000/api/profile/all", {
+//   const result = await axios.get("http://10.13.6.5:3000/api/profile/all", {
 //     headers: {
 //       Authorization: `Bearer ${token}`,
 //     },

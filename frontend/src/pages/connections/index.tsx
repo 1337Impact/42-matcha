@@ -8,7 +8,7 @@ const getConnectionsData = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      "http://localhost:3000/api/profile/connections",
+      `${import.meta.env.VITE_APP_API_URL}/profile/connections`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -40,8 +40,8 @@ export default function SingUpForm({
     }
     try {
       setStatus("loading");
-      await axios.post(
-        "http://localhost:3000/api/auth/signup",
+      const response = await axios.post(
+        `${import.meta.env.VITE_APP_API_URL}/auth/signup`,
         data
       );
       setStatus("success");

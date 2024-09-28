@@ -7,7 +7,7 @@ const getviewsData = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      "http://localhost:3000/api/profile/views",
+      `${import.meta.env.VITE_APP_API_URL}/profile/views`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

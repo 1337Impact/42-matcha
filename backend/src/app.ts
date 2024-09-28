@@ -31,6 +31,7 @@ io.on("connection", (socket) => {
   // @ts-ignore
   const user = socket.request.user;
   userSocketMap.set(user.id, socket.id);
+  console.log("user connected: ", user.id);
 
   socket.on("disconnect", () => {
     userSocketMap.delete(user.id);
@@ -45,6 +46,7 @@ io.on("connection", (socket) => {
       sender_id: user.id,
     });
   });
+  handleVideoCall(io, socket);
 });
 
 app.use(cors());

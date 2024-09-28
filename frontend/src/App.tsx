@@ -23,6 +23,7 @@ import UpdatePassword from "./pages/auth/resetPassword/[token]";
 import Settings from "./pages/settings";
 import Map from "./pages/map";
 import ScheduleDate from "./pages/connections/schedule_date";
+import VideoCall from "./pages/chat/video-call";
 
 function App() {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ function App() {
           <Route path="/connections/schedule_date" element={<ScheduleDate />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chat/:profileId" element={<ChatRoom />} />
+          <Route path="/chat/:profileId/video-call" element={<VideoCall />} />
           <Route path="/profile/:profileId" element={<Profile />} />
           <Route path="/profile/likes" element={<Likes />} />
           <Route path="/profile/views" element={<Views />} />
