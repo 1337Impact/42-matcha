@@ -10,8 +10,7 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import { handleCreateMessage } from "./messages/messageService";
 import passport from "./auth/passportSetup";
-
-const FacebookStrategy = require("passport-facebook").Strategy;
+import { handleVideoCall } from "./utils/socket";
 
 const app = express();
 const httpServer = createServer(app);
