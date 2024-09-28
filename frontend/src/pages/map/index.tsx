@@ -5,7 +5,7 @@ import Map from "../../components/Map";
 const getUsers = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get("http://localhost:3000/api/profile/map", {
+    const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/profile/map`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -19,7 +19,7 @@ const getUsers = async (): Promise<any> => {
 const getUserLocation = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get("http://localhost:3000/api/profile/", {
+    const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/profile/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

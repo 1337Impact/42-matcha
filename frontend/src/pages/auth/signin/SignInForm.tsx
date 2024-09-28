@@ -35,7 +35,7 @@ export default function SignInForm() {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
+        `${import.meta.env.VITE_APP_API_URL}/auth/login`,
         data
       );
       //"login res: ", response);

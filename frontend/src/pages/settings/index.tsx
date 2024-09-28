@@ -77,7 +77,7 @@ export default function Settings() {
     // Fetch user profile data on component mount
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/profile", {
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/profile`, {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           },
@@ -215,7 +215,7 @@ export default function Settings() {
         file && formData.append("images", file);
       });
 
-      await axios.post("http://localhost:3000/api/profile/settings", formData, {
+      await axios.post(`${import.meta.env.VITE_APP_API_URL}/profile/settings`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
