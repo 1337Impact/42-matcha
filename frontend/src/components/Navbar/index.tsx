@@ -29,6 +29,7 @@ const Navbar: React.FC = () => {
       ...prev,
       ageRange: newValue as number[],
     }));
+    return event;
   };
 
   const handleFameRatingChange = (event: any, newValue: number | number[]) => {
@@ -36,6 +37,7 @@ const Navbar: React.FC = () => {
       ...prev,
       fameRating: newValue as number[],
     }));
+    return event;
   };
 
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {

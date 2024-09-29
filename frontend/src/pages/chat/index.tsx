@@ -1,13 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import formatDate from "../../utils/formateDate";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 const getConnectionsData = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      "http://localhost:3000/api/profile/connections",
+      `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/connections`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

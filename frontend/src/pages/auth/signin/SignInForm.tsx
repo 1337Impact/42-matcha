@@ -35,7 +35,7 @@ export default function SignInForm() {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
+        `${import.meta.env.VITE_APP_BACKEND_URL}/api/auth/login`,
         data
       );
       //"login res: ", response);
@@ -136,7 +136,7 @@ export default function SignInForm() {
       <div>
         <p className="text-gray-600 text-sm mt-3">
           Or sign in with <button onClick={() => {
-            window.location.href = "http://localhost:3000/api/auth/facebook";
+            window.location.href = `${import.meta.env.VITE_APP_BACKEND_URL}/api/auth/facebook`;
           }}>Facebook</button>
         </p>
       </div>

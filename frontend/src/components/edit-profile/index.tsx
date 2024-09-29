@@ -116,7 +116,7 @@ export default function EditProfile({
       imageFiles.forEach((file) => {
         file && formData.append("images", file);
       });
-      await axios.post("http://localhost:3000/api/profile/update", formData, {
+      await axios.post(`${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/update`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

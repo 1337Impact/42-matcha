@@ -19,7 +19,6 @@ import LikeDislikeButton from "../like-button/like-button";
 import FilterDropdown from "./filter-dropdown";
 import SortDropdown from "./sort-dropdown";
 import AdvancedSearchMenu from "../search";
-import { tagsList } from "../edit-profile";
 
 SwiperCore.use([Navigation, Pagination, EffectCards]);
 
@@ -48,18 +47,11 @@ const ProfileSwiper = () => {
     agerange: [18, 99],
     fameRating: [0, 10],
   };
-  const initialSearchCriteria = {
-    ageRange: [18, 99],
-    fameRating: [0, 10],
-    location: "",
-    interests: [] as string[],
-  };
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sortCriteria, setSortCriteria] = useState(initialSortCriteria);
   const [filterCriteria, setFilterCriteria] = useState(initialFilterCriteria);
-  const [searchCriteria, setSearchCriteria] = useState(initialSearchCriteria);
 
   useEffect(() => {
     console.log("filter Criteria:", filterCriteria);
@@ -111,7 +103,7 @@ const ProfileSwiper = () => {
       }
     };
     applyFilters();
-  }, [sortCriteria, filterCriteria, searchCriteria]); // Add searchCriteria to the dependency array
+  }, [sortCriteria, filterCriteria]);
 
   const handleSwipe = (direction: string) => {
     if (direction === "like" || direction === "dislike") {

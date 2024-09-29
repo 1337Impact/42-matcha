@@ -43,7 +43,7 @@ export default function UpdatePasswordForm() {
     try {
       setLoading(true);
       await axios.post(
-        `http://localhost:3000/api/auth/reset-password/`,
+        `${import.meta.env.VITE_APP_SOCKET_URL}/api/auth/reset-password/`,
         { password: data.password, token: token }
       );
       setRedirecting(true);

@@ -43,10 +43,12 @@ const FilterDropdown: React.FC<FilterDropDownProps> = ({
 
   const handleDistanceChange = (event: any, newValue: number | number[]) => {
     setDistance(newValue as number);
+    return event;
   };
 
   const handleAgeRangeChange = (event: any, newValue: number | number[]) => {
     setAgeRange(newValue as number[]);
+    return event;
   };
 
   const applyFilter = () => {

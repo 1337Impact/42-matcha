@@ -7,7 +7,7 @@ const gethistoryData = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      "http://localhost:3000/api/profile/views/history",
+      `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/views/history`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
