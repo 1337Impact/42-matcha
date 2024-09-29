@@ -15,13 +15,7 @@ import { handleVideoCall } from "./utils/socket";
 const app = express();
 const httpServer = createServer(app);
 
-const io = new SocketIOServer(httpServer, {
-  path: "",
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  },
-});
+const io = new SocketIOServer(httpServer, { path: '/api',addTrailingSlash: false });
 
 const corsOptions = {
   origin: "*",
