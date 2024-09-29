@@ -113,8 +113,8 @@ ADD COLUMN IF NOT EXISTS "report_count" NUMERIC DEFAULT 0;
 
 async function alterTables() {
   try {
-    await pool.query(createTableRequestQuery);
-    //"User table updated successfully with new columns.");
+    const res = await pool.query(EventsTable);
+    console.log(res, "User table updated successfully with new columns.");
     pool.end();
   } catch (error) {
     console.error("Error updating User table:", error);

@@ -55,7 +55,12 @@ export default function Connections() {
             <div className="relative rounded-xl overflow-hidden lg:w-[15rem] lg:h-[20rem] w-[10rem] h-[15rem] shadow-lg transition-transform transform hover:scale-105">
               {openMenu && (
                 <div className="absolute top-11 right-0 z-30 bg-white p-4 rounded-md flex-row item-center gap-2">
-                  <button className="text-gray-600 text-md p-2 hover:bg-gray-200">
+                  <button
+                    onClick={() => {
+                      window.location.href = `/connections/schedule_date/?user_id=${profile.id}`;
+                    }}
+                    className="text-gray-600 text-md p-2 hover:bg-gray-200"
+                  >
                     Schedule a date
                   </button>
                 </div>

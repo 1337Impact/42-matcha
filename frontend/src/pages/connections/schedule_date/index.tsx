@@ -1,25 +1,42 @@
 import { useState } from "react";
 
 export default function ScheduleDate() {
-  // Form state
   const [eventName, setEventName] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [message, setMessage] = useState("");
+  const parms = new URLSearchParams(window.location.search);
+  const userId = parms.get("user_id");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission, e.g., post to backend API
-    const eventData = {
-      eventName,
-      date,
-      time,
-      location,
-      message,
-    };
-    console.log(eventData); // Replace with actual API call
-    // Reset form or give feedback to the user
+    const token = window.localStorage.getItem("token");
+    const date_time = new Date(`${date} ${time}`);
+    try {
+      const eventForm = {
+        user_id: userId,
+        event_name: eventName,
+        event_date: date_time,
+        event_location: location,
+        event_description: message,
+      };
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/events/request-date/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(eventForm),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error scheduling date: ", error);
+    }
   };
 
   return (
@@ -30,7 +47,10 @@ export default function ScheduleDate() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Event Name */}
         <div>
-          <label htmlFor="eventName" className="block text-gray-700 font-medium mb-2">
+          <label
+            htmlFor="eventName"
+            className="block text-gray-700 font-medium mb-2"
+          >
             Event Name (Optional)
           </label>
           <input
@@ -42,10 +62,13 @@ export default function ScheduleDate() {
             placeholder="Coffee date, Movie night, etc."
           />
         </div>
-        
+
         {/* Date */}
         <div>
-          <label htmlFor="date" className="block text-gray-700 font-medium mb-2">
+          <label
+            htmlFor="date"
+            className="block text-gray-700 font-medium mb-2"
+          >
             Date
           </label>
           <input
@@ -60,7 +83,10 @@ export default function ScheduleDate() {
 
         {/* Time */}
         <div>
-          <label htmlFor="time" className="block text-gray-700 font-medium mb-2">
+          <label
+            htmlFor="time"
+            className="block text-gray-700 font-medium mb-2"
+          >
             Time
           </label>
           <input
@@ -75,7 +101,10 @@ export default function ScheduleDate() {
 
         {/* Location */}
         <div>
-          <label htmlFor="location" className="block text-gray-700 font-medium mb-2">
+          <label
+            htmlFor="location"
+            className="block text-gray-700 font-medium mb-2"
+          >
             Location
           </label>
           <input
@@ -91,7 +120,10 @@ export default function ScheduleDate() {
 
         {/* Optional Message */}
         <div>
-          <label htmlFor="message" className="block text-gray-700 font-medium mb-2">
+          <label
+            htmlFor="message"
+            className="block text-gray-700 font-medium mb-2"
+          >
             Message (Optional)
           </label>
           <textarea

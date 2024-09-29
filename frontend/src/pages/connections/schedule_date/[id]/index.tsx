@@ -1,117 +1,120 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function ScheduleDate() {
-  // Form state
-  const [eventName, setEventName] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [location, setLocation] = useState("");
-  const [message, setMessage] = useState("");
+export default function RespondToScheduleRequest() {
+  // State for handling user's response
+  const [response, setResponse] = useState("");
+  const [comment, setComment] = useState("");
+  const [event, setEvent] = useState<any>({});
+  const parms = new URLSearchParams(window.location.search);
+  const eventId = parms.get("event_id");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission, e.g., post to backend API
-    const eventData = {
-      eventName,
-      date,
-      time,
-      location,
-      message,
+  useEffect(() => {
+    try {
+      const token = window.localStorage.getItem("token");
+      fetch(
+        `${
+          import.meta.env.VITE_APP_API_URL
+        }/profile/events/?event_id=${eventId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setEvent(data);
+        });
+    } catch (error) {
+      console.error("Error getting event data: ", error);
+    }
+  }, [eventId]);
+
+  const handleAccept = () => {
+    setResponse("accepted");
+    // You can send the accept response to your backend API here
+    submitResponse("accepted");
+  };
+
+  const handleDecline = () => {
+    setResponse("declined");
+    // You can send the decline response to your backend API here
+    submitResponse("declined");
+  };
+
+  const submitResponse = (userResponse: string) => {
+    const responseData = {
+      eventId: eventId,
+      response: userResponse,
+      comment,
     };
-    console.log(eventData); // Replace with actual API call
-    // Reset form or give feedback to the user
+    console.log(responseData); // Replace this with your API call to save the response
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-3xl font-semibold text-gray-800 py-4">
-        Schedule a Date
+    <div className="p-6">
+      <h1 className="text-3xl font-semibold text-gray-800 pb-4">
+        Respond to Schedule Request
       </h1>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Event Name */}
-        <div>
-          <label htmlFor="eventName" className="block text-gray-700 font-medium mb-2">
-            Event Name (Optional)
-          </label>
-          <input
-            type="text"
-            id="eventName"
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-            className="w-full border-gray-300 p-2 rounded-lg shadow-sm"
-            placeholder="Coffee date, Movie night, etc."
-          />
-        </div>
-        
-        {/* Date */}
-        <div>
-          <label htmlFor="date" className="block text-gray-700 font-medium mb-2">
-            Date
-          </label>
-          <input
-            type="date"
-            id="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full border-gray-300 p-2 rounded-lg shadow-sm"
-            required
-          />
-        </div>
 
-        {/* Time */}
-        <div>
-          <label htmlFor="time" className="block text-gray-700 font-medium mb-2">
-            Time
-          </label>
-          <input
-            type="time"
-            id="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            className="w-full border-gray-300 p-2 rounded-lg shadow-sm"
-            required
-          />
-        </div>
+      {/* Event details */}
+      <div className="border p-4 rounded-lg shadow-lg bg-gray-50 mb-6">
+        <h2 className="text-xl font-bold text-gray-700">
+          {event.eventName || "Scheduled Date"}
+        </h2>
+        <p className="text-gray-700">
+          <strong>Date:</strong> {event.date} <br />
+          <strong>Time:</strong> {event.time} <br />
+          <strong>Location:</strong> {event.location} <br />
+          {event.message && (
+            <>
+              <strong>Message:</strong> {event.message}
+            </>
+          )}
+        </p>
+      </div>
 
-        {/* Location */}
-        <div>
-          <label htmlFor="location" className="block text-gray-700 font-medium mb-2">
-            Location
-          </label>
-          <input
-            type="text"
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full border-gray-300 p-2 rounded-lg shadow-sm"
-            placeholder="Enter a location"
-            required
-          />
-        </div>
+      {/* Response buttons */}
+      <div className="flex gap-4 mb-6">
+        <button
+          className={`w-1/2 bg-green-500 text-white py-2 rounded-lg ${
+            response === "accepted" ? "bg-green-700" : "hover:bg-green-600"
+          }`}
+          onClick={handleAccept}
+        >
+          Accept
+        </button>
 
-        {/* Optional Message */}
+        <button
+          className={`w-1/2 bg-red-500 text-white py-2 rounded-lg ${
+            response === "declined" ? "bg-red-700" : "hover:bg-red-600"
+          }`}
+          onClick={handleDecline}
+        >
+          Decline
+        </button>
+      </div>
+
+      {/* Optional comment section */}
+      {response === "declined" && (
         <div>
-          <label htmlFor="message" className="block text-gray-700 font-medium mb-2">
-            Message (Optional)
+          <label
+            htmlFor="comment"
+            className="block text-gray-700 font-medium mb-2"
+          >
+            Add a comment (Optional)
           </label>
           <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            id="comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
             className="w-full border-gray-300 p-2 rounded-lg shadow-sm"
+            placeholder="You can explain why you're declining..."
             rows={4}
-            placeholder="You can add a message here..."
           />
         </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Schedule Date
-        </button>
-      </form>
+      )}
     </div>
   );
 }

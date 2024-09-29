@@ -52,7 +52,7 @@ const getFilteredProfiles = async (req: any, res: any) => {
       req.user,
       req.body.ProfilesFilter
     );
-    
+
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
@@ -186,7 +186,7 @@ const reportUser = async (req: any, res: any) => {
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
   }
-}
+};
 
 const blockUser = async (req: any, res: any) => {
   try {
@@ -195,18 +195,18 @@ const blockUser = async (req: any, res: any) => {
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
   }
-}
+};
 
 export {
+  blockUser,
   getAllProfiles,
   getConnections,
   getFilteredProfiles,
   getGeoLocation,
+  getMapProfiles,
   getProfile,
   isProfileCompleted,
   likeProfile,
-  updateProfile,
   reportUser,
-  blockUser,
-  getMapProfiles,
+  updateProfile,
 };

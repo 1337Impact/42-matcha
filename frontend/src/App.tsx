@@ -24,6 +24,7 @@ import Settings from "./pages/settings";
 import Map from "./pages/map";
 import ScheduleDate from "./pages/connections/schedule_date";
 import VideoCall from "./pages/chat/video-call";
+import RespondToScheduleRequest from "./pages/connections/schedule_date/[id]";
 
 function App() {
   const navigate = useNavigate();
@@ -69,6 +70,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/connections" element={<Connections />} />
           <Route path="/connections/schedule_date" element={<ScheduleDate />} />
+          <Route path="/connections/schedule_date/:eventId" element={<RespondToScheduleRequest />} />
+          <Route path="/connections/schedule_date/:eventId" element={<RespondToScheduleRequest />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chat/:profileId" element={<ChatRoom />} />
           <Route path="/chat/:profileId/video-call" element={<VideoCall />} />

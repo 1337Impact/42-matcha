@@ -20,6 +20,7 @@ import Settings from "./settings";
 import Map from "./map";
 import ScheduleDate from "./connections/schedule_date";
 import VideoCall from "./chat/video-call";
+import RespondToScheduleRequest from "./connections/schedule_date/[id]";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -100,6 +101,8 @@ const ProtectedLayout: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/connections" element={<Connections />} />
             <Route path="/connections/schedule_date/" element={<ScheduleDate />} />
+            <Route path="/connections/schedule_date/:eventId" element={<RespondToScheduleRequest />} />
+            <Route path="/connections/schedule_date/:eventId" element={<RespondToScheduleRequest />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/chat/:profileId" element={<ChatRoom />} />
             <Route path="/chat/:profileId/video-call" element={<VideoCall />} />

@@ -38,4 +38,14 @@ interface Filter {
   max_fame_rating?: number;
 }
 
-export { User, Profile, Filter };
+interface DateEvent{
+  event_id?: string;
+  user_id: string;
+  event_name: string;
+  event_date: string;
+  event_location: string;
+  event_description: string;
+  accepted?: boolean;
+}
+
+export { User, Profile, Filter, DateEvent };

@@ -21,21 +21,10 @@ import { Link } from "react-router-dom";
 const inotifications = [
   {
     id: 1,
-    content:
-      "New content from userNew content from userNew content from userNew content from user",
-    type: "view",
-    url: "/",
+    content: "You have a new message from John Doe",
+    type: "message",
+    url: "/chat",
   },
-  { id: 2, content: "New content from user", type: "message", url: "/" },
-  { id: 3, content: "New content from user", type: "like", url: "/" },
-  { id: 4, content: "New content from user", type: "unlike", url: "/" },
-  { id: 5, content: "New content from user", type: "message", url: "/" },
-  { id: 3, content: "New content from user", type: "like", url: "/" },
-  { id: 4, content: "New content from user", type: "unlike", url: "/" },
-  { id: 5, content: "New content from user", type: "message", url: "/" },
-  { id: 3, content: "New content from user", type: "like", url: "/" },
-  { id: 4, content: "New content from user", type: "unlike", url: "/" },
-  { id: 5, content: "New content from user", type: "message", url: "/" },
 ];
 
 const Notifications: React.FC = () => {
@@ -66,6 +55,8 @@ const Notifications: React.FC = () => {
                 ? "/profile/likes"
                 : data.type === "view"
                 ? "/profile/views"
+                : data.type === "date"
+                ? `/connections/${data.data}`
                 : "/",
           },
           ...prev,

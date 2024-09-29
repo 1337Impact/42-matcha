@@ -1,5 +1,5 @@
 import db from "../utils/db/client";
-import { Filter, Profile, User } from "./types";
+import { DateEvent, Filter, Profile, User } from "./types";
 
 async function handleGetProfile(
   profileId: string,
@@ -339,6 +339,7 @@ const handleBlockUser = async (userId: string, user: User) => {
     throw error;
   }
 };
+
 
 export {
   getIsProfileCompleted,

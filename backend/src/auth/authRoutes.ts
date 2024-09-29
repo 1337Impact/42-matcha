@@ -38,7 +38,7 @@ router.get(
   passport.authenticate('facebook', { failureRedirect: '/signin', session: false }),
   (req: any, res) => {
     // Successful authentication, send JWT token to the client
-    console.log("req.user", req.user);
+    // console.log("req.user", res);
     const token = generateToken(req.user);
     res.redirect(`${process.env.FRONTEND_URL}/signin?token=${token}`);
   }

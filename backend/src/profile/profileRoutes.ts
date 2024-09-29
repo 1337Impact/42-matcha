@@ -1,5 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
+import eventsRouter from "./events/eventsRoutes";
 import LikesRouter from "./likes/likesRoutes";
 import {
   blockUser,
@@ -12,7 +13,7 @@ import {
   isProfileCompleted,
   reportUser,
   updateProfile,
-  updateProfileSettings,
+  updateProfileSettings
 } from "./profileControllers";
 import viewsRouter from "./views/viewsRoutes";
 
@@ -32,6 +33,7 @@ const upload = multer({ storage: storage });
 
 router.use("/likes", LikesRouter);
 router.use("/views", viewsRouter);
+router.use("/events", eventsRouter);
 router.post("/report", reportUser);
 router.post("/block", blockUser);
 router.post("/update", upload.array("images", 5), updateProfile);
@@ -43,5 +45,7 @@ router.get("/all", getAllProfiles);
 router.post("/FilteredProfiles", getFilteredProfiles);
 router.post("/geolocation", getGeoLocation);
 router.get("/map", getMapProfiles);
+
+
 
 export default router;
