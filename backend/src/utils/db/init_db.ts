@@ -1,5 +1,9 @@
 import pool from "./client";
 
+const createExtensionQuery = `
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+`;
+
 const createTableUserQuery = `
 DROP TABLE IF EXISTS "USER" CASCADE;
 CREATE TABLE IF NOT EXISTS "USER" (
@@ -25,7 +29,7 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "reset_password_expires" TIMESTAMP,
   "reset_password_token" TEXT DEFAULT '',
-  "report_count" NUMERIC DEFAULT 0,
+  "report_count" NUMERIC DEFAULT 0
 );
 `;
 
@@ -127,6 +131,8 @@ ADD COLUMN IF NOT EXISTS "report_count" NUMERIC DEFAULT 0;
 
 async function createTables() {
   try {
+    await pool.query(createExtensionQuery);
+    console.log("Extension created successfully");
     await pool.query(createTableUserQuery);
     console.log("User table created successfully");
     await pool.query(createTableViewQuery);
@@ -135,8 +141,8 @@ async function createTables() {
     console.log("User likes table created successfully");
     await pool.query(createTableMessageQuery);
     console.log("Message table created successfully");
-    const res = await pool.query(EventsTable);
-    console.log(res, "Events table created successfully");
+    await pool.query(EventsTable);
+    console.log("Events table created successfully");
     await pool.query(createTableRequestQuery);
     console.log("Event request table created successfully");
     await pool.query(createTableBlockQuery);

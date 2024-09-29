@@ -1,5 +1,3 @@
-# Dockerfile for the backend
-
 FROM node:18
 
 # Set the working directory
@@ -12,9 +10,9 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# get the database url from the environment
+# Get the database URL from the environment
 ARG DATABASE_URL
-# set the database url in the environment variables of the backend app .env file
+# Set the database URL in the environment variables of the backend app .env file
 # RUN echo "DATABASE_URL=$DATABASE_URL" >> .env
 
 # Install ts-node globally
@@ -26,5 +24,11 @@ RUN npm run build
 # Expose the backend port
 EXPOSE 5000
 
-# Initialize the database and start the backend server
-CMD ["npx", "ts-node", "src/utils/db/init_db.ts", "&&", "npm", "run", "start"]
+# Copy the shell script into the container
+COPY start.sh .
+
+# Give execution permission to the shell script
+RUN chmod +x start.sh
+
+# Run the shell script
+CMD ["./start.sh"]
