@@ -160,7 +160,7 @@ export default function SignInForm() {
         <div className="flex items-center justify-center gap-4 mt-6">
           <button
             onClick={() => {
-              window.location.href = "http://localhost:3000/api/auth/facebook";
+              window.location.href = `${import.meta.env.VITE_APP_API_URL}/auth/facebook`;
             }}
             className="w-12 h-12 rounded-full flex items-center justify-center "
           >
