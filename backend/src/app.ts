@@ -6,7 +6,7 @@ import profileRouter from "./profile/profileRoutes";
 import messageRouter from "./messages/messageRoutes";
 import authorize, { socketMiddlware } from "./middleware";
 import cors from "cors";
-import { Server } from "socket.io";
+import { Server as SocketIOServer } from "socket.io";
 import { createServer } from "http";
 import { handleCreateMessage } from "./messages/messageService";
 import passport from "./auth/passportSetup";
@@ -15,10 +15,11 @@ import { handleVideoCall } from "./utils/socket";
 const app = express();
 const httpServer = createServer(app);
 
-const io = new Server(httpServer, {
+const io = new SocketIOServer(httpServer, {
   path: "",
   cors: {
     origin: "*",
+    methods: ["GET", "POST"]
   },
 });
 
