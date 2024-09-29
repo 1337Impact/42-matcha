@@ -19,6 +19,7 @@ import LikeDislikeButton from "../like-button/like-button";
 import AdvancedSearchMenu from "../search";
 import FilterDropdown from "./filter-dropdown";
 import SortDropdown from "./sort-dropdown";
+import AdvancedSearchMenu from "../search";
 
 SwiperCore.use([Navigation, Pagination, EffectCards]);
 
@@ -103,6 +104,7 @@ const ProfileSwiper = () => {
       }
     };
     applyFilters();
+  }, [sortCriteria, filterCriteria]);
   }, [sortCriteria, filterCriteria]);
 
   const handleSwipe = (direction: string) => {

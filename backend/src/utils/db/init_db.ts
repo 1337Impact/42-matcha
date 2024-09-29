@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS "USER" (
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "reset_password_expires" TIMESTAMP,
-  "reset_password_token" TEXT DEFAULT ''
+  "reset_password_token" TEXT DEFAULT '',
+  "report_count" NUMERIC DEFAULT 0,
 );
 `;
 
@@ -111,29 +112,35 @@ ALTER TABLE "USER"
 ADD COLUMN IF NOT EXISTS "report_count" NUMERIC DEFAULT 0;
 `;
 
-async function alterTables() {
-  try {
-    const res = await pool.query(EventsTable);
-    console.log(res, "User table updated successfully with new columns.");
-    pool.end();
-  } catch (error) {
-    console.error("Error updating User table:", error);
-    pool.end();
-  }
-}
+// async function alterTables() {
+//   try {
+//     const res = await pool.query(EventsTable);
+//     console.log(res, "User table updated successfully with new columns.");
+//     pool.end();
+//   } catch (error) {
+//     console.error("Error updating User table:", error);
+//     pool.end();
+//   }
+// }
 
-alterTables();
+// alterTables();
 
 async function createTables() {
   try {
     await pool.query(createTableUserQuery);
-    //"User table created successfully");
+    console.log("User table created successfully");
     await pool.query(createTableViewQuery);
-    //"User views table created successfully");
+    console.log("User views table created successfully");
     await pool.query(createTableLikesQuery);
-    //"User likes table created successfully");
+    console.log("User likes table created successfully");
     await pool.query(createTableMessageQuery);
-    //"Message table created successfully");
+    console.log("Message table created successfully");
+    const res = await pool.query(EventsTable);
+    console.log(res, "Events table created successfully");
+    await pool.query(createTableRequestQuery);
+    console.log("Event request table created successfully");
+    await pool.query(createTableBlockQuery);
+    console.log("Blocked table created successfully");
     pool.end();
   } catch (error) {
     console.error("Error creating tables:", error);
@@ -141,4 +148,4 @@ async function createTables() {
   }
 }
 
-// createTables();
+createTables();

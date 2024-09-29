@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - '443:443'
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    ports:
+      - '5000:5000'
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: ${DATABASE_URL}  # Use the env variable from .env file
+    networks:
+      - app-network
+
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}     # Use env variable from .env file
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Use env variable from .env file
+      POSTGRES_DB: ${POSTGRES_DB}         # Use env variable from .env file
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

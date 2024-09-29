@@ -42,7 +42,6 @@ export default function LikeDislikeButton({
   };
 
   useEffect(() => {
-    //"Profile ID: ", profileId);
     axios
       .get(
         `${import.meta.env.VITE_APP_API_URL}/profile/likes/is-profile-liked`,
@@ -58,8 +57,8 @@ export default function LikeDislikeButton({
       .then((response) => {
         setIsLiked(response.data);
       })
-      .catch(() => {
-        //"Error getting likes:", error);
+      .catch((error) => {
+        console.log("Error getting likes:", error);
       });
   }, [profileId]);
 
