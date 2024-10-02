@@ -11,11 +11,18 @@ import { createServer } from "http";
 import { handleCreateMessage } from "./messages/messageService";
 import passport from "./auth/passportSetup";
 import { handleVideoCall } from "./utils/socket";
+import fs from "fs";
+import https from "https";
+
+// SSL setup
+const privateKey = fs.readFileSync("/etc/nginx/ssl/cert.key", "utf8");
+const certificate = fs.readFileSync("/etc/nginx/ssl/cert.crt", "utf8");
+const credentials = { key: privateKey, cert: certificate };
 
 const app = express();
-const httpServer = createServer(app);
+const httpsServer = https.createServer(credentials, app);  // Use HTTPS
 
-const io = new SocketIOServer(httpServer, {
+const io = new SocketIOServer(httpsServer, {
   path: "",
   cors: {
     origin: "*",
@@ -62,5 +69,10 @@ app.use("/api/profile", authorize, profileRouter);
 app.use("/api/user", authorize, userRouter);
 app.use("/api/message", authorize, messageRouter);
 
+// // Start the HTTPS server
+// httpsServer.listen(5000, () => {
+//   console.log("Backend running on https://localhost:5000");
+// });
+
 export { io, userSocketMap };
-export default httpServer;
+export default httpsServer;
