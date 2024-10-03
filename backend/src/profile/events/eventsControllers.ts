@@ -40,7 +40,7 @@ const requestDateSchedule = async (req: any, res: any) => {
 const respondRequestDateSchedule = async (req: any, res: any) => {
   try {
     const response = await handleRespondRequestDateSchedule(
-      req.body.event,
+      req.body.responseData,
       req.user
     );
     if (response) {

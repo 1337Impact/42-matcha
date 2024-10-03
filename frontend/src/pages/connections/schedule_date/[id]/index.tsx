@@ -31,25 +31,36 @@ export default function RespondToScheduleRequest() {
     }
   }, [eventId]);
 
-  const handleAccept = () => {
-    setResponse("accepted");
-    // You can send the accept response to your backend API here
-    submitResponse("accepted");
-  };
 
-  const handleDecline = () => {
-    setResponse("declined");
-    // You can send the decline response to your backend API here
-    submitResponse("declined");
-  };
-
-  const submitResponse = (userResponse: string) => {
+  const submitResponse = () => {
     const responseData = {
       eventId: eventId,
-      response: userResponse,
+      response: response,
       comment,
     };
-    console.log(responseData); // Replace this with your API call to save the response
+    try{
+      const token = window.localStorage.getItem("token");
+      fetch(
+        `${import.meta.env.VITE_APP_API_URL}/profile/events/respond-request-date`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(responseData),
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          // Redirect user to the events page
+          window.location.href = "/connections/";
+        });
+    }
+    catch (error) {
+      console.error("Error responding to date request: ", error);
+    }
   };
 
   return (
@@ -81,7 +92,7 @@ export default function RespondToScheduleRequest() {
           className={`w-1/2 bg-green-500 text-white py-2 rounded-lg ${
             response === "accepted" ? "bg-green-700" : "hover:bg-green-600"
           }`}
-          onClick={handleAccept}
+          onClick={() => setResponse("accepted")}
         >
           Accept
         </button>
@@ -90,7 +101,7 @@ export default function RespondToScheduleRequest() {
           className={`w-1/2 bg-red-500 text-white py-2 rounded-lg ${
             response === "declined" ? "bg-red-700" : "hover:bg-red-600"
           }`}
-          onClick={handleDecline}
+          onClick={() => setResponse("declined")}
         >
           Decline
         </button>
@@ -115,6 +126,13 @@ export default function RespondToScheduleRequest() {
           />
         </div>
       )}
+
+      {/* Submit button */}
+      <button
+        className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+        onClick={submitResponse}
+      >
+      </button>
     </div>
   );
 }
