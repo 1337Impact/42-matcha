@@ -1,12 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { GrSend } from "react-icons/gr";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SocketContext } from "../../contexts/SocketContext";
 import Message from "../../components/message/message";
 import axios from "axios";
 import { ProfileAvatar } from "../../components/profile-avatar/profile-avatar";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { FaVideo } from "react-icons/fa";
+import { RootState } from "../../store";
+import { useSelector } from "react-redux";
 
 interface Message {
   id: string;
@@ -60,6 +63,8 @@ const getProfileData = async (token: string, profileId: string) => {
 
 export default function ChatRoom() {
   const params = useParams();
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.userSlice.user);
   const socket = useContext(SocketContext);
   const [profile, setProfile] = useState<any>({});
   const [messages, setMessages] = useState<Message[]>([]);
@@ -96,6 +101,14 @@ export default function ChatRoom() {
     e.target[0].value = "";
   };
 
+  const handleCall = () => {
+    socket?.emit("request-call", {
+      receiver_id: params.profileId,
+      sender_id: user?.id,
+    });
+    navigate(`/chat/${params.profileId}/video-call`);
+  };
+
   useEffect(() => {
     if (socket) {
       socket.on("message", (message: IncomingMessage) => {
@@ -112,9 +125,12 @@ export default function ChatRoom() {
   }, [socket]);
 
   return (
-    <div className="flex flex-col gap-1 p-1 pt-4 h-full">
-      <Link to={`/profile/${params.profileId}`} className="text-blue-500">
-        <div className="w-full flex items-center gap-4 p-2 bg-white border-gray-300">
+    <div className="flex flex-col gap-1 p-1 pt-4 h-full lg:px-5">
+      <div className="w-full flex items-center justify-between py-2 bg-white border-gray-300">
+        <Link
+          to={`/profile/${params.profileId}`}
+          className="flex items-center gap-4"
+        >
           <ArrowLeft
             onClick={() => {
               window.history.back();
@@ -135,8 +151,14 @@ export default function ChatRoom() {
               </h1>
             </div>
           </div>
-        </div>
-      </Link>
+        </Link>
+        <button
+          onClick={handleCall}
+          className="text-green-400 hover:text-green-600 mr-4"
+        >
+          <FaVideo size={26} />
+        </button>
+      </div>
       <div id={"message-container"} className="flex-1 p-2 overflow-y-auto">
         <div className="flex flex-col gap-2">
           {messages.map((message, index) => (

@@ -1,24 +1,25 @@
 import { useRef, useEffect, useState, useContext } from "react";
-import { FiVideo, FiVideoOff, FiMic, FiMicOff } from "react-icons/fi";
+import { FiVideoOff, FiMic, FiMicOff, FiVideo } from "react-icons/fi";
 import { SocketContext } from "../../../contexts/SocketContext";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const configuration = {
   iceServers: [
     {
-      urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
+      urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
     },
   ],
   iceCandidatePoolSize: 10,
 };
 
 function App() {
+  let [searchParams] = useSearchParams();
   const params = useParams();
   const socket = useContext(SocketContext);
 
-  const pc = useRef<RTCPeerConnection | null>(null); // Updated to use `useRef` to store `RTCPeerConnection` instance
-  const localStream = useRef<MediaStream | null>(null); // Storing local stream
-  const remoteStream = useRef<MediaStream | null>(null); // Storing remote stream
+  const pc = useRef<RTCPeerConnection | null>(null);
+  const localStream = useRef<MediaStream | null>(null);
+  const remoteStream = useRef<MediaStream | null>(null);
 
   const startButton = useRef<HTMLButtonElement>(null);
   const hangupButton = useRef<HTMLButtonElement>(null);
@@ -68,6 +69,23 @@ function App() {
     };
   }, [socket]);
 
+  useEffect(() => {
+    const init = async () => {
+      try {
+        localStream.current = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: { echoCancellation: true },
+        });
+        if (localVideo.current)
+          localVideo.current.srcObject = localStream.current;
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    init();
+    startB();
+  }, []);
+
   async function makeCall() {
     try {
       pc.current = new RTCPeerConnection(configuration);
@@ -94,7 +112,9 @@ function App() {
 
       localStream.current
         ?.getTracks()
-        .forEach((track) => pc.current?.addTrack(track, localStream.current as MediaStream));
+        .forEach((track) =>
+          pc.current?.addTrack(track, localStream.current as MediaStream)
+        );
 
       const offer = await pc.current.createOffer();
       await pc.current.setLocalDescription(offer);
@@ -142,7 +162,9 @@ function App() {
 
       localStream.current
         ?.getTracks()
-        .forEach((track) => pc.current?.addTrack(track, localStream.current as MediaStream));
+        .forEach((track) =>
+          pc.current?.addTrack(track, localStream.current as MediaStream)
+        );
 
       const answer = await pc.current.createAnswer();
       await pc.current.setLocalDescription(answer);
@@ -203,7 +225,8 @@ function App() {
         video: true,
         audio: { echoCancellation: true },
       });
-      if (localVideo.current) localVideo.current.srcObject = localStream.current;
+      if (localVideo.current)
+        localVideo.current.srcObject = localStream.current;
     } catch (err) {
       console.log(err);
     }
@@ -232,8 +255,11 @@ function App() {
   }
 
   return (
-    <main className="container">
-      <div className="video bg-main">
+    <main className="w-screen max-w-[1000px]">
+      <div className="w-full text-center-center p-4 bg-red-300">
+        Call has been rejected by the user. Please try again later.
+      </div>
+      <div className="w-full">
         <video
           ref={localVideo}
           className="video-item"
@@ -249,13 +275,6 @@ function App() {
       </div>
 
       <div className="flex gap-2 items-center">
-        <button
-          className="flex p-2 border border-red-300 gap-2 rounded-md"
-          ref={startButton}
-          onClick={startB}
-        >
-          Start <FiVideo />
-        </button>
         <button
           className="flex p-2 border border-red-300 gap-2 rounded-md"
           ref={hangupButton}

@@ -21,6 +21,7 @@ import Map from "./map";
 import ScheduleDate from "./connections/schedule_date";
 import VideoCall from "./chat/video-call";
 import RespondToScheduleRequest from "./connections/schedule_date/[id]";
+import { CallDialog } from "../components/call-dialog/call-dialog";
 
 const ProtectedLayout: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
@@ -84,19 +85,20 @@ const ProtectedLayout: React.FC = () => {
 
   return (
     <SocketProvider>
+      <CallDialog />
       <div className="h-screen bg-gray-100 flex flex-col">
         {isOpenProfileCompleted && (
           <CompleteProfile handleClose={handleCloseProfileCompletion} />
         )}
         {user && !user.is_verified && (
-          <div className="w-full max-w-[786px] p-1 bg-yellow-400">
+          <div className="w-full max-w-[1000px] p-1 bg-yellow-400">
             <div className="text-sm text-center">
               Verfiy your email address to access all features.
             </div>
           </div>
         )}
         <Navbar />
-        <main className="flex-1 overflow-auto w-full max-w-[786px] mx-auto h-auto bg-white">
+        <main className="flex-1 overflow-auto w-full max-w-[1000px] mx-auto h-auto bg-white">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/connections" element={<Connections />} />

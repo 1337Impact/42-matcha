@@ -15,8 +15,8 @@ import fs from "fs";
 import https from "https";
 
 // SSL setup
-const privateKey = fs.readFileSync("/etc/nginx/ssl/cert.key", "utf8");
-const certificate = fs.readFileSync("/etc/nginx/ssl/cert.crt", "utf8");
+const privateKey = fs.readFileSync("/goinfre/mbenkhat/42-matcha/backend/cert.key", "utf8");
+const certificate = fs.readFileSync("/goinfre/mbenkhat/42-matcha/backend/cert.crt", "utf8");
 const credentials = { key: privateKey, cert: certificate };
 
 const app = express();

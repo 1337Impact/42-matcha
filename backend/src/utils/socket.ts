@@ -18,22 +18,31 @@ function handleVideoCall(io: any, socket: any) {
     console.log("rtc-message", data);
   });
 
-  socket.on("video-answer", (data: any) => {
-    const { receiver_id, answer } = data;
+  socket.on("request-call", (data: any) => {
+    const { receiver_id, ...rest } = data;
     const receiverSocketId = userSocketMap.get(receiver_id);
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("video-answer", answer);
+      io.to(receiverSocketId).emit("incoming-call", rest);
     }
-    console.log("video-answer", data);
+    console.log("incoming-call", data);
   });
-  socket.on("ice-candidate", (data: any) => {
-    const { receiver_id, ice_candidate } = data;
-    const receiverSocketId = userSocketMap.get(receiver_id);
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("ice-candidate", ice_candidate);
-    }
-    console.log("ice-candidate", data);
-  });
+
+  // socket.on("video-answer", (data: any) => {
+  //   const { receiver_id, answer } = data;
+  //   const receiverSocketId = userSocketMap.get(receiver_id);
+  //   if (receiverSocketId) {
+  //     io.to(receiverSocketId).emit("video-answer", answer);
+  //   }
+  //   console.log("video-answer", data);
+  // });
+  // socket.on("ice-candidate", (data: any) => {
+  //   const { receiver_id, ice_candidate } = data;
+  //   const receiverSocketId = userSocketMap.get(receiver_id);
+  //   if (receiverSocketId) {
+  //     io.to(receiverSocketId).emit("ice-candidate", ice_candidate);
+  //   }
+  //   console.log("ice-candidate", data);
+  // });
 }
 
 export { sendNotification, handleVideoCall };

@@ -47,7 +47,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full z-50 bottom-0 flex justify-center lg:bottom-3">
-      <div className="w-full flex justify-between bg-gray-100 py-1 pt-2 px-7 lg:w-[786px] lg:border-gray-200 lg:border-t-[0.1rem] lg:bg-white ">
+      <div className="w-full flex justify-between bg-gray-100 py-1 pt-2 px-7 lg:max-w-[1000px] lg:border-gray-200 lg:border-t-[0.1rem] lg:bg-white ">
         {items.map((item, index) => (
           <Link
             className="flex flex-col justify-center items-center transition-all duration-300 h-10 p-2 mb-1 "
