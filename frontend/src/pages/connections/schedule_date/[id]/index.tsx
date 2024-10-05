@@ -51,7 +51,7 @@ export default function RespondToScheduleRequest() {
         }
       )
         .then((response) => response.json())
-        .then((data) => {
+        .then(() => {
           // Redirect user to the events page
           window.location.href = "/connections/";
         });

@@ -107,8 +107,6 @@ const ProfileSwiper = () => {
   const handleSwipe = (direction: string) => {
     if (profiles.length === 0) return;
 
-    const currentProfile = profiles[currentIndex];
-
     if (direction === "like" || direction === "dislike") {
       if (currentIndex < profiles.length - 1) {
         setCurrentIndex((prevIndex) => prevIndex + 1);

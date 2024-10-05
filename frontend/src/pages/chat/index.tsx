@@ -1,7 +1,6 @@
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FaVideo } from "react-icons/fa";
 import { Link } from "react-router-dom";
 const getConnectionsData = async (): Promise<any> => {
   try {

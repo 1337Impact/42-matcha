@@ -22,7 +22,7 @@ export interface UserProfile {
 
 const handleViewProfile = async (profileId: string, token: string | null) => {
   try {
-    const res = await axios.post(
+    await axios.post(
       `${import.meta.env.VITE_APP_API_URL}/profile/views/view-profile`,
       {
         profileId: profileId,

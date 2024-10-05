@@ -9,7 +9,6 @@ import "./styles.css";
 type MapProps = {
   latitude: number;
   longitude: number;
-  showMarker?: boolean;
   markers?: {
     id: string;
     position: number[];
@@ -34,7 +33,6 @@ const businessIcon = new Icon({
 const Map: React.FC<MapProps> = ({
   latitude,
   longitude,
-  showMarker,
   markers,
 }) => {
   const navigate = useNavigate();
