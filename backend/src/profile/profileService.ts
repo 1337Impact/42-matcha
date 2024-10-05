@@ -134,9 +134,6 @@ async function handleGetgetFilteredProfiles(
     }
     query += ` id DESC;`;
 
-    query += ` id DESC
-      LIMIT 5;`;
-
     const { rows } = await db.query(query, [
       user.id,
       userData.latitude,

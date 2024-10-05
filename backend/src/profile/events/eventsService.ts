@@ -24,13 +24,11 @@ const handleSendRequestDateSchedule = async (event: DateEvent, user: User) => {
 
 const handleRespondRequestDateSchedule = async (event: any, user: User) => {
   try {
-    console.log("event: ", event);
     if (event.response === "accepted") {
       const query = `UPDATE "EventRequests" SET status = $1 WHERE receiver_id = $2 AND event_id = $3;`;
       await db.query(query, ["accepted", user.id, event.eventId]);
       const query1 = `UPDATE "Events" SET confirmed = $1 WHERE id = $2 RETURNING *;`;
       const { rows } = await db.query(query1, [true, event.eventId]);
-      console.log("rows: events ", rows[0]);
       return "Date request accepted successfully";
     } else if (event.response === "rejected") {
       const query1 = `DELETE FROM "Events" WHERE id = $1;`;

@@ -39,7 +39,6 @@ export default function Dates() {
             event_message: event.event_description,
           }))
         );
-        console.log("events: ", data);
       } catch (error: any) {
         console.error("Error getting events: ", error);
         setError(
@@ -50,9 +49,6 @@ export default function Dates() {
     getEventData();
   }, []);
 
-  useEffect(() => {
-    console.log("event -------> ", events);
-  }, [events]);
 
   return (
     <div className="p-4">

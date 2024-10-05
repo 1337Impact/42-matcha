@@ -123,7 +123,6 @@ export const updateProfileSettings = async (req: any, res: any) => {
       mergeArrays(JSON.parse(req.body.images), req.files)
     );
 
-    console.log("images : -------> : ", images);
 
     let hashedPassword = null;
     if (req.body.new_password) {

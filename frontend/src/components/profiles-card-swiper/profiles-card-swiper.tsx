@@ -107,9 +107,6 @@ const ProfileSwiper = () => {
     applyFilters();
   }, [sortCriteria, filterCriteria]);
 
-  useEffect(() => {
-    console.log("Profiles: ", profiles);
-  }, [profiles]);
 
   const handleSwipe = (direction: string) => {
     if (profiles.length === 0) return;

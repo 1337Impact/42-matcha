@@ -124,6 +124,7 @@ CREATE TABLE IF NOT EXISTS "Blocked" (
 );
 `;
 
+
 async function createTables() {
   try {
     await pool.query(createExtensionQuery);
@@ -144,6 +145,8 @@ async function createTables() {
     console.log("Notifications table created successfully");
     await pool.query(createTableBlockQuery);
     console.log("Blocked table created successfully");
+    await pool.query(createTableNotificationQuery);
+    console.log("Notifications table created successfully");
     pool.end();
   } catch (error) {
     console.error("Error creating tables:", error);

@@ -36,7 +36,7 @@ const userSocketMap = new Map();
 
 io.engine.use(socketMiddlware);
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: any) => {
   const user = socket.request.user;
   userSocketMap.set(user.id, socket.id);
 
@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
     userSocketMap.delete(user.id);
   });
 
-  socket.on("message", async (msg) => {
+  socket.on("message", async (msg: any) => {
     const receiverSocketId = userSocketMap.get(msg.receiver_id);
     const res = await handleCreateMessage(msg, user);
     io.to(receiverSocketId).emit("message", {

@@ -49,7 +49,6 @@ const requestDateSchedule = async (req: any, res: any) => {
 
 const respondRequestDateSchedule = async (req: any, res: any) => {
   try {
-    console.log("req.body : ---------->  22666666 ", req.body);
     const response = await handleRespondRequestDateSchedule(
       req.body,
       req.user

@@ -44,10 +44,6 @@ export default function RespondToScheduleRequest() {
     getEventData();
   }, [eventId]);
 
-  useEffect(() => {
-    console.log("event -------> ", event);
-  }, [event]);
-
   const submitResponse = () => {
     const responseData = {
       eventId: eventId,
@@ -70,7 +66,9 @@ export default function RespondToScheduleRequest() {
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
+          if (data.error) {
+            throw new Error(data.error);
+          }
           window.location.href = "/connections/";
         });
     } catch (error) {

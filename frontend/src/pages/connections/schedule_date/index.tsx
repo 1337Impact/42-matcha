@@ -16,7 +16,7 @@ export default function ScheduleDate() {
     const date_time = new Date(`${date}`);
     date_time.setHours(Number(time.split(":")[0]));
     date_time.setMinutes(Number(time.split(":")[1]));
-    
+
     setDisabled(true);
     try {
       const eventForm = {
@@ -39,7 +39,9 @@ export default function ScheduleDate() {
           body: JSON.stringify(eventForm),
         }
       );
-      console.log(response);
+      if (!response.ok) {
+        throw new Error("Failed to schedule date");
+      }
       window.location.href = "/connections";
     } catch (error) {
       console.error("Error scheduling date: ", error);
