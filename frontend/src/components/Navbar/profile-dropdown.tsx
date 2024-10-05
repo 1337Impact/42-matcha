@@ -40,7 +40,7 @@ const ProfileDropdown: React.FC = () => {
           username={user?.username}
         />
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="min-w-[180px]">
         <DropdownMenuLabel>
           <h3>@{user?.username}</h3>
           <h4 className="text-xs text-gray-600">

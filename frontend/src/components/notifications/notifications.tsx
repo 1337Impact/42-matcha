@@ -62,24 +62,24 @@ const Notifications: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const socket = useContext(SocketContext);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      getNotificationIcon(token).then((data) => {
-        setNotifications(
-          data.map((notification: any) => ({
-            id: notification.id,
-            content:
-              notification.content.lenght > 30
-                ? notification.content.slice(0, 50)
-                : notification.content,
-            type: notification.type,
-            url: getUrl(notification.type, notification.data),
-          }))
-        );
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     getNotificationIcon(token).then((data) => {
+  //       setNotifications(
+  //         data.map((notification: any) => ({
+  //           id: notification.id,
+  //           content:
+  //             notification.content.lenght > 30
+  //               ? notification.content.slice(0, 50)
+  //               : notification.content,
+  //           type: notification.type,
+  //           url: getUrl(notification.type, notification.data),
+  //         }))
+  //       );
+  //     });
+  //   }
+  // }, []);
 
   const resetCounter = () => {
     setUnread(0);
@@ -118,37 +118,43 @@ const Notifications: React.FC = () => {
           </div>
         </Badge>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="max-w-[300px] max-h-[500px] overflow-y-auto md:max-w-[500px]">
+      <DropdownMenuContent className="min-w-[180px] max-w-[300px] max-h-[500px] overflow-y-auto md:max-w-[500px]">
         <DropdownMenuLabel>
           <h3>Notifications: </h3>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {notifications.map((notification) => (
-          <DropdownMenuItem key={notification.id}>
-            <Link to={notification.url} className="w-full">
-              <div className="flex gap-2 px-2 py-2 w-full rounded-md items-center bg-red-200">
-                <div className="">
-                  {notification.type === "message" ? (
-                    <RiMessage2Line className="text-lg" />
-                  ) : notification.type === "like" ? (
-                    <FaRegHeart className="text-lg" />
-                  ) : notification.type === "unlike" ? (
-                    <MdOutlineHeartBroken className="text-lg" />
-                  ) : notification.type === "view" ? (
-                    <FaRegEye className="text-lg" />
-                  ) : (
-                    <IoIosNotifications className="text-lg" />
-                  )}
+        {notifications.length ? (
+          notifications.map((notification) => (
+            <DropdownMenuItem key={notification.id}>
+              <Link to={notification.url} className="w-full">
+                <div className="flex gap-2 px-2 py-2 w-full rounded-md items-center bg-red-200">
+                  <div className="">
+                    {notification.type === "message" ? (
+                      <RiMessage2Line className="text-lg" />
+                    ) : notification.type === "like" ? (
+                      <FaRegHeart className="text-lg" />
+                    ) : notification.type === "unlike" ? (
+                      <MdOutlineHeartBroken className="text-lg" />
+                    ) : notification.type === "view" ? (
+                      <FaRegEye className="text-lg" />
+                    ) : (
+                      <IoIosNotifications className="text-lg" />
+                    )}
+                  </div>
+                  <p className="text-wrap">
+                    {notification.content.length > 50
+                      ? notification.content.slice(0, 50) + "..."
+                      : notification.content}
+                  </p>
                 </div>
-                <p className="text-wrap">
-                  {notification.content.length > 50
-                    ? notification.content.slice(0, 50) + "..."
-                    : notification.content}
-                </p>
-              </div>
-            </Link>
+              </Link>
+            </DropdownMenuItem>
+          ))
+        ) : (
+          <DropdownMenuItem>
+            <p>No notifications</p>
           </DropdownMenuItem>
-        ))}
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

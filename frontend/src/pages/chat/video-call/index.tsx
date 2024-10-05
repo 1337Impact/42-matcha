@@ -53,9 +53,7 @@ function App() {
           await makeCall();
           break;
         case "bye":
-          if (pc.current) {
-            hangup();
-          }
+          hangup();
           break;
         default:
           console.log("unhandled", e);

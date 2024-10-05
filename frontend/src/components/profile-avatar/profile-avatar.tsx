@@ -10,7 +10,7 @@ export function ProfileAvatar({
 }) {
   return (
     <Avatar>
-      <AvatarImage src={profileImage} alt={username || "avatar"} />
+      <AvatarImage className="object-cover" src={profileImage} alt={username || "avatar"} />
       <AvatarFallback>
         <FaUserCircle className="h-10 w-10" />
       </AvatarFallback>

@@ -31,14 +31,13 @@ export function CallDialog() {
     });
   }, [socket]);
 
-
   const handleAnswer = () => {
     navigate(`/chat/${callerId}/video-call?answer=true`);
   };
 
   const handleCancel = () => {
     setIsOpen(false);
-    socket?.emit("call-rejected", { receiver_id: callerId });
+    socket?.emit("rtc-message", { receiver_id: callerId, type: "bye" });
   };
 
   return (
@@ -48,7 +47,10 @@ export function CallDialog() {
           <AlertDialogTitle>You have a call from {caller}</AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancel} className="text-[1.05rem] bg-red-500 text-white hover:text-white hover:bg-red-600 flex items-center gap-2">
+          <AlertDialogCancel
+            onClick={handleCancel}
+            className="text-[1.05rem] bg-red-500 text-white hover:text-white hover:bg-red-600 flex items-center gap-2"
+          >
             Cancel <FaPhoneSlash size={24} />
           </AlertDialogCancel>
           <AlertDialogAction
