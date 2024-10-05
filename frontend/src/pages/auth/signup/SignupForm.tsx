@@ -66,6 +66,7 @@ export default function SingUpForm({
           className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
           id="email"
           type="email"
+          name="email"
           required={false}
           placeholder="Email"
           onChange={handleChange}
@@ -86,6 +87,7 @@ export default function SingUpForm({
         <input
           className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
           id="username"
+          name="username"
           type="text"
           placeholder="Username"
           onChange={handleChange}
@@ -107,6 +109,7 @@ export default function SingUpForm({
           <input
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="first_name"
+            name="first_name"
             type="text"
             placeholder="First Name"
             onChange={handleChange}
@@ -127,6 +130,7 @@ export default function SingUpForm({
           <input
             className="border-2 rounded w-full py-1 px-3 text-gray-600 border-gray-500 placeholder-gray-300"
             id="last_name"
+            name="last_name"
             type="text"
             placeholder="Last Name"
             onChange={handleChange}
