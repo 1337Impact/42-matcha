@@ -62,24 +62,24 @@ const Notifications: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const socket = useContext(SocketContext);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     getNotificationIcon(token).then((data) => {
-  //       setNotifications(
-  //         data.map((notification: any) => ({
-  //           id: notification.id,
-  //           content:
-  //             notification.content.lenght > 30
-  //               ? notification.content.slice(0, 50)
-  //               : notification.content,
-  //           type: notification.type,
-  //           url: getUrl(notification.type, notification.data),
-  //         }))
-  //       );
-  //     });
-  //   }
-  // }, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      getNotificationIcon(token).then((data) => {
+        setNotifications(
+          data.map((notification: any) => ({
+            id: notification.id,
+            content:
+              notification.content.lenght > 30
+                ? notification.content.slice(0, 50)
+                : notification.content,
+            type: notification.type,
+            url: getUrl(notification.type, notification.data),
+          }))
+        );
+      });
+    }
+  }, []);
 
   const resetCounter = () => {
     setUnread(0);
