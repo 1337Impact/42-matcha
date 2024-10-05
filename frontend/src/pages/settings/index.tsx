@@ -4,7 +4,6 @@ import ReactSelect from "react-select";
 import { toast } from "react-toastify";
 import UploadImage from "../../components/upload-image";
 import completeProfileSchema from "../../utils/zod/completeProfileSchema";
-import { passwordUpdateSchema } from "../../utils/zod/passwordUpdateSchema";
 
 const tagsList = [
   { label: "Reading", value: "Reading" },
