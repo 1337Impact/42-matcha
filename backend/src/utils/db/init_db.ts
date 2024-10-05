@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS "EventRequests" (
 `;
 
 const createTableNotificationQuery = `
-CREATE TABLE IF NOT EXISTS "Blocked" (
+CREATE TABLE IF NOT EXISTS "Notification" (
   "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   "user_id" UUID,
   "content" TEXT,

@@ -26,7 +26,7 @@ const getAllEvents = async (req: any, res: any) => {
     console.error("Error getting events:", error);
     res.status(400).send({ message: "Error getting events" });
   }
-}
+};
 
 const requestDateSchedule = async (req: any, res: any) => {
   try {
@@ -49,10 +49,7 @@ const requestDateSchedule = async (req: any, res: any) => {
 
 const respondRequestDateSchedule = async (req: any, res: any) => {
   try {
-    const response = await handleRespondRequestDateSchedule(
-      req.body,
-      req.user
-    );
+    const response = await handleRespondRequestDateSchedule(req.body, req.user);
     if (response) {
       sendNotification(
         {
@@ -77,4 +74,9 @@ const respondRequestDateSchedule = async (req: any, res: any) => {
   }
 };
 
-export { getEvent, requestDateSchedule, respondRequestDateSchedule, getAllEvents };
+export {
+  getEvent,
+  requestDateSchedule,
+  respondRequestDateSchedule,
+  getAllEvents,
+};
