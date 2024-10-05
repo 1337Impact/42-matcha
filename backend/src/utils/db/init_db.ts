@@ -111,6 +111,18 @@ CREATE TABLE IF NOT EXISTS "EventRequests" (
 );
 `;
 
+const createTableNotificationQuery = `
+CREATE TABLE IF NOT EXISTS "Blocked" (
+  "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  "user_id" UUID,
+  "content" TEXT,
+  "type" TEXT,
+  "is_read" BOOLEAN DEFAULT FALSE,
+  "time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_user_id FOREIGN KEY ("user_id") REFERENCES "USER" ("id") ON DELETE CASCADE
+);
+`;
+
 async function createTables() {
   try {
     await pool.query(createExtensionQuery);
@@ -127,6 +139,8 @@ async function createTables() {
     console.log("Events table created successfully");
     await pool.query(createTableRequestQuery);
     console.log("Event request table created successfully");
+    await pool.query(createTableNotificationQuery);
+    console.log("Notifications table created successfully");
     await pool.query(createTableBlockQuery);
     console.log("Blocked table created successfully");
     pool.end();
