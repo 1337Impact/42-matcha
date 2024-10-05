@@ -58,7 +58,7 @@ export default function Settings() {
     biography: "",
     tags: "",
     images: "",
-    new_password: "",
+    password: "",
     confirm_password: "",
     address: "",
     age: "",
@@ -172,7 +172,7 @@ export default function Settings() {
       biography: "",
       sexual_preferences: "",
       gender: "",
-      new_password: "",
+      password: "",
       confirm_password: "",
       address: "",
       age: "",
@@ -184,7 +184,9 @@ export default function Settings() {
     });
 
     if (!res.success) {
-      setError((prev) => ({ ...prev, confirm_password: err.message }));
+      res.error.errors.forEach((err) => {
+        setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
+      });
       return;
     }
 
@@ -464,8 +466,8 @@ export default function Settings() {
           value={data.new_password}
           onChange={handleChange}
         />
-        {error.new_password && (
-          <p className="text-red-500 text-xs mt-1">{error.new_password}</p>
+        {error.password && (
+          <p className="text-red-500 text-xs mt-1">{error.password}</p>
         )}
       </div>
 
