@@ -25,6 +25,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads");
   },
   filename: function (req, file, cb) {
+    console.log("file  ", file);
     const uniqueSuffix = Date.now();
     cb(null, uniqueSuffix + "-" + file.originalname);
   },
@@ -44,7 +45,6 @@ router.get("/", getProfile);
 router.get("/connections", getConnections);
 router.get("/all", getAllProfiles);
 router.post("/FilteredProfiles", getFilteredProfiles);
-router.post("/geolocation", getGeoLocation);
 router.get("/map", getMapProfiles);
 router.get("/notifications", getNotifications);
 

@@ -1,5 +1,3 @@
-// auth/passportSetup.ts
-import { generateToken } from "../utils/jwtUtils";
 import db from "../utils/db/client";
 import { createUser, getUserData } from "./authService";
 const passport = require("passport");
@@ -31,7 +29,6 @@ passport.use(
           return done(null, existingUser);
         }
 
-        // User doesn't exist, create new user
         const newUser = {
           email: `${profile.name?.givenName}@facebook.com`,
           first_name: profile.name?.givenName,
@@ -46,7 +43,6 @@ passport.use(
           const newUserData = await getUserData(newUser.email);
           return done(null, newUserData);
         }
-
       } catch (error) {
         done(error, null);
       }
@@ -54,12 +50,10 @@ passport.use(
   )
 );
 
-// Serialize user into the session
 passport.serializeUser((user: any, done: any) => {
   done(null, user.id);
 });
 
-// Deserialize user from the session
 passport.deserializeUser(async (id: string, done: any) => {
   try {
     const user = await getUserDataById(id);

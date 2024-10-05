@@ -45,7 +45,7 @@ export default function Settings() {
     latitude: 0,
     longitude: 0,
     age: "",
-  };  
+  };
   const [data, setData] = useState(initialData);
 
   const [error, setError] = useState({
@@ -63,9 +63,9 @@ export default function Settings() {
     age: "",
   });
 
-  // const [imageFiles, setImageFiles] = useState<(File | null)[]>(
-  //   Array(5).fill(null)
-  // );
+  const [imageFiles, setImageFiles] = useState<(File | null)[]>(
+    Array(5).fill(null)
+  );
   const [imagePreview, setImagePreview] = useState<(string | null)[]>(
     data.images
   );
@@ -77,11 +77,14 @@ export default function Settings() {
     // Fetch user profile data on component mount
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/profile`, {
-          headers: {
-            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_APP_API_URL}/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            },
+          }
+        );
         //"response", response.data, response.data.pictures.length);
         const pictureArrayFromString = JSON.parse(response.data.pictures);
         //"pictureArray", pictureArrayFromString);
@@ -211,15 +214,19 @@ export default function Settings() {
       formData.append("latitude", data.latitude.toString());
       formData.append("longitude", data.longitude.toString());
       formData.append("age", parseInt(data.age).toString());
-      // imageFiles.forEach((file) => {
-      //   file && formData.append("images", file);
-      // });
-
-      await axios.post(`${import.meta.env.VITE_APP_API_URL}/profile/settings`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      imageFiles.forEach((file) => {
+        file && formData.append("images", file);
       });
+
+      await axios.post(
+        `${import.meta.env.VITE_APP_API_URL}/profile/settings`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       toast.success("Your profile has been updated");
     } catch (error: any) {
@@ -501,7 +508,11 @@ export default function Settings() {
                   }
                 }}
                 setImgFile={(file) => {
-                  return file;
+                  setImageFiles((prev) => {
+                    const newFiles = [...prev];
+                    newFiles[index] = file;
+                    return newFiles;
+                  });
                 }}
               />
             ))}

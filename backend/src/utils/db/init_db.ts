@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS "Events" (
   "event_date" TIMESTAMP,
   "event_location" VARCHAR(255),
   "event_description" TEXT,
+  "confirmed" BOOLEAN DEFAULT false,
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_user1_id FOREIGN KEY ("user1_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
@@ -110,6 +111,24 @@ CREATE TABLE IF NOT EXISTS "EventRequests" (
   CONSTRAINT fk_event_id FOREIGN KEY ("event_id") REFERENCES "Events" ("id") ON DELETE CASCADE
 );
 `;
+
+// const alterTableUserQuery = `
+// ALTER TABLE "Events"
+// ADD COLUMN IF NOT EXISTS "confirmed" BOOLEAN DEFAULT false;
+// `;
+
+// async function alterTables() {
+//   try {
+//     const res = await pool.query(alterTableUserQuery);
+//     console.log(res, "Events table updated successfully with new columns.");
+//     pool.end();
+//   } catch (error) {
+//     console.error("Error updating User table:", error);
+//     pool.end();
+//   }
+// }
+
+// alterTables();
 
 async function createTables() {
   try {

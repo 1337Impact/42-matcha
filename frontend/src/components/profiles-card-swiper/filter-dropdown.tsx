@@ -64,7 +64,7 @@ const FilterDropdown: React.FC<FilterDropDownProps> = ({
   return (
     <Menu as="div" className="relative inline-block text-right z-20">
       <div>
-        <Menu.Button>
+        <Menu.Button as="div" className="cursor-pointer">
           <TuneIcon
             sx={{
               width: 32,

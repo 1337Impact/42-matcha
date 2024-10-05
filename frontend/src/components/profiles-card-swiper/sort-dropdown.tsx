@@ -1,8 +1,8 @@
-import { Menu } from "@headlessui/react";
 import Switch from "@mui/material/Switch";
 import React from "react";
 import SortIcon from "@mui/icons-material/Sort";
 import ReactSelect from "react-select";
+import { Menu } from "@headlessui/react";
 
 interface SortCriteria {
   age: string;
@@ -44,7 +44,7 @@ const SortDropdown: React.FC<SortCriteriaProps> = ({
   return (
     <Menu as="div" className="relative inline-block text-left z-20">
       <div>
-        <Menu.Button>
+        <Menu.Button as="div" className="cursor-pointer">
           <SortIcon
             sx={{
               width: 32,

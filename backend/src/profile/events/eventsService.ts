@@ -22,21 +22,24 @@ const handleSendRequestDateSchedule = async (event: DateEvent, user: User) => {
   }
 };
 
-const handleRespondRequestDateSchedule = async (
-  event: DateEvent,
-  user: User
-) => {
+const handleRespondRequestDateSchedule = async (event: any, user: User) => {
   try {
-    if (event.accepted) {
+    console.log("event: ", event);
+    if (event.response === "accepted") {
       const query = `UPDATE "EventRequests" SET status = $1 WHERE receiver_id = $2 AND event_id = $3;`;
-      await db.query(query, ["accepted", user.id, event.event_id]);
+      await db.query(query, ["accepted", user.id, event.eventId]);
+      const query1 = `UPDATE "Events" SET confirmed = $1 WHERE id = $2 RETURNING *;`;
+      const { rows } = await db.query(query1, [true, event.eventId]);
+      console.log("rows: events ", rows[0]);
       return "Date request accepted successfully";
-    } else {
-      const query1 = `DELETE FROM "EventsTable" WHERE id = $1;`;
+    } else if (event.response === "rejected") {
+      const query1 = `DELETE FROM "Events" WHERE id = $1;`;
       const query = `DELETE FROM "EventRequests" WHERE receiver_id = $1 AND event_id = $2;`;
-      await db.query(query, [user.id, event.event_id]);
-      await db.query(query1, [event.event_id]);
+      await db.query(query, [user.id, event.eventId]);
+      await db.query(query1, [event.eventId]);
       return null;
+    } else {
+      throw new Error("Invalid response");
     }
   } catch (error) {
     console.error("Error responding to date request:", error);
@@ -46,16 +49,34 @@ const handleRespondRequestDateSchedule = async (
 
 const handleGetEvent = async (eventId: string, user: User) => {
   try {
-    const query = `SELECT * FROM "Events" WHERE id = $1;`;
-    const { rows } = await db.query(query, [eventId]);
-    if (rows[0].user1_id === user.id || rows[0].user2_id === user.id) {
+    const query = `SELECT * FROM "Events" WHERE id = $1 AND (user2_id = $2) AND event_date > NOW() AND confirmed = $3;`;
+    const { rows } = await db.query(query, [eventId, user.id, false]);
+    if (rows.length) {
       return rows[0];
     }
-    return null;
+    if (rows.length === 0) {
+      throw new Error("Event not found or unauthorized");
+    }
   } catch (error) {
     console.error("Error getting event:", error);
     throw error;
   }
 };
 
-export { handleRespondRequestDateSchedule, handleSendRequestDateSchedule, handleGetEvent };
+const handleGetAllEvents = async (user: User) => {
+  try {
+    const query = `SELECT * FROM "Events" WHERE user1_id = $1 OR user2_id = $1 AND event_date > NOW() AND confirmed = $2;`;
+    const { rows } = await db.query(query, [user.id, true]);
+    return rows;
+  } catch (error) {
+    console.error("Error getting events:", error);
+    throw error;
+  }
+};
+
+export {
+  handleRespondRequestDateSchedule,
+  handleSendRequestDateSchedule,
+  handleGetEvent,
+  handleGetAllEvents,
+};

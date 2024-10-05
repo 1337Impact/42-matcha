@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { FaMapMarkedAlt, FaRegHeart } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
-import { MdHistory } from "react-icons/md";
+import { MdEventAvailable, MdHistory } from "react-icons/md";
 import { ProfileAvatar } from "../profile-avatar/profile-avatar";
 
 const ProfileDropdown: React.FC = () => {
@@ -68,7 +68,13 @@ const ProfileDropdown: React.FC = () => {
           <FaMapMarkedAlt className="mr-2" />
           <Link to="/map">Map</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleClose}>
+        <DropdownMenuItem>
+          <MdEventAvailable className="mr-2" />
+          <Link to="/connections/dates">Dates</Link>
+        </DropdownMenuItem>
+
+        {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}
+        <DropdownMenuItem>
           <button
             onClick={onLogout}
             className="flex items-center gap-1 text-red-500 font-bold"

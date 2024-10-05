@@ -6,13 +6,18 @@ export default function ScheduleDate() {
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [message, setMessage] = useState("");
+  const [disabled, setDisabled] = useState(false);
   const parms = new URLSearchParams(window.location.search);
   const userId = parms.get("user_id");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = window.localStorage.getItem("token");
-    const date_time = new Date(`${date} ${time}`);
+    const date_time = new Date(`${date}`);
+    date_time.setHours(Number(time.split(":")[0]));
+    date_time.setMinutes(Number(time.split(":")[1]));
+    
+    setDisabled(true);
     try {
       const eventForm = {
         user_id: userId,
@@ -22,7 +27,9 @@ export default function ScheduleDate() {
         event_description: message,
       };
       const response = await fetch(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/events/request-date/`,
+        `${
+          import.meta.env.VITE_APP_BACKEND_URL
+        }/api/profile/events/request-date/`,
         {
           method: "POST",
           headers: {
@@ -32,7 +39,8 @@ export default function ScheduleDate() {
           body: JSON.stringify(eventForm),
         }
       );
-      const data = await response.json();
+      console.log(response);
+      window.location.href = "/connections";
     } catch (error) {
       console.error("Error scheduling date: ", error);
     }
@@ -138,6 +146,7 @@ export default function ScheduleDate() {
         {/* Submit Button */}
         <button
           type="submit"
+          disabled={disabled}
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
           Schedule Date

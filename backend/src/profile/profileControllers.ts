@@ -69,12 +69,15 @@ const getConnections = async (req: any, res: any) => {
   }
 };
 
-const mergeArrays = (newImages: string[], imageFiles: any) => {
+const mergeArrays = (
+  newImages: string[],
+  imageFiles: Express.Multer.File[]
+) => {
   let fillIndex = 0;
 
   return newImages.map((item: string) => {
     if (item === "" && fillIndex < imageFiles.length) {
-      return `${process.env.BACKEND_URL}/images/${
+      return `${process.env.BACKEND_URL}/uploads/${
         imageFiles[fillIndex++].filename
       }`;
     }
@@ -87,6 +90,7 @@ const updateProfile = async (req: any, res: any) => {
     const images = JSON.stringify(
       mergeArrays(JSON.parse(req.body.images), req.files)
     );
+
     let hashedPassword = null;
     if (req.body.new_password) {
       if (req.body.new_password !== req.body.confirm_password) {
@@ -106,6 +110,7 @@ const updateProfile = async (req: any, res: any) => {
       },
       req.user
     );
+    handleSetGeoLocation(req.user.id);
     res.send("Profile updated successfully");
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
@@ -117,6 +122,8 @@ export const updateProfileSettings = async (req: any, res: any) => {
     const images = JSON.stringify(
       mergeArrays(JSON.parse(req.body.images), req.files)
     );
+
+    console.log("images : -------> : ", images);
 
     let hashedPassword = null;
     if (req.body.new_password) {

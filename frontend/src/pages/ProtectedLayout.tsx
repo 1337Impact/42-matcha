@@ -20,7 +20,8 @@ import Settings from "./settings";
 import Map from "./map";
 import ScheduleDate from "./connections/schedule_date";
 import VideoCall from "./chat/video-call";
-import RespondToScheduleRequest from "./connections/schedule_date/[id]";
+import RespondToScheduleRequest from "./connections/schedule_date/eventId";
+import Dates from "./connections/dates";
 import { CallDialog } from "../components/call-dialog/call-dialog";
 
 const ProtectedLayout: React.FC = () => {
@@ -53,26 +54,6 @@ const ProtectedLayout: React.FC = () => {
   } , [user]);
 
   useEffect(() => {
-    const userGeoLocation = async () => {
-      try {
-        if (!user) return;
-        await axios.post(
-          `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/geolocation`,
-          { user: user.id },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } catch (err) {
-        toast.error("Failed to get user location");
-      }
-    };
-    userGeoLocation();
-  }, []);
-
-  useEffect(() => {
     if (searchParams.get("profilecompleted") == "false") {
       setIsOpenProfileCompleted(true);
     }
@@ -91,7 +72,7 @@ const ProtectedLayout: React.FC = () => {
           <CompleteProfile handleClose={handleCloseProfileCompletion} />
         )}
         {user && !user.is_verified && (
-          <div className="w-full max-w-[1000px] p-1 bg-yellow-400">
+          <div className="w-full mx-auto max-w-[786px] p-1 bg-yellow-400">
             <div className="text-sm text-center">
               Verfiy your email address to access all features.
             </div>
@@ -104,7 +85,7 @@ const ProtectedLayout: React.FC = () => {
             <Route path="/connections" element={<Connections />} />
             <Route path="/connections/schedule_date/" element={<ScheduleDate />} />
             <Route path="/connections/schedule_date/:eventId" element={<RespondToScheduleRequest />} />
-            <Route path="/connections/schedule_date/:eventId" element={<RespondToScheduleRequest />} />
+            <Route path="/connections/dates" element={<Dates />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/chat/:profileId" element={<ChatRoom />} />
             <Route path="/chat/:profileId/video-call" element={<VideoCall />} />

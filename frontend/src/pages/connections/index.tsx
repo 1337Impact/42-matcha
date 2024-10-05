@@ -17,7 +17,6 @@ const getConnectionsData = async (): Promise<any> => {
     );
     return response.data;
   } catch (error) {
-    //"Error getting connections: ", error);
     return [];
   }
 };

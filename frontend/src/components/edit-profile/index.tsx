@@ -60,7 +60,7 @@ export default function EditProfile({
     sexual_preferences: "",
     gender: "",
   });
-  const [imageFiles, setImagFiles] = useState<(File | null)[]>(
+  const [imageFiles, setImageFiles] = useState<(File | null)[]>(
     Array(5).fill(null)
   );
   const [imagePreview, setImagePreview] = useState<(string | null)[]>(
@@ -105,7 +105,6 @@ export default function EditProfile({
       return;
     }
     try {
-      //data);
       const formData = new FormData();
       formData.append("gender", data.gender);
       formData.append("sexual_preferences", data.sexual_preferences);
@@ -116,11 +115,16 @@ export default function EditProfile({
       imageFiles.forEach((file) => {
         file && formData.append("images", file);
       });
-      await axios.post(`${import.meta.env.VITE_APP_API_URL}/profile/update`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+
+      await axios.post(
+        `${import.meta.env.VITE_APP_API_URL}/profile/update`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       toast.success("Your profile has been updated");
       handleClose();
     } catch (error: any) {
@@ -340,7 +344,7 @@ export default function EditProfile({
                   }
                 }}
                 setImgFile={(file) => {
-                  setImagFiles((prev) => {
+                  setImageFiles((prev) => {
                     const newFiles = [...prev];
                     newFiles[index] = file;
                     return newFiles;

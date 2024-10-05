@@ -1,13 +1,13 @@
+import bcrypt from "bcrypt";
+import { JwtPayload } from "jsonwebtoken";
+import db from "../utils/db/client";
 import {
   generateEmailVerificationToken,
   generateToken,
   verifyToken,
 } from "../utils/jwtUtils";
-import { loginSchema, signupSchema } from "./authSchema";
-import bcrypt from "bcrypt";
-import db from "../utils/db/client";
 import sendVerificationEmail, { transporter } from "../utils/sendMail";
-import { JwtPayload } from "jsonwebtoken";
+import { loginSchema, signupSchema } from "./authSchema";
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
@@ -22,7 +22,6 @@ interface User {
 }
 
 export async function createUser(userData: User): Promise<string | null> {
-  //"userData: ", userData);
   const {
     username,
     first_name,
@@ -46,9 +45,8 @@ export async function createUser(userData: User): Promise<string | null> {
       return null;
     }
     const salt = await bcrypt.genSalt(10);
-    const pictures_arr = Array(5).fill('');
-    if (pictures)
-      pictures_arr[0] = pictures[0];
+    const pictures_arr = Array(5).fill("");
+    if (pictures) pictures_arr[0] = pictures[0];
     const hashedPass = await bcrypt.hash(password, salt);
     const values = [
       username,
@@ -79,7 +77,6 @@ async function deleteUser(userId: string) {
 }
 
 export const registerUser = async (userData: User) => {
-  //"registerUser: ", userData);
   try {
     const result = signupSchema.safeParse(userData);
     if (!result.success) {
@@ -98,7 +95,6 @@ export const registerUser = async (userData: User) => {
       };
     }
     try {
-      // send verification email
       const emailToken = generateEmailVerificationToken(userId);
       await sendVerificationEmail({
         name: `${userData.first_name} ${userData.last_name}`,
@@ -111,12 +107,10 @@ export const registerUser = async (userData: User) => {
         data: "User created successfully. Please verify your email.",
       };
     } catch (error) {
-      //"Error catched. deleting user from db...");
       deleteUser(userId);
       throw error;
     }
   } catch (error) {
-    //"Unhandled error:", error);
     return {
       code: 500,
       error: "Internal Server Error.",
@@ -174,7 +168,6 @@ const updateEmailVerification = async (userId: string) => {
     `;
   try {
     const { rows } = await db.query(query, [userId]);
-    //"rows verificated ----> : ", rows);
   } catch (error) {
     console.error("Error updating email verification:", error);
     throw error;
@@ -227,7 +220,7 @@ export const handleForgetPasswordEamil = async (email: string, res: any) => {
     }
 
     const token = crypto.randomBytes(32).toString("hex");
-    const expiration = new Date(Date.now() + 3600000); // 1 hour from now
+    const expiration = new Date(Date.now() + 3600000);
 
     rows[0].reset_password_token = token;
     rows[0].reset_password_expires = new Date(expiration);
@@ -278,8 +271,6 @@ export const handleUpdatePassword = async (password: string, token: string) => {
     const hashedPass = await bcrypt.hash(password, salt);
 
     await db.query(updatePasswordQuery, [hashedPass, user.id]);
-
-    //`Password updated successfully for user ID ${user.id}`);
   } catch (error) {
     console.error("Error updating user password:", error);
     throw error;

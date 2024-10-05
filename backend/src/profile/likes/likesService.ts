@@ -48,10 +48,10 @@ async function handleLikeProfile(profileId: string, user: User): Promise<any> {
       `SELECT fame_rating FROM "USER" WHERE id = $1;`,
       [profileId]
     );
-    if (fame_rating[0].fame_rating < 0) {
+    if (fame_rating[0].fame_rating <= 0) {
       const query1 = `UPDATE "USER" SET fame_rating = 0 WHERE id = $1;`;
       await db.query(query1, [profileId]);
-    } else if (fame_rating[0].fame_rating > 10) {
+    } else if (fame_rating[0].fame_rating >= 10) {
       const query1 = `UPDATE "USER" SET fame_rating = 10 WHERE id = $1;`;
       await db.query(query1, [profileId]);
     } else {

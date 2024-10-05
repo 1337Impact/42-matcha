@@ -10,7 +10,6 @@ router.post("/login", login);
 router.post("/signup", signup);
 router.post("/verify", verifyEmail);
 router.post("/request-reset-password", async (req, res) => {
-  //"Request reset password", req.body);
   const email = req.body.email;
   try {
     const resp = await handleForgetPasswordEamil(email, res);
@@ -32,7 +31,6 @@ router.post("/reset-password/", async (req, res) => {
 
 router.get('/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile', 'user_photos'] }));
 
-// Route to handle Facebook login callback
 router.get(
   '/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/signin', session: false }),

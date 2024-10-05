@@ -1,9 +1,9 @@
 import { Menu } from "@headlessui/react";
+import SearchIcon from "@mui/icons-material/Search";
 import Slider from "@mui/material/Slider";
 import { useState } from "react";
 import ReactSelect from "react-select";
 import { tagsList } from "../edit-profile";
-import SearchIcon from "@mui/icons-material/Search";
 
 interface SearchCriteria {
   agerange: number[];
@@ -60,9 +60,9 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
 
   return (
     <Menu as="div" className="relative inline-block text-right z-20">
-      <Menu.Button>
+      <Menu.Button as="div" className="cursor-pointer">
         <div>
-          <Menu.Button>
+          <Menu.Button as="div" className="cursor-pointer">
             <SearchIcon
               sx={{
                 width: 32,
@@ -76,14 +76,12 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
       </Menu.Button>
 
       <Menu.Items className="absolute right-0 w-[20rem] mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-        {/* Header */}
         <div className="p-4">
           <h3 className="text-gray-700 text-start p-1 w-full font-semibold">
             Advanced Search
           </h3>
         </div>
 
-        {/* Age Gap */}
         <div className="p-4">
           <div className="flex flex-col items-start gap-0 w-full">
             <label className="text-gray-700 text-sm font-bold mb-1">
@@ -100,7 +98,6 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
           </div>
         </div>
 
-        {/* Fame Rating Gap */}
         <div className="p-4">
           <div className="flex flex-col items-start gap-0 w-full">
             <label className="text-gray-700 text-sm font-bold mb-1">
@@ -117,7 +114,6 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
           </div>
         </div>
 
-        {/* Location */}
         <div className="p-4">
           <div className="mb-3 w-full text-start">
             <label className="block text-gray-600 text-sm font-bold mb-2">
@@ -142,7 +138,6 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
           </div>
         </div>
 
-        {/* Interest Tags */}
         <div className="p-4">
           <div className="flex flex-col text-start items-start gap-2 w-full">
             <label className="text-gray-700 text-sm font-bold mb-1">
@@ -159,7 +154,6 @@ const AdvancedSearchMenu: React.FC<AdvancedSearchMenuProps> = ({
           </div>
         </div>
 
-        {/* Apply Search */}
         <div className="p-4">
           <div className="flex flex-col items-end gap-2 w-full">
             <button

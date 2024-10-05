@@ -5,13 +5,11 @@ async function handleGetProfile(
   profileId: string,
   user: User
 ): Promise<string | null> {
-  // //"User data: ", user);
   try {
     const query = `SELECT *
       FROM "USER" 
       WHERE id = $1;`;
     const { rows } = await db.query(query, [profileId]);
-    //"Profile data: ++++++++++++ ", rows[0]);
     return rows[0];
   } catch (error) {
     console.error("Error getting user:", error);
@@ -21,7 +19,6 @@ async function handleGetProfile(
 
 async function handleGetMapProfiles(user: User): Promise<any> {
   try {
-    //get user's location
     const { rows: data } = await db.query(
       `SELECT id, latitude, longitude FROM "USER"`
     );
@@ -34,14 +31,12 @@ async function handleGetMapProfiles(user: User): Promise<any> {
 
 async function handleGetAllProfiles(user: User): Promise<any> {
   try {
-    //get user's location
     const { rows: data } = await db.query(
       `SELECT * FROM "USER" WHERE id = $1;`,
       [user.id]
     );
     const userData = data[0];
 
-    // get all profiles ordered by distance, fame rating and common interests
     const query = `
     SELECT *, sqrt(pow(latitude - $2, 2) + pow(longitude - $3, 2)) AS distance, 
     array_length(array(
@@ -137,6 +132,8 @@ async function handleGetgetFilteredProfiles(
     if (profilesFilter.age) {
       query += ` age ${profilesFilter.age},`;
     }
+    query += ` id DESC;`;
+
     query += ` id DESC
       LIMIT 5;`;
 

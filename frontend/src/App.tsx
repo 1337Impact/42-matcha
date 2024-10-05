@@ -24,22 +24,23 @@ import Settings from "./pages/settings";
 import Map from "./pages/map";
 import ScheduleDate from "./pages/connections/schedule_date";
 import VideoCall from "./pages/chat/video-call";
-import RespondToScheduleRequest from "./pages/connections/schedule_date/[id]";
+import RespondToScheduleRequest from "./pages/connections/schedule_date/eventId";
+import Dates from "./pages/connections/dates";
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-    const token = window.localStorage.getItem("token");
     if (token) {
       let decodedToken = jwtDecode(token);
       const { exp, iat, iss, ...userData } = decodedToken;
-      //"user: ", userData);
       var current_time = new Date().getTime() / 1000;
+
       if (exp && current_time > exp) {
         toast.error("Session expired. Please sign in again.");
-        //"Token expired");
         window.localStorage.removeItem("token");
         navigate("/signin");
       } else {
@@ -60,7 +61,17 @@ function App() {
     ) {
       navigate("/signin");
     }
-  }, [navigate, location.pathname]);
+  }, [navigate, location.pathname, token]);
+
+  if (
+    !token &&
+    location.pathname !== "/signin" &&
+    location.pathname !== "/signup" &&
+    !location.pathname.startsWith("/resetPassword") &&
+    location.pathname !== "/verify"
+  ) {
+    navigate("/signin");
+  }
 
   return (
     <>
@@ -81,6 +92,7 @@ function App() {
           <Route path="/profile/history" element={<History />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/map" element={<Map />} />
+          <Route path="/connections/dates" element={<Dates />} />
         </Route>
         <Route path="/" element={<AuthLayout />}>
           <Route path="/signin" element={<SignIn />} />

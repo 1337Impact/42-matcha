@@ -1,8 +1,9 @@
-import { isProfileCompleted } from "../profile/profileControllers";
 import { getIsProfileCompleted } from "../profile/profileService";
-import { verifyToken } from "../utils/jwtUtils";
-import { handleEmailVerification, loginUser, registerUser } from "./authService";
-
+import {
+  handleEmailVerification,
+  loginUser,
+  registerUser,
+} from "./authService";
 
 export const signup = async (req: any, res: any) => {
   const result = await registerUser(req.body);
@@ -17,8 +18,7 @@ export const login = async (req: any, res: any) => {
   const user = await loginUser(req.body);
   if (user) {
     const isProfileCompleted = await getIsProfileCompleted(user.id);
-    //"sending res !", isProfileCompleted);
-    res.send({token: user.token, isProfileCompleted: isProfileCompleted});
+    res.send({ token: user.token, isProfileCompleted: isProfileCompleted });
   } else {
     res.status(400).send({ error: "Invalid email or password." });
   }
@@ -31,4 +31,4 @@ export const verifyEmail = async (req: any, res: any) => {
   } else {
     res.status(result.code).send({ error: result.error });
   }
-}
+};

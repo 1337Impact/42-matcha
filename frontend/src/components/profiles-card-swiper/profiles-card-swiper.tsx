@@ -31,6 +31,7 @@ interface Profile {
   bio: string;
   tags: string[];
   pictures: string[];
+  age: number;
 }
 
 const ProfileSwiper = () => {
@@ -93,6 +94,8 @@ const ProfileSwiper = () => {
               bio: profile.bio,
               tags: profile.interests,
               pictures,
+              age: profile.age,
+              gender: profile.gender,
             };
           })
         );
@@ -103,6 +106,10 @@ const ProfileSwiper = () => {
     };
     applyFilters();
   }, [sortCriteria, filterCriteria]);
+
+  useEffect(() => {
+    console.log("Profiles: ", profiles);
+  }, [profiles]);
 
   const handleSwipe = (direction: string) => {
     if (profiles.length === 0) return;
@@ -148,7 +155,7 @@ const ProfileSwiper = () => {
           slideShadows: true,
         }}
         allowTouchMove={false}
-        modules={[EffectCoverflow]} // Use Coverflow effect
+        modules={[EffectCoverflow]}
         className="h-5/6 flex flex-col items-center border-2 rounded-xl border-gray-200 shadow-lg bg-white justify-center w-full"
       >
         {profiles.length > 0 ? (
@@ -161,71 +168,83 @@ const ProfileSwiper = () => {
               <Swiper
                 slidesPerView={1}
                 className="shadow-md h-full flex w-full overflow-hidden relative"
-                allowTouchMove={true} // Allow swiping for pictures only
+                allowTouchMove={true}
               >
-                {profile.pictures &&
-                  profile.pictures.map((picture, index) => (
-                    <SwiperSlide key={index} className="h-full relative">
-                      <Link to={`/profile/${profile.id}`}>
-                        <img
-                          src={picture || "https://via.placeholder.com/blur"}
-                          alt={`Profile of ${profile.first_name}`}
-                          className="w-full h-full rounded-lg object-fit"
-                        />
-                      </Link>
-                      <div className="absolute bottom-0 left-0 flex flex-col items-start w-full backdrop-blur-sm p-3">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-xl text-gray-800 text-start font-extrabold">
-                            {profile.username}
-                          </h3>
-                          {profile.gender === "male" ? (
-                            <MaleIcon className="w-8 h-8 " color="info" />
-                          ) : (
-                            <FemaleIcon
-                              sx={{
-                                width: 32,
-                                height: 32,
-                                color: "pink",
-                                fontWeight: "bold",
-                              }}
-                              color="info"
-                            />
-                          )}
-                        </div>
-                        <p className="text-gray-600">
-                          {profile.bio.length > 100
-                            ? profile.bio.substring(0, 80) + " ..."
-                            : profile.bio}
-                        </p>
-                        <div className="flex flex-wrap gap-2 pt-4">
-                          {profile.tags.length < 4 ? (
-                            profile.tags.map((tag, index) => (
-                              <div
-                                key={index}
-                                className="bg-red-400 rounded-full px-3 py-1 text-xs font-medium text-white"
-                              >
-                                {tag}
-                              </div>
-                            ))
-                          ) : (
-                            <>
-                              {profile.tags.slice(0, 3).map((tag, index) => (
+                {profile.pictures && profile.pictures.length > 0 ? (
+                  profile.pictures
+                    .filter((picture) => picture !== "") // Filter out any null pictures
+                    .map((picture, index) => (
+                      <SwiperSlide key={index} className="h-full relative">
+                        <Link to={`/profile/${profile.id}`}>
+                          <img
+                            src={picture}
+                            alt={`Profile of ${profile.first_name}`}
+                            className="w-full h-full rounded-lg object-cover"
+                          />
+                        </Link>
+                        <div className="absolute bottom-0 left-0 flex flex-col items-start w-full backdrop-blur-xl p-3">
+                          <div className="flex items-center gap-2 w-[1/3] justify-between">
+                            <h3 className="text-xl text-white text-start font-extrabold">
+                              {profile.username}
+                            </h3>
+                            {profile.gender === "male" ? (
+                              <MaleIcon className="w-8 h-8 " color="info" />
+                            ) : (
+                              <FemaleIcon
+                                sx={{
+                                  width: 32,
+                                  height: 32,
+                                  color: "pink",
+                                  fontWeight: "bold",
+                                }}
+                                color="info"
+                              />
+                            )}
+                            <h4 className="text-xl text-white text-start font-extrabold">
+                              {profile.age} yrs
+                            </h4>
+                          </div>
+                          <p className="text-gray-200 p-1">
+                            {profile.bio.length > 100
+                              ? profile.bio.substring(0, 80) + " ..."
+                              : profile.bio}
+                          </p>
+                          <div className="flex flex-wrap gap-2 pt-4">
+                            {profile.tags.length < 4 ? (
+                              profile.tags.map((tag, index) => (
                                 <div
                                   key={index}
                                   className="bg-red-400 rounded-full px-3 py-1 text-xs font-medium text-white"
                                 >
                                   {tag}
                                 </div>
-                              ))}
-                              <div className="bg-red-400 rounded-full px-3 py-1 text-xs font-medium text-white">
-                                +{profile.tags.length - 3}
-                              </div>
-                            </>
-                          )}
+                              ))
+                            ) : (
+                              <>
+                                {profile.tags.slice(0, 3).map((tag, index) => (
+                                  <div
+                                    key={index}
+                                    className="bg-red-400 rounded-full px-3 py-1 text-xs font-medium text-white"
+                                  >
+                                    {tag}
+                                  </div>
+                                ))}
+                                <div className="bg-red-400 rounded-full px-3 py-1 text-xs font-medium text-white">
+                                  +{profile.tags.length - 3}
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </SwiperSlide>
-                  ))}
+                      </SwiperSlide>
+                    ))
+                ) : (
+                  <SwiperSlide className="h-full relative">
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                      <p>No pictures available</p>
+                    </div>
+                  </SwiperSlide>
+                )}
               </Swiper>
             </SwiperSlide>
           ))

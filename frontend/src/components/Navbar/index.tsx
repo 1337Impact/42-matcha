@@ -8,7 +8,12 @@ const Navbar: React.FC = () => {
       <div className="py-4 mx-4 md:mx-6 lg:mx-8 xl:mx-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="text-red-500 text-xl font-bold">Logo</div>
+            <a href="/">
+              <div className="text-red-500 text-2xl font-bold flex text-center gap-1 items-center">
+                <img src="/Vector.svg" alt="logo" className="h-10" />
+                <span className="text-red-500 md:inline hidden ">Matcha</span>
+              </div>
+            </a>
           </div>
           <div className="flex gap-4 items-center">
             <Notifications />

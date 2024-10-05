@@ -19,9 +19,7 @@ const getLikes = async (req: any, res: any) => {
 const likeProfile = async (req: any, res: any) => {
   try {
     const profileId = req.body.profileId;
-    //"like profile: ", profileId);
     const response = await handleLikeProfile(profileId, req.user);
-    // handle notification
     if (response) {
       sendNotification(
         {

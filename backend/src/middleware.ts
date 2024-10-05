@@ -1,4 +1,3 @@
-// src/middleware/authMiddleware.ts
 import { NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -55,7 +54,6 @@ function socketMiddlware(req: any, res: any, next: NextFunction) {
   } catch (error) {
     console.error("Error verifying token:", error);
     const err = new Error("Error verifying token!");
-    // err.data = { content: "Please retry later" }; // additional details
     next(err);
   }
 }
