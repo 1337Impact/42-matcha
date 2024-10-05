@@ -5,7 +5,7 @@ import Map from "../../components/Map";
 const getUsers = async (): Promise<any> => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/profile/map`, {
+    const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/profile/all`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -178,17 +178,11 @@ export default function Settings() {
       age: "",
     });
 
-    const res = passwordUpdateSchema.safeParse({
-      new_password: data.new_password,
-      confirm_password: data.confirm_password,
-    });
-
-    if (!res.success) {
-      res.error.errors.forEach((err) => {
-        setError((prev) => ({ ...prev, [err.path[0]]: err.message }));
-      });
-      return;
-    }
+    if (data.new_password && data.new_password !== data.confirm_password) {
+      setError((prev) => ({
+        ...prev,
+        confirm_password: "Passwords do not match",
+      }));
 
     const result = completeProfileSchema.safeParse({
       ...data,
