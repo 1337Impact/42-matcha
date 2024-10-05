@@ -62,18 +62,21 @@ const Map: React.FC<MapProps> = ({
         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
       {markers &&
-        markers.map((marker) => (
-          <Marker
-            eventHandlers={{
-              click: () => {
-                handleClick(marker.id);
-              },
-            }}
-            key={marker.id}
-            icon={businessIcon}
-            position={marker.position as LatLngExpression}
-          ></Marker>
-        ))}
+        markers.map(
+          (marker) =>
+            marker.position[0] && (
+              <Marker
+                eventHandlers={{
+                  click: () => {
+                    handleClick(marker.id);
+                  },
+                }}
+                key={marker.id}
+                icon={businessIcon}
+                position={marker.position as LatLngExpression}
+              ></Marker>
+            )
+        )}
     </MapContainer>
   );
 };

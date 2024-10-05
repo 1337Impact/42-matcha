@@ -62,7 +62,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="max-w-[790px] w-full h-full">
+    <div className="max-w-[1000] w-full h-full">
       <Map
         latitude={userLocation?.latitude || 0}
         longitude={userLocation?.longitude || 0}
