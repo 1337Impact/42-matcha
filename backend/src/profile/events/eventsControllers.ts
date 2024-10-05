@@ -40,6 +40,7 @@ const requestDateSchedule = async (req: any, res: any) => {
         },
         req.body.user_id
       );
+      console.log("Request sent successfully : ", data, req.body.user_id);
       res.send("Request sent successfully");
     }
   } catch (error) {

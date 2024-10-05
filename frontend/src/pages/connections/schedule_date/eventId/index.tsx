@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function RespondToScheduleRequest() {
-  // State for handling user's response
-  const [response, setResponse] = useState("");
   const [event, setEvent] = useState<any>({});
   const [error, setError] = useState("");
   const params = useParams();
@@ -44,7 +42,7 @@ export default function RespondToScheduleRequest() {
     getEventData();
   }, [eventId]);
 
-  const submitResponse = () => {
+  const submitResponse = (response: string) => {
     const responseData = {
       eventId: eventId,
       response: response,
@@ -66,10 +64,7 @@ export default function RespondToScheduleRequest() {
       )
         .then((response) => response.json())
         .then((data) => {
-          if (data.error) {
-            throw new Error(data.error);
-          }
-          window.location.href = "/connections/";
+          if (data) window.location.href = "/connections/";
         });
     } catch (error) {
       console.error("Error responding to date request: ", error);
@@ -113,36 +108,23 @@ export default function RespondToScheduleRequest() {
       {/* Response buttons */}
       <div className="flex gap-4 mb-8">
         <button
-          className={`w-1/2 py-3 rounded-lg font-semibold text-lg transition-all duration-300 ease-in-out ${
-            response === "accepted"
-              ? "bg-green-600 text-white"
-              : "bg-green-500 text-white hover:bg-green-600"
-          }`}
-          onClick={() => setResponse("accepted")}
+          className={
+            "w-1/2 py-3 rounded-lg font-semibold text-lg transition-all duration-300 ease-in-out bg-green-600 text-white"
+          }
+          onClick={() => submitResponse("accepted")}
         >
           Accept
         </button>
 
         <button
-          className={`w-1/2 py-3 rounded-lg font-semibold text-lg transition-all duration-300 ease-in-out ${
-            response === "rejected"
-              ? "bg-red-600 text-white"
-              : "bg-red-500 text-white hover:bg-red-600"
-          }`}
-          onClick={() => setResponse("rejected")}
+          className={
+            "w-1/2 py-3 rounded-lg font-semibold text-lg transition-all duration-300 ease-in-out bg-red-600 text-white"
+          }
+          onClick={() => submitResponse("rejected")}
         >
           Decline
         </button>
       </div>
-
-      {/* Submit button */}
-      <button
-        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold text-lg transition-all duration-300 hover:bg-blue-600 shadow-md"
-        onClick={submitResponse}
-        disabled={!response}
-      >
-        Submit Response
-      </button>
     </div>
   );
 }

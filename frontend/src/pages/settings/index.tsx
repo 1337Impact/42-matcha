@@ -4,6 +4,7 @@ import ReactSelect from "react-select";
 import { toast } from "react-toastify";
 import UploadImage from "../../components/upload-image";
 import completeProfileSchema from "../../utils/zod/completeProfileSchema";
+import { passwordUpdateSchema } from "../../utils/zod/passwordUpdateSchema";
 
 const tagsList = [
   { label: "Reading", value: "Reading" },
@@ -177,11 +178,13 @@ export default function Settings() {
       age: "",
     });
 
-    if (data.new_password && data.new_password !== data.confirm_password) {
-      setError((prev) => ({
-        ...prev,
-        confirm_password: "Passwords do not match",
-      }));
+    const res = passwordUpdateSchema.safeParse({
+      new_password: data.new_password,
+      confirm_password: data.confirm_password,
+    });
+
+    if (!res.success) {
+      setError((prev) => ({ ...prev, confirm_password: err.message }));
       return;
     }
 

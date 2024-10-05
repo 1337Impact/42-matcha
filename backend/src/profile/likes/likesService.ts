@@ -36,29 +36,34 @@ async function handleLikeProfile(profileId: string, user: User): Promise<any> {
     const isProfileLiked = await handleGetIsProfileLiked(profileId, user);
     if (isProfileLiked) {
       const query = `DELETE FROM "user_likes" WHERE liker_id = $1 AND liked_id = $2;`;
-      const query1 = `UPDATE "USER" SET fame_rating = fame_rating - 1 WHERE id = $1;`;
-      await db.query(query1, [profileId]);
+      const { rows: fame_rating } = await db.query(
+        `SELECT fame_rating FROM "USER" WHERE id = $1;`,
+        [profileId]
+      );
+      if (fame_rating[0].fame_rating <= 0) {
+        const query1 = `UPDATE "USER" SET fame_rating = 0 WHERE id = $1;`;
+        await db.query(query1, [profileId]);
+      } else {
+        const query1 = `UPDATE "USER" SET fame_rating = fame_rating - 1 WHERE id = $1;`;
+        await db.query(query1, [profileId]);
+      }
       await db.query(query, [user.id, profileId]);
       return false;
     }
     const query = `INSERT INTO "user_likes" (liker_id, liked_id) VALUES ($1, $2);`;
     await db.query(query, [user.id, profileId]);
-
     const { rows: fame_rating } = await db.query(
       `SELECT fame_rating FROM "USER" WHERE id = $1;`,
       [profileId]
     );
-    if (fame_rating[0].fame_rating <= 0) {
-      const query1 = `UPDATE "USER" SET fame_rating = 0 WHERE id = $1;`;
-      await db.query(query1, [profileId]);
-    } else if (fame_rating[0].fame_rating >= 10) {
+    if (fame_rating[0].fame_rating >= 10) {
       const query1 = `UPDATE "USER" SET fame_rating = 10 WHERE id = $1;`;
       await db.query(query1, [profileId]);
     } else {
       const query1 = `UPDATE "USER" SET fame_rating = fame_rating + 1 WHERE id = $1;`;
       await db.query(query1, [profileId]);
     }
-    
+
     return true;
   } catch (error) {
     console.error("Error liking profile:", error);

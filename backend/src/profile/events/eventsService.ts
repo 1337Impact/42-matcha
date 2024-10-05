@@ -24,6 +24,7 @@ const handleSendRequestDateSchedule = async (event: DateEvent, user: User) => {
 
 const handleRespondRequestDateSchedule = async (event: any, user: User) => {
   try {
+    console.log("Event response: ----> ", event);
     if (event.response === "accepted") {
       const query = `UPDATE "EventRequests" SET status = $1 WHERE receiver_id = $2 AND event_id = $3;`;
       await db.query(query, ["accepted", user.id, event.eventId]);

@@ -33,7 +33,7 @@ const getUrl = (type: string, data: any) => {
   } else if (type === "view") {
     return "/profile/views";
   } else if (type === "date") {
-    return `/connections/${data}`;
+    return `/connections/schedule_date/${data}`;
   } else {
     return "/";
   }

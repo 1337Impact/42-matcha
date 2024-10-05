@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS "Events" (
   "event_date" TIMESTAMP,
   "event_location" VARCHAR(255),
   "event_description" TEXT,
-  "confirmed" BOOLEAN DEFAULT false,
+  "confirmed" BOOLEAN DEFAULT FALSE,
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_user1_id FOREIGN KEY ("user1_id") REFERENCES "USER" ("id") ON DELETE CASCADE,
