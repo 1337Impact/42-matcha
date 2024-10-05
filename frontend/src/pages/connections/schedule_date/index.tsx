@@ -33,7 +33,6 @@ export default function ScheduleDate() {
         }
       );
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error("Error scheduling date: ", error);
     }

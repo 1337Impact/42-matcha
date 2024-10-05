@@ -49,7 +49,6 @@ const getNotificationIcon = async (token: string) => {
         },
       }
     );
-    console.log("Notifications:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error getting notifications:", error);
