@@ -183,6 +183,7 @@ export default function Settings() {
         ...prev,
         confirm_password: "Passwords do not match",
       }));
+    }
 
     const result = completeProfileSchema.safeParse({
       ...data,

@@ -20,7 +20,8 @@ async function handleGetProfile(
 async function handleGetMapProfiles(user: User): Promise<any> {
   try {
     const { rows: data } = await db.query(
-      `SELECT id, latitude, longitude FROM "USER"`
+      `SELECT id, latitude, longitude FROM "USER" WHERE id != $1;`,
+      [user.id]
     );
     return data;
   } catch (error) {
