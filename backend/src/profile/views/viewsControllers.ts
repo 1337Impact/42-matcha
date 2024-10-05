@@ -18,7 +18,6 @@ const getViewes = async (req: any, res: any) => {
 const getViewesHistory = async (req: any, res: any) => {
   try {
     const data = await handleGetViewesHistory(req.user);
-    console.log("getViewesHistory: ", data); 
     res.send(data);
   } catch (error) {
     res.status(400).send({ error: "Something went wrong." });
@@ -39,7 +38,6 @@ const vieweProfile = async (req: any, res: any) => {
 const isProfileViewed = async (req: any, res: any) => {
   try {
     const profileId = req.query.profileId;
-    console.log("isProfileViewed: ", profileId);
     const isViewed = await handleGetIsProfileViewed(profileId, req.user);
     res.send(isViewed);
   } catch (error) {

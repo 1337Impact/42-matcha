@@ -25,7 +25,6 @@ export default function Likes() {
 
   useEffect(() => {
     getlikesData().then((data) => {
-      console.log("likes: ", data);
       setLikes(
         data.map((like: any) => ({
           ...like,

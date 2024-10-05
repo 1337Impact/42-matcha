@@ -20,10 +20,9 @@ export default function Profile() {
     getProfileData(params.profileId as string)
       .then((data) => {
         setProfileData(data);
-        console.log("data 000000000  : ", data);
       })
       .catch((error) => {
-        console.log("error: ", error);
+        console.error("error: ", error);
       });
   }, [params]);
 
@@ -34,7 +33,7 @@ export default function Profile() {
           const token = localStorage.getItem("token");
           await handleViewProfile(profileData.id, token);
         } catch (error) {
-          console.log("error: ", error);
+          console.error("error: ", error);
         }
       }
     };
@@ -44,7 +43,7 @@ export default function Profile() {
   const handleReport = async () => {
     try {
       const token = window.localStorage.getItem("token");
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/report`,
         { userId: profileData?.id },
         {
@@ -53,16 +52,15 @@ export default function Profile() {
           },
         }
       );
-      console.log("response: ", response);
     } catch (error) {
-      console.log("error: ", error);
+      console.error("error: ", error);
     }
   };
 
   const handleBlock = async () => {
     try {
       const token = window.localStorage.getItem("token");
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_APP_BACKEND_URL}/api/profile/block`,
         { userId: profileData?.id },
         {
@@ -71,9 +69,8 @@ export default function Profile() {
           },
         }
       );
-      console.log("response: ", response);
     } catch (error) {
-      console.log("error: ", error);
+      console.error("error: ", error);
     }
   };
 

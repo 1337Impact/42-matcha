@@ -58,12 +58,10 @@ async function handleViewedProfile(
     if (profileViewed) {
       const query = `UPDATE "user_views" SET view_time = CURRENT_TIMESTAMP WHERE id = $1;`;
       await db.query(query, [profileViewed]);
-      console.log("Profile viewed updated successfully");
       return "Profile viewed successfully";
     }
     const query = `INSERT INTO "user_views" (viewer_id, viewed_id) VALUES ($1, $2);`;
     await db.query(query, [user.id, profileId]);
-    console.log("Profile viewed successfully");
     return "Profile viewed successfully";
   } catch (error) {
     throw error;

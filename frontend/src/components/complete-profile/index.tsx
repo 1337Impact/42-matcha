@@ -72,16 +72,13 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
           ...initialData,
           images: data.pictures ? data.pictures : Array(5).fill(""),
         });
-        console.log("data 000000000  : ", data);
       })
       .catch((error) => {
-        console.log("error: ", error);
+        console.error("error: ", error);
       });
   }, []);
 
   useEffect(() => {
-    console.log("images: ", data.images);
-    console.log("legnth: ", imagePreview.length);
     setImagePreview(data.images);
   }, [data.images]);
  
@@ -118,7 +115,6 @@ export default function EditProfile({ handleClose }: EditProfileProps) {
       images: "",
     });
     
-    console.log("iameges preview  : ", imagePreview);
     const result = completeProfileSchema.safeParse({
       ...data,
       images: imagePreview,

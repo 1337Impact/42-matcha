@@ -18,9 +18,7 @@ const getEvent = async (req: any, res: any) => {
 
 const requestDateSchedule = async (req: any, res: any) => {
   try {
-    console.log("req.body.event : ---------->  2225 ", req.body);
     const data = await handleSendRequestDateSchedule(req.body, req.user);
-    console.log("data : ---------->  2225 ", data);
     if (data) {
       sendNotification(
         {

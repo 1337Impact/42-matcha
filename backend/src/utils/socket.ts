@@ -21,7 +21,6 @@ function handleVideoCall(io: any, socket: any) {
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("rtc-message", rest);
     }
-    console.log("rtc-message", data);
   });
 
   socket.on("request-call", (data: any) => {
@@ -30,7 +29,6 @@ function handleVideoCall(io: any, socket: any) {
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("incoming-call", rest);
     }
-    console.log("incoming-call", data);
   });
 }
 

@@ -54,7 +54,6 @@ const ProfileSwiper = () => {
   const [filterCriteria, setFilterCriteria] = useState(initialFilterCriteria);
 
   useEffect(() => {
-    console.log("filter Criteria:", filterCriteria);
     const applyFilters = async () => {
       const token = window.localStorage.getItem("token");
       try {
@@ -111,12 +110,9 @@ const ProfileSwiper = () => {
     const currentProfile = profiles[currentIndex];
 
     if (direction === "like" || direction === "dislike") {
-      console.log("name: ", currentProfile.username, "id: ", currentProfile.id);
-
       if (currentIndex < profiles.length - 1) {
         setCurrentIndex((prevIndex) => prevIndex + 1);
       } else {
-        console.log("No more profiles to swipe.");
         setCurrentIndex(0);
       }
       profiles.shift();

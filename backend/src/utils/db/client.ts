@@ -16,7 +16,7 @@ pool.connect((err, client, release) => {
             if (err) {
                 console.error("Error executing query", err);
             } else {
-                console.log("Database is running");
+                console.log("Database is running...");
             }
         });
     }

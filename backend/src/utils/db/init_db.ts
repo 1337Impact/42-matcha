@@ -111,24 +111,6 @@ CREATE TABLE IF NOT EXISTS "EventRequests" (
 );
 `;
 
-const alterTableUserQuery = `
-ALTER TABLE "USER"
-ADD COLUMN IF NOT EXISTS "report_count" NUMERIC DEFAULT 0;
-`;
-
-// async function alterTables() {
-//   try {
-//     const res = await pool.query(EventsTable);
-//     console.log(res, "User table updated successfully with new columns.");
-//     pool.end();
-//   } catch (error) {
-//     console.error("Error updating User table:", error);
-//     pool.end();
-//   }
-// }
-
-// alterTables();
-
 async function createTables() {
   try {
     await pool.query(createExtensionQuery);

@@ -19,7 +19,6 @@ export default function LikeDislikeButton({
   const [isLiked, setIsLiked] = useState(false);
 
   const handleLikeDislike = async () => {
-    console.log("Profile ID: ", profileId);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API_URL}/profile/likes/like-profile`,
@@ -58,7 +57,7 @@ export default function LikeDislikeButton({
         setIsLiked(response.data);
       })
       .catch((error) => {
-        console.log("Error getting likes:", error);
+        console.error("Error getting likes:", error);
       });
   }, [profileId]);
 

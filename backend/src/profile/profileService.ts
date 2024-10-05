@@ -81,11 +81,6 @@ async function handleGetgetFilteredProfiles(
       [user.id]
     );
     const userData = data[0];
-    console.log(
-      "userData: ",
-      profilesFilter.min_fame_rating,
-      profilesFilter.max_fame_rating
-    );
     // get the filtered profiles, so for example if the user set distance to 10km, we will get all profiles within 10km
     // of the user position and so on for the other filters
     let query = `
@@ -145,11 +140,6 @@ async function handleGetgetFilteredProfiles(
     query += ` id DESC
       LIMIT 5;`;
 
-    console.log(
-      "s_pref: ",
-      profilesFilter.sexual_preferences?.toLocaleLowerCase()
-    );
-
     const { rows } = await db.query(query, [
       user.id,
       userData.latitude,
@@ -163,12 +153,6 @@ async function handleGetgetFilteredProfiles(
       profilesFilter.min_fame_rating || 0,
       profilesFilter.max_fame_rating || 10,
     ]);
-
-    const query1 = `
-      SELECT * FROM "USER"
-      WHERE id != $1
-    `;
-    const { rows: rows1 } = await db.query(query1, [user.id]);
     return rows;
   } catch (error) {
     console.error("Error getting filtered Profiles:", error);

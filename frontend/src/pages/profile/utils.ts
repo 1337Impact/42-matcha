@@ -33,7 +33,6 @@ const handleViewProfile = async (profileId: string, token: string | null) => {
         },
       }
     );
-    console.log("Viewed profile: ", res.data);
   } catch (error: any) {
     console.error("Error viewing profile:", error.message);
     throw error;
@@ -50,7 +49,6 @@ const getProfileData = async (profileId: string): Promise<UserProfile> => {
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log("response: ", response.data, JSON.parse(response.data.pictures));
   return {
     ...response.data,
     pictures: JSON.parse(response.data.pictures),

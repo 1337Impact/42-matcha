@@ -40,9 +40,7 @@ const Map: React.FC<MapProps> = ({
   const navigate = useNavigate();
 
   const handleClick = (user_id: string) => {
-    console.log("User ID: ", user_id);
     navigate("/profile/" + user_id);
-    console.log(showMarker);
   };
 
   return (

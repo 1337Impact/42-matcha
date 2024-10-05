@@ -22,7 +22,6 @@ export function CallDialog() {
 
   useEffect(() => {
     socket?.on("incoming-call", (data) => {
-      console.log("incoming-call", data);
       setCallerId(data.sender_id);
       getProfileData(data.sender_id).then((profile) => {
         setCaller(profile.first_name + " " + profile.last_name);

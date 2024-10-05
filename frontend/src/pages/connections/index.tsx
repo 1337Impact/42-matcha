@@ -28,7 +28,6 @@ export default function Connections() {
 
   useEffect(() => {
     getConnectionsData().then((data) => {
-      console.log("connections: ", data);
       setConnections(
         data.map((like: any) => ({
           ...like,
@@ -40,7 +39,6 @@ export default function Connections() {
   }, []);
 
   const openEventhandler = () => {
-    console.log("Open event handler");
     setOpenMenu(!openMenu);
   };
 

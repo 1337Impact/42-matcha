@@ -42,7 +42,6 @@ io.on("connection", (socket) => {
   // @ts-ignore
   const user = socket.request.user;
   userSocketMap.set(user.id, socket.id);
-  console.log("user connected: ", user.id);
 
   socket.on("disconnect", () => {
     userSocketMap.delete(user.id);
@@ -68,11 +67,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/profile", authorize, profileRouter);
 app.use("/api/user", authorize, userRouter);
 app.use("/api/message", authorize, messageRouter);
-
-// // Start the HTTPS server
-// httpsServer.listen(5000, () => {
-//   console.log("Backend running on https://localhost:5000");
-// });
 
 export { io, userSocketMap };
 export default httpsServer;

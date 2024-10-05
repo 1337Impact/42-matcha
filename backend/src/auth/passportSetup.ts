@@ -23,11 +23,6 @@ passport.use(
     },
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
       try {
-        // console.log(
-        //   "\nnewUser: \n ",
-        //   profile
-        // )
-        // Check if the user already exists
         const existingUser = await getUserData(
           `${profile.name?.givenName}@facebook.com`
         );
@@ -46,7 +41,6 @@ passport.use(
           pictures: [profile.photos[0].value],
           is_verified: true,
         };
-        console.log(  "\nnewUser: \n ", newUser);
         const userId = await createUser(newUser);
         if (userId) {
           const newUserData = await getUserData(newUser.email);

@@ -23,7 +23,6 @@ export default function RespondToScheduleRequest() {
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setEvent(data);
         });
     } catch (error) {
@@ -53,7 +52,6 @@ export default function RespondToScheduleRequest() {
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           // Redirect user to the events page
           window.location.href = "/connections/";
         });

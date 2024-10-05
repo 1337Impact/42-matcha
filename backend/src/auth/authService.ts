@@ -60,11 +60,7 @@ export async function createUser(userData: User): Promise<string | null> {
       JSON.stringify(pictures_arr) || JSON.stringify([pictures_arr]),
       is_verified || false,
     ];
-    console.log("values: ++++++++++++++ ", values);
     const { rows } = await db.query(query, values);
-    const query1 = `SELECT * FROM "USER" WHERE id = $1;`;
-    const { rows: user } = await db.query(query1, [rows[0].id]);
-    console.log("user registred --------> : ", user);
     return rows[0].id;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -109,7 +105,6 @@ export const registerUser = async (userData: User) => {
         email: userData.email,
         link: `${process.env.FRONTEND_URL}/verify?token=${emailToken}`,
       });
-      console.log(`${process.env.FRONTEND_URL}/verify?token=${emailToken}`);
       return {
         code: 200,
         error: null,
@@ -138,7 +133,6 @@ export const getUserData = async (email: string) => {
     `;
   try {
     const { rows } = await db.query(query, [email]);
-    console.log("rows: ---\\\\\\/////////----> ", rows);
     return rows[0];
   } catch (error) {
     console.error("Error getting user data:", error);
