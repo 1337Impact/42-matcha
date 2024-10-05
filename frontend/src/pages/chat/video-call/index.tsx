@@ -1,5 +1,5 @@
-import { useRef, useEffect, useState, useContext } from "react";
-import { FiVideoOff, FiMic, FiMicOff } from "react-icons/fi";
+import { useRef, useEffect, useContext } from "react";
+import { FiVideoOff } from "react-icons/fi";
 import { SocketContext } from "../../../contexts/SocketContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,12 +22,8 @@ function App() {
   const localStream = useRef<MediaStream | null>(null);
   const remoteStream = useRef<MediaStream | null>(null);
 
-  const hangupButton = useRef<HTMLButtonElement>(null);
-  const muteAudButton = useRef<HTMLButtonElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
   const localVideo = useRef<HTMLVideoElement>(null);
-
-  const [audiostate, setAudio] = useState(false);
 
   useEffect(() => {
     socket?.on("rtc-message", async (e) => {
@@ -79,9 +75,6 @@ function App() {
         console.log(err);
       }
 
-      if (hangupButton.current) hangupButton.current.disabled = false;
-      if (muteAudButton.current) muteAudButton.current.disabled = false;
-
       socket?.emit("rtc-message", {
         receiver_id: params.profileId,
         type: "ready",
@@ -89,6 +82,13 @@ function App() {
     };
     init();
   }, [socket, params]);
+
+  function closeCamera() {
+    if (!localStream.current) return;
+    console.log("closing camera");
+    const tracks = localStream.current.getTracks();
+    tracks.forEach((track) => track.stop());
+  }
 
   async function makeCall() {
     try {
@@ -210,6 +210,7 @@ function App() {
   }
 
   function hangup() {
+    closeCamera();
     navigate(`/chat/${params.profileId}`);
     toast.success("Call ended");
     if (pc.current) {
@@ -222,14 +223,6 @@ function App() {
     hangup();
     socket?.emit("rtc-message", { receiver_id: params.profileId, type: "bye" });
   };
-
-  function muteAudio() {
-    if (localStream.current) {
-      const audioTracks = localStream.current.getAudioTracks();
-      audioTracks.forEach((track) => (track.enabled = !track.enabled));
-      setAudio(!audiostate);
-    }
-  }
 
   return (
     <main className="w-screen max-w-[1000px]">
@@ -251,17 +244,9 @@ function App() {
       <div className="flex gap-2 items-center">
         <button
           className="flex p-2 border border-red-300 gap-2 rounded-md"
-          ref={hangupButton}
           onClick={hangB}
         >
           Hangup <FiVideoOff />
-        </button>
-        <button
-          className="flex p-2 border border-red-300 gap-2 rounded-md"
-          ref={muteAudButton}
-          onClick={muteAudio}
-        >
-          Mute {audiostate ? <FiMic /> : <FiMicOff />}
         </button>
       </div>
     </main>
