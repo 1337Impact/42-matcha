@@ -1,7 +1,8 @@
 import { useRef, useEffect, useState, useContext } from "react";
-import { FiVideoOff, FiMic, FiMicOff, FiVideo } from "react-icons/fi";
+import { FiVideoOff, FiMic, FiMicOff } from "react-icons/fi";
 import { SocketContext } from "../../../contexts/SocketContext";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const configuration = {
   iceServers: [
@@ -13,15 +14,14 @@ const configuration = {
 };
 
 function App() {
-  let [searchParams] = useSearchParams();
   const params = useParams();
   const socket = useContext(SocketContext);
+  const navigate = useNavigate();
 
   const pc = useRef<RTCPeerConnection | null>(null);
   const localStream = useRef<MediaStream | null>(null);
   const remoteStream = useRef<MediaStream | null>(null);
 
-  const startButton = useRef<HTMLButtonElement>(null);
   const hangupButton = useRef<HTMLButtonElement>(null);
   const muteAudButton = useRef<HTMLButtonElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
@@ -35,7 +35,6 @@ function App() {
         console.log("not ready yet");
         return;
       }
-      console.log("rtc-message....", e.type);
       switch (e.type) {
         case "offer":
           await handleOffer(e);
@@ -67,7 +66,7 @@ function App() {
     return () => {
       socket?.off("rtc-message");
     };
-  }, [socket]);
+  }, [socket, params, navigate]);
 
   useEffect(() => {
     const init = async () => {
@@ -81,10 +80,17 @@ function App() {
       } catch (err) {
         console.log(err);
       }
+
+      if (hangupButton.current) hangupButton.current.disabled = false;
+      if (muteAudButton.current) muteAudButton.current.disabled = false;
+
+      socket?.emit("rtc-message", {
+        receiver_id: params.profileId,
+        type: "ready",
+      });
     };
     init();
-    startB();
-  }, []);
+  }, [socket, params]);
 
   async function makeCall() {
     try {
@@ -206,40 +212,13 @@ function App() {
   }
 
   function hangup() {
+    navigate(`/chat/${params.profileId}`);
+    toast.success("Call ended");
     if (pc.current) {
       pc.current.close();
       pc.current = null;
     }
-    localStream.current?.getTracks().forEach((track) => track.stop());
-    localStream.current = null;
-    remoteStream.current = null;
-
-    if (startButton.current) startButton.current.disabled = false;
-    if (hangupButton.current) hangupButton.current.disabled = true;
-    if (muteAudButton.current) muteAudButton.current.disabled = true;
   }
-
-  const startB = async () => {
-    try {
-      localStream.current = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: { echoCancellation: true },
-      });
-      if (localVideo.current)
-        localVideo.current.srcObject = localStream.current;
-    } catch (err) {
-      console.log(err);
-    }
-
-    if (startButton.current) startButton.current.disabled = true;
-    if (hangupButton.current) hangupButton.current.disabled = false;
-    if (muteAudButton.current) muteAudButton.current.disabled = false;
-
-    socket?.emit("rtc-message", {
-      receiver_id: params.profileId,
-      type: "ready",
-    });
-  };
 
   const hangB = async () => {
     hangup();
@@ -256,9 +235,6 @@ function App() {
 
   return (
     <main className="w-screen max-w-[1000px]">
-      <div className="w-full text-center-center p-4 bg-red-300">
-        Call has been rejected by the user. Please try again later.
-      </div>
       <div className="w-full">
         <video
           ref={localVideo}
