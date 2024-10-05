@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { Link } from "react-router-dom";
 
-import { FaRegHeart } from "react-icons/fa";
+import { FaMapMarkedAlt, FaRegHeart } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdHistory } from "react-icons/md";
@@ -21,13 +21,19 @@ import { ProfileAvatar } from "../profile-avatar/profile-avatar";
 
 const ProfileDropdown: React.FC = () => {
   const user = useSelector((state: RootState) => state.userSlice.user);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const onLogout = () => {
     window.localStorage.removeItem("token");
     navigate("/signin");
   };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger>
         <ProfileAvatar
           profileImage={user?.profile_picture}
@@ -42,25 +48,27 @@ const ProfileDropdown: React.FC = () => {
           </h4>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleClose}>
           <FaRegUserCircle className="mr-2" />
           <Link to={`/profile/${user?.id}`}>Profile</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleClose}>
           <FaRegHeart className="mr-2" />
           <Link to="/profile/likes">Likes</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleClose}>
           <FaRegEye className="mr-2" />
           <Link to="/profile/views">Views</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleClose}>
           <MdHistory className="mr-2" />
           <Link to="/profile/history">History</Link>
         </DropdownMenuItem>
-
-        {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleClose}>
+          <FaMapMarkedAlt className="mr-2" />
+          <Link to="/map">Map</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleClose}>
           <button
             onClick={onLogout}
             className="flex items-center gap-1 text-red-500 font-bold"
