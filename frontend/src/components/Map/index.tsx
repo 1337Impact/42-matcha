@@ -26,10 +26,6 @@ const ChangeView: React.FC<ChangeViewProps> = ({ center }) => {
   return null;
 };
 
-// const positionIcon = new Icon({
-//   iconUrl: "/icons/red-marker.png",
-//   iconSize: [30, 30],
-// });
 const businessIcon = new Icon({
   iconUrl: "/icons/black-marker.svg",
   iconSize: [32, 32],
@@ -51,7 +47,7 @@ const Map: React.FC<MapProps> = ({
 
   return (
     <MapContainer
-      className="h-full w-full rounded-xl"
+      className="h-full w-full"
       center={[latitude, longitude]}
       zoom={10}
       scrollWheelZoom={true}

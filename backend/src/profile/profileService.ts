@@ -169,7 +169,6 @@ async function handleGetgetFilteredProfiles(
       WHERE id != $1
     `;
     const { rows: rows1 } = await db.query(query1, [user.id]);
-    // console.log("filtred : --------!!!----> ", rows);
     return rows;
   } catch (error) {
     console.error("Error getting filtered Profiles:", error);
@@ -340,6 +339,16 @@ const handleBlockUser = async (userId: string, user: User) => {
   }
 };
 
+const handleGetNotifications = async (user: User) => {
+  try {
+    const query = `SELECT * FROM "Notification" WHERE user_id = $1 ORDER BY time DESC LIMIT 10;`;
+    const { rows } = await db.query(query, [user.id]);
+    return rows;
+  } catch (error) {
+    console.error("Error getting notifications:", error);
+    throw error;
+  }
+};
 
 export {
   getIsProfileCompleted,
@@ -354,4 +363,5 @@ export {
   handleReportUser,
   handleBlockUser,
   handleGetMapProfiles,
+  handleGetNotifications,
 };

@@ -9,6 +9,7 @@ import {
   getFilteredProfiles,
   getGeoLocation,
   getMapProfiles,
+  getNotifications,
   getProfile,
   isProfileCompleted,
   reportUser,
@@ -45,6 +46,7 @@ router.get("/all", getAllProfiles);
 router.post("/FilteredProfiles", getFilteredProfiles);
 router.post("/geolocation", getGeoLocation);
 router.get("/map", getMapProfiles);
+router.get("/notifications", getNotifications);
 
 
 

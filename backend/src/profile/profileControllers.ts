@@ -5,6 +5,7 @@ import {
   handleGetAllProfiles,
   handleGetConnections,
   handleGetMapProfiles,
+  handleGetNotifications,
   handleGetProfile,
   handleGetgetFilteredProfiles,
   handleLikeProfile,
@@ -197,6 +198,15 @@ const blockUser = async (req: any, res: any) => {
   }
 };
 
+const getNotifications = async (req: any, res: any) => {
+  try {
+    const data = await handleGetNotifications(req.user);
+    res.send(data);
+  } catch (error) {
+    res.status(400).send({ error: "Something went wrong." });
+  }
+};
+
 export {
   blockUser,
   getAllProfiles,
@@ -209,4 +219,5 @@ export {
   likeProfile,
   reportUser,
   updateProfile,
+  getNotifications,
 };

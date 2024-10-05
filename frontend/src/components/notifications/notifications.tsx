@@ -13,24 +13,73 @@ import { IoIosNotifications } from "react-icons/io";
 import { RiMessage2Line } from "react-icons/ri";
 import { MdOutlineHeartBroken } from "react-icons/md";
 import { FaRegEye } from "react-icons/fa";
-
 import { SocketContext } from "../../contexts/SocketContext";
 import Badge from "../badge/badge";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-const inotifications = [
-  {
-    id: 1,
-    content: "You have a new message from John Doe",
-    type: "message",
-    url: "/chat",
-  },
-];
+interface Notification {
+  id: number;
+  content: string;
+  type: string;
+  url: string;
+}
+
+const getUrl = (type: string, data: any) => {
+  if (type === "message") {
+    return "/chat";
+  } else if (type === "like" || type === "unlike") {
+    return "/profile/likes";
+  } else if (type === "view") {
+    return "/profile/views";
+  } else if (type === "date") {
+    return `/connections/${data}`;
+  } else {
+    return "/";
+  }
+};
+
+const getNotificationIcon = async (token: string) => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_APP_API_URL}/profile/notifications`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("Notifications:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting notifications:", error);
+    return [];
+  }
+};
 
 const Notifications: React.FC = () => {
   const [unread, setUnread] = useState(0);
-  const [notifications, setNotifications] = useState(inotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      getNotificationIcon(token).then((data) => {
+        setNotifications(
+          data.map((notification: any) => ({
+            id: notification.id,
+            content:
+              notification.content.lenght > 30
+                ? notification.content.slice(0, 50)
+                : notification.content,
+            type: notification.type,
+            url: getUrl(notification.type, notification.data),
+          }))
+        );
+      });
+    }
+  }, []);
 
   const resetCounter = () => {
     setUnread(0);
@@ -48,16 +97,7 @@ const Notifications: React.FC = () => {
                 ? data.content.slice(0, 50)
                 : data.content,
             type: data.type,
-            url:
-              data.type == "message"
-                ? "/chat"
-                : data.type == "like" || data.type === "unlike"
-                ? "/profile/likes"
-                : data.type === "view"
-                ? "/profile/views"
-                : data.type === "date"
-                ? `/connections/${data.data}`
-                : "/",
+            url: getUrl(data.type, data.data),
           },
           ...prev,
         ]);

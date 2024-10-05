@@ -1,10 +1,16 @@
 import { io, userSocketMap } from "../app";
+import db from "../utils/db/client";
 
-function sendNotification(message: any, receiver_id: string) {
-  const receiverSocketId = userSocketMap.get(receiver_id);
-  //"sendNotification", message, receiverSocketId);
-  if (receiverSocketId) {
-    io.to(receiverSocketId).emit("notification", message);
+async function sendNotification(message: any, receiver_id: string) {
+  try {
+    const receiverSocketId = userSocketMap.get(receiver_id);
+    const query = `INSERT INTO "Notification" (user_id, content, type) VALUES ($1, $2, $3);`;
+    await db.query(query, [receiver_id, message.content, message.type]);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("notification", message);
+    }
+  } catch (error) {
+    console.error("Error sending notification:", error);
   }
 }
 
@@ -26,23 +32,6 @@ function handleVideoCall(io: any, socket: any) {
     }
     console.log("incoming-call", data);
   });
-
-  // socket.on("video-answer", (data: any) => {
-  //   const { receiver_id, answer } = data;
-  //   const receiverSocketId = userSocketMap.get(receiver_id);
-  //   if (receiverSocketId) {
-  //     io.to(receiverSocketId).emit("video-answer", answer);
-  //   }
-  //   console.log("video-answer", data);
-  // });
-  // socket.on("ice-candidate", (data: any) => {
-  //   const { receiver_id, ice_candidate } = data;
-  //   const receiverSocketId = userSocketMap.get(receiver_id);
-  //   if (receiverSocketId) {
-  //     io.to(receiverSocketId).emit("ice-candidate", ice_candidate);
-  //   }
-  //   console.log("ice-candidate", data);
-  // });
 }
 
 export { sendNotification, handleVideoCall };

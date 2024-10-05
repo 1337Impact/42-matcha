@@ -92,8 +92,8 @@ export default function ChatRoom() {
   const onSubmit = (e: any) => {
     e.preventDefault();
     const message = e.target[0].value;
+    if (!message) return;
     setMessages((prev) => [...prev, { id: "", content: message, is_me: true }]);
-    //"submitting message: ", message);
     socket?.emit("message", {
       receiver_id: params.profileId,
       content: message,
