@@ -96,20 +96,32 @@ export const registerUser = async (userData: User) => {
     }
     try {
       const emailToken = generateEmailVerificationToken(userId);
-      await sendVerificationEmail({
-        name: `${userData.first_name} ${userData.last_name}`,
-        email: userData.email,
-        link: `${process.env.FRONTEND_URL}/verify?token=${emailToken}`,
-      });
-      console.log("Email verification : ", `${process.env.FRONTEND_URL}/verify?token=${emailToken}`);
+
+      const mailOptions = {
+        to: userData.email,
+        from: `"Matcha 👻" <${process.env.EMAIL_LOGIN}>`,
+        subject: "Password Reset",
+        text: `You are receiving this because you (or someone else) have requested to reset your account password.\n\n
+        Please click on the following link, or paste it into your browser to complete the process:\n\n
+        ${process.env.FRONTEND_URL}/verify?token=${emailToken}
+        If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+      };
+  
+      const res = await transporter.sendMail(mailOptions);
+      console.log("Email sent: ", res);
+
       return {
         code: 200,
         error: null,
         data: "User created successfully. Please verify your email.",
       };
     } catch (error) {
-      deleteUser(userId);
-      throw error;
+      console.error("Error sending email: ", error);
+      return {
+        code: 200,
+        error: null,
+        data: "User created successfully. Please verify your email.",
+      };
     }
   } catch (error) {
     return {
